@@ -21,7 +21,6 @@
         }
     </script>
     <style>
-        /* Theme Palettes */
         body.theme-dark {
             --bg-body-from: rgba(15, 20, 28, 0.8);
             --bg-body-to: rgba(13, 17, 23, 0.95);
@@ -147,23 +146,11 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--scrollbar-bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--scrollbar-thumb-hover);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
-        /* High-Impact In-Your-Face Ready Animation */
         @keyframes bounceGlow {
             0%, 100% { 
                 transform: translateY(0) scale(1.02);
@@ -210,9 +197,7 @@
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
         }
         
-        .theme-subtext {
-            color: var(--subtext);
-        }
+        .theme-subtext { color: var(--subtext); }
     </style>
 </head>
 <body id="app-body" class="theme-maple-light min-h-screen flex flex-col justify-between p-3 md:p-6 select-none">
@@ -224,7 +209,6 @@
             <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-                <!-- Title & Fairy Info -->
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shadow-pink-500/30">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -246,7 +230,6 @@
                     </div>
                 </div>
 
-                <!-- Live Quick Stats -->
                 <div class="flex items-center gap-2 md:gap-4 ms-inner-box p-2 md:p-3 rounded-xl">
                     <div class="text-center px-3 py-1">
                         <div class="text-xs theme-subtext font-semibold">Idle</div>
@@ -278,7 +261,6 @@
 
         <!-- Controls & Filter Toolbar -->
         <div class="ms-glass rounded-xl p-3 md:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
-            <!-- Filter Tabs -->
             <div class="flex items-center ms-inner-box p-1 rounded-lg text-xs md:text-sm">
                 <button onclick="setFilter('all')" id="btn-filter-all" class="px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all">
                     <i class="fa-solid fa-list text-xs mr-1.5"></i>By Ch # (18)
@@ -291,9 +273,12 @@
                 </button>
             </div>
 
-            <!-- Global Action Controls -->
+            <!-- Global Action Controls with Bubbly Standout Hub Button -->
             <div class="flex items-center gap-2 flex-wrap">
-                <!-- Theme Selector Dropdown -->
+                <a href="index.html" class="ms-button px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white shadow-md shadow-pink-500/20 transition-all hover:scale-105">
+                    <i class="fa-solid fa-house"></i> Hub Menu
+                </a>
+
                 <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
                     <i class="fa-solid fa-palette text-pink-500"></i>
                     <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
@@ -306,18 +291,15 @@
                     </select>
                 </div>
 
-                <!-- Sound Toggle -->
                 <button id="toggle-sound-btn" onclick="toggleSound()" class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2">
                     <i id="sound-icon" class="fa-solid fa-volume-high text-pink-500"></i>
                     <span id="sound-text">Audio Alerts: ON</span>
                 </button>
 
-                <!-- Audio Test Button -->
                 <button onclick="playAlertSound()" class="ms-button ms-inner-box px-2.5 py-1.5 rounded-lg text-xs font-medium" title="Test Beep Sound">
                     <i class="fa-solid fa-bell text-pink-500"></i>
                 </button>
 
-                <!-- Reset All Button -->
                 <button onclick="confirmResetAll()" class="ms-button ms-inner-box px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 hover:text-pink-600">
                     <i class="fa-solid fa-rotate-right"></i> Reset All to Idle
                 </button>
@@ -326,7 +308,6 @@
 
         <!-- Channels Grid -->
         <div id="channels-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3.5">
-            <!-- Cards generated dynamically via JavaScript -->
         </div>
     </div>
 
@@ -335,30 +316,23 @@
             <span class="inline-block w-2 h-2 rounded-full bg-pink-400"></span>
             <span>All channels start in <b>IDLE</b>. Click <b>Killed (Start 3m)</b> when you clear a Fairy to start its timer.</span>
         </div>
-        <div>
-            MapleStory Fairy Farm Tracker • From Sunshine ♥
-        </div>
+        <div>MapleStory Fairy Farm Tracker • From Sunshine ♥</div>
     </footer>
 
     <script>
-        // Channel Data State
         const TOTAL_CHANNELS = 18;
-        const RESPAWN_TIME_SECONDS = 180; // 3 minutes (180 seconds)
+        const RESPAWN_TIME_SECONDS = 180;
         
         let channels = [];
-        let activeFilter = 'all'; // 'all', 'ready', 'active'
+        let activeFilter = 'all';
         let soundEnabled = true;
         let currentTheme = 'maple-light';
-
-        // Web Audio Synthesizer
         let audioCtx = null;
 
         function initAudio() {
             if (!audioCtx) {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) {
-                    audioCtx = new AudioContext();
-                }
+                if (AudioContext) audioCtx = new AudioContext();
             }
         }
 
@@ -367,18 +341,13 @@
             try {
                 initAudio();
                 if (!audioCtx) return;
-
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
+                if (audioCtx.state === 'suspended') audioCtx.resume();
                 const now = audioCtx.currentTime;
 
-                // Tone 1
                 const osc1 = audioCtx.createOscillator();
                 const gain1 = audioCtx.createGain();
                 osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(587.33, now); // D5
+                osc1.frequency.setValueAtTime(587.33, now);
                 gain1.gain.setValueAtTime(0.15, now);
                 gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
                 osc1.connect(gain1);
@@ -386,18 +355,16 @@
                 osc1.start(now);
                 osc1.stop(now + 0.25);
 
-                // Tone 2
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(880, now + 0.12); // A5
+                osc2.frequency.setValueAtTime(880, now + 0.12);
                 gain2.gain.setValueAtTime(0.2, now + 0.12);
                 gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
                 osc2.connect(gain2);
                 gain2.connect(audioCtx.destination);
                 osc2.start(now + 0.12);
                 osc2.stop(now + 0.45);
-
             } catch (e) {
                 console.warn("Audio playback failed:", e);
             }
@@ -426,10 +393,8 @@
             currentTheme = themeName;
             const bodyEl = document.getElementById('app-body');
             bodyEl.className = `theme-${themeName} min-h-screen flex flex-col justify-between p-3 md:p-6 select-none`;
-            
             const selector = document.getElementById('theme-selector');
             if (selector) selector.value = themeName;
-
             saveState();
         }
 
@@ -440,7 +405,6 @@
                     const parsed = JSON.parse(saved);
                     soundEnabled = parsed.soundEnabled ?? true;
                     currentTheme = parsed.currentTheme || 'maple-light';
-                    
                     changeTheme(currentTheme);
 
                     const savedChannels = parsed.channels || [];
@@ -448,8 +412,7 @@
                         const existing = savedChannels.find(c => c.id === i);
                         if (existing) {
                             let remaining = 0;
-                            let status = existing.status || 'idle'; // 'idle', 'active', 'ready', 'crowded'
-                            
+                            let status = existing.status || 'idle';
                             if (status === 'active' && existing.targetTime) {
                                 const now = Date.now();
                                 const diff = Math.ceil((existing.targetTime - now) / 1000);
@@ -458,10 +421,9 @@
                                     status = 'active';
                                 } else {
                                     remaining = 0;
-                                    status = 'ready'; // Timer completed while away
+                                    status = 'ready';
                                 }
                             }
-
                             channels.push({
                                 id: i,
                                 remainingSeconds: remaining,
@@ -474,7 +436,6 @@
                         }
                     }
                 } catch (e) {
-                    console.error("Failed to parse saved state, starting fresh", e);
                     channels = createDefaultChannels();
                     changeTheme('maple-light');
                 }
@@ -482,7 +443,6 @@
                 channels = createDefaultChannels();
                 changeTheme('maple-light');
             }
-
             updateSoundUI();
             renderGrid();
             startTimerLoop();
@@ -490,60 +450,41 @@
 
         function createDefaultChannels() {
             const arr = [];
-            for (let i = 1; i <= TOTAL_CHANNELS; i++) {
-                arr.push(createNewChannelObject(i));
-            }
+            for (let i = 1; i <= TOTAL_CHANNELS; i++) arr.push(createNewChannelObject(i));
             return arr;
         }
 
         function createNewChannelObject(id) {
-            return {
-                id: id,
-                remainingSeconds: 0,
-                status: 'idle',
-                targetTime: null,
-                kills: 0
-            };
+            return { id: id, remainingSeconds: 0, status: 'idle', targetTime: null, kills: 0 };
         }
 
         function saveState() {
             const dataToSave = {
                 soundEnabled,
                 currentTheme,
-                channels: channels.map(c => ({
-                    id: c.id,
-                    targetTime: c.targetTime,
-                    status: c.status,
-                    kills: c.kills
-                }))
+                channels: channels.map(c => ({ id: c.id, targetTime: c.targetTime, status: c.status, kills: c.kills }))
             };
             localStorage.setItem('ms_fairy_tracker_v9_data', JSON.stringify(dataToSave));
         }
 
-        // Action: Killed / Start Timer
         function startTimer(chId) {
             initAudio();
             const ch = channels.find(c => c.id === chId);
             if (!ch) return;
-
             ch.targetTime = Date.now() + (RESPAWN_TIME_SECONDS * 1000);
             ch.remainingSeconds = RESPAWN_TIME_SECONDS;
             ch.status = 'active';
             ch.kills++;
-
             saveState();
             renderGrid();
         }
 
-        // Action: Missed / Late (+45s)
         function handleMissedTimer(chId) {
             initAudio();
             const ch = channels.find(c => c.id === chId);
             if (!ch) return;
-
             const missedBonusSeconds = 45;
             const now = Date.now();
-            
             if (ch.status === 'active' && ch.targetTime && ch.targetTime > now) {
                 ch.targetTime += (missedBonusSeconds * 1000);
                 ch.remainingSeconds += missedBonusSeconds;
@@ -552,43 +493,33 @@
                 ch.remainingSeconds = RESPAWN_TIME_SECONDS;
                 ch.status = 'active';
             }
-
             saveState();
             renderGrid();
         }
 
-        // Action: Crowded (Keeps element idle with distinct crowded look)
         function markCrowded(chId) {
             const ch = channels.find(c => c.id === chId);
             if (!ch) return;
-
             ch.remainingSeconds = 0;
             ch.status = 'crowded';
             ch.targetTime = null;
-
             saveState();
             renderGrid();
         }
 		
-        // Action: Reset to Idle
         function resetToIdle(chId) {
             const ch = channels.find(c => c.id === Number(chId));
             if (!ch) return;
-
             ch.remainingSeconds = 0;
             ch.status = 'idle';
             ch.targetTime = null;
-
             saveState();
             renderGrid();
         }
 
-        // Action: Reset Total Kills across all channels
         function resetTotalKills() {
             if (confirm("Reset total kill counts across all channels?")) {
-                channels.forEach(ch => {
-                    ch.kills = 0;
-                });
+                channels.forEach(ch => { ch.kills = 0; });
                 saveState();
                 renderGrid();
             }
@@ -608,19 +539,9 @@
 
         function setFilter(filter) {
             activeFilter = filter;
-
-            document.getElementById('btn-filter-all').className = filter === 'all' 
-                ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" 
-                : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
-            
-            document.getElementById('btn-filter-ready').className = filter === 'ready' 
-                ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" 
-                : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
-
-            document.getElementById('btn-filter-active').className = filter === 'active' 
-                ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" 
-                : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
-
+            document.getElementById('btn-filter-all').className = filter === 'all' ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
+            document.getElementById('btn-filter-ready').className = filter === 'ready' ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
+            document.getElementById('btn-filter-active').className = filter === 'active' ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
             renderGrid();
         }
 
@@ -644,7 +565,6 @@
                             ch.remainingSeconds = 0;
                             ch.status = 'ready';
                             ch.targetTime = null;
-                            
                             playAlertSound();
                             needsReRender = true;
                         }
@@ -652,7 +572,6 @@
                 });
 
                 updateDynamicElements();
-                
                 if (needsReRender) {
                     saveState();
                     renderGrid();
@@ -664,11 +583,7 @@
             channels.forEach(ch => {
                 const timerEl = document.getElementById(`timer-display-${ch.id}`);
                 const progressBar = document.getElementById(`progress-bar-${ch.id}`);
-
-                if (timerEl) {
-                    timerEl.textContent = formatTime(ch.remainingSeconds);
-                }
-
+                if (timerEl) timerEl.textContent = formatTime(ch.remainingSeconds);
                 if (progressBar) {
                     let percentage = 0;
                     if (ch.status === 'active') {
@@ -679,27 +594,21 @@
                     progressBar.style.width = `${percentage}%`;
                 }
             });
-
             updateGlobalStats();
         }
 
         function updateGlobalStats() {
-            const idleCount = channels.filter(c => c.status === 'idle' || c.status === 'crowded').length;
-            const activeCount = channels.filter(c => c.status === 'active').length;
-            const readyCount = channels.filter(c => c.status === 'ready').length;
-            const totalKills = channels.reduce((acc, c) => acc + (c.kills || 0), 0);
-
-            document.getElementById('stat-idle').textContent = idleCount;
-            document.getElementById('stat-active').textContent = activeCount;
-            document.getElementById('stat-ready').textContent = readyCount;
-            document.getElementById('stat-kills').textContent = totalKills;
+            document.getElementById('stat-idle').textContent = channels.filter(c => c.status === 'idle' || c.status === 'crowded').length;
+            document.getElementById('stat-active').textContent = channels.filter(c => c.status === 'active').length;
+            document.getElementById('stat-ready').textContent = channels.filter(c => c.status === 'ready').length;
+            document.getElementById('stat-kills').textContent = channels.reduce((acc, c) => acc + (c.kills || 0), 0);
         }
 
         function renderGrid() {
             const container = document.getElementById('channels-container');
             container.innerHTML = '';
-
             let displayList = [...channels];
+
             if (activeFilter === 'ready') {
                 displayList.sort((a, b) => {
                     const score = { 'ready': 1, 'active': 2, 'crowded': 3, 'idle': 4 };
@@ -715,10 +624,8 @@
             }
 
             displayList.forEach(ch => {
-                const cardHtml = createChannelCardHTML(ch);
-                container.insertAdjacentHTML('beforeend', cardHtml);
+                container.insertAdjacentHTML('beforeend', createChannelCardHTML(ch));
             });
-
             updateGlobalStats();
         }
 
@@ -763,10 +670,7 @@
 
             return `
                 <div id="card-ch-${ch.id}" class="rounded-xl p-3.5 transition-all duration-300 flex flex-col justify-between relative overflow-hidden shadow-md ${cardBorderClass}">
-                    
                     ${crowdedOverlay}
-
-                    <!-- Top Row: Channel Label & Status Badge -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-1.5 h-6">
@@ -782,23 +686,18 @@
                             </span>
                         </div>
 
-                        <!-- Main Timer Display -->
                         <div class="text-center py-2 ms-inner-box rounded-lg my-2">
                             <div id="timer-display-${ch.id}" class="font-mono text-3xl font-extrabold tracking-wider ${timerColor}">
                                 ${formatTime(ch.remainingSeconds)}
                             </div>
-                            <!-- Progress Bar -->
                             <div class="w-full bg-slate-300/40 h-1.5 rounded-full mt-2 overflow-hidden px-0.5">
                                 <div id="progress-bar-${ch.id}" class="h-full rounded-full transition-all duration-300 ${progressBg}" style="width: ${progressPercentage}%;"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Actions & Controls -->
                     <div class="mt-2 space-y-2">
-                        <!-- Primary Action Buttons -->
                         <div class="grid grid-cols-12 gap-1.5">
-                            <!-- Main Killed / Start Button -->
                             <button onclick="startTimer(${ch.id})" class="col-span-8 ms-button bg-gradient-to-r ${ch.status === 'ready' ? 'from-amber-400 to-yellow-400 text-slate-950 font-black ring-2 ring-amber-300' : 'from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white'} font-extrabold text-xs py-1.5 rounded-lg flex flex-col items-center justify-center gap-0.5 shadow-md">
                                 <div class="flex items-center gap-1.5">
                                     <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
@@ -807,20 +706,17 @@
                                 <span class="text-[10px] opacity-90">${ch.status === 'ready' ? '(3m)' : '(Start 3m)'}</span>
                             </button>
 
-                            <!-- Missed (+45s) Button -->
                             <button onclick="handleMissedTimer(${ch.id})" class="col-span-4 ms-button ms-inner-box hover:border-pink-400 text-amber-600 font-bold text-[11px] py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm" title="Missed or Late? Sets/adds time">
                                 <i class="fa-solid fa-clock-rotate-left text-[10px]"></i>
                                 <span>Missed</span>
                             </button>
                         </div>
 
-                        <!-- Secondary Row: Crowded & Reset to Idle -->
                         <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-300/40">
                             <button onclick="markCrowded(${ch.id})" class="theme-subtext hover:text-purple-600 text-[11px] font-medium transition-colors flex items-center gap-1" title="Mark as Crowded / Keep Idle">
                                 <i class="fa-solid fa-users text-[10px]"></i>
                                 <span>Crowded</span>
                             </button>
-
                             <button onclick="resetToIdle(${ch.id})" class="theme-subtext hover:text-rose-600 text-[11px] font-medium transition-colors">
                                 <i class="fa-solid fa-rotate-left mr-0.5"></i>Reset Idle
                             </button>
@@ -830,10 +726,7 @@
             `;
         }
 
-        // Initialize App on Page Load
-        window.addEventListener('DOMContentLoaded', () => {
-            initData();
-        });
+        window.addEventListener('DOMContentLoaded', () => { initData(); });
     </script>
 </body>
 </html>
