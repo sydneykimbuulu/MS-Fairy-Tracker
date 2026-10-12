@@ -210,6 +210,12 @@
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
                 <div class="flex items-center gap-3">
+                    <!-- Back Button Updated to match Grind Hub style -->
+                    <a href="index.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 text-pink-500 hover:text-pink-600 transition hover:scale-105" title="Back to Main Hub">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                        <i class="fa-solid fa-house"></i>
+                    </a>
+
                     <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shadow-pink-500/30">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                     </div>
@@ -273,12 +279,8 @@
                 </button>
             </div>
 
-            <!-- Global Action Controls with Bubbly Standout Hub Button -->
+            <!-- Global Action Controls -->
             <div class="flex items-center gap-2 flex-wrap">
-                <a href="index.html" class="ms-button px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white shadow-md shadow-pink-500/20 transition-all hover:scale-105">
-                    <i class="fa-solid fa-house"></i> Hub Menu
-                </a>
-
                 <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
                     <i class="fa-solid fa-palette text-pink-500"></i>
                     <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
