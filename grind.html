@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -26,7 +25,6 @@
         }
     </script>
     <style>
-        /* Theme Palettes from Index */
         body.theme-dark {
             --bg-body-from: rgba(15, 20, 28, 0.8);
             --bg-body-to: rgba(13, 17, 23, 0.95);
@@ -152,21 +150,10 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--scrollbar-bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--scrollbar-thumb-hover);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
         .ms-glass {
             background: var(--glass-bg);
@@ -194,9 +181,7 @@
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
         }
         
-        .theme-subtext {
-            color: var(--subtext);
-        }
+        .theme-subtext { color: var(--subtext); }
 
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
@@ -214,7 +199,13 @@
             <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                <!-- Left Side: Back Button + Title -->
                 <div class="flex items-center gap-3">
+                    <a href="index.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 text-pink-500 hover:text-pink-600 transition hover:scale-105" title="Back to Main Hub">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                        <i class="fa-solid fa-house"></i>
+                    </a>
+
                     <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shadow-pink-500/30">
                         <i class="fa-solid font-bold fa-maple-leaf"></i>
                     </div>
@@ -233,8 +224,8 @@
                     </div>
                 </div>
 
+                <!-- Right Side Controls -->
                 <div class="flex items-center gap-2 flex-wrap">
-                    <!-- Theme Selector Dropdown -->
                     <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
                         <i class="fa-solid fa-palette text-pink-500"></i>
                         <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
@@ -263,7 +254,6 @@
 
         <!-- Banner Alert / Quick Info Row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Map & Session Info Card -->
             <div class="ms-card rounded-xl p-4 flex flex-col justify-between shadow-md">
                 <div class="flex items-center justify-between mb-2">
                     <label class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
@@ -272,7 +262,6 @@
                     <span id="levelDisplayTag" class="text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">Lv. 1</span>
                 </div>
                 <div class="space-y-2">
-                    <!-- Location Dropdown Select -->
                     <select id="mapLocationSelect" onchange="handleLocationSelectChange(this)" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500 font-medium transition cursor-pointer">
                         <optgroup label="Victoria Island">
                             <option value="Victoria Road : Henesys">Henesys</option>
@@ -291,18 +280,10 @@
                             <label class="text-[10px] theme-subtext font-semibold block mb-0.5">CHARACTER LEVEL</label>
                             <input type="number" id="charLevelInput" value="1" min="1" max="100" class="w-full ms-inner-box rounded-lg px-2.5 py-1 text-xs font-mono focus:outline-none focus:border-pink-500" oninput="updateCalculations(); saveCurrentState();">
                         </div>
-                        <div class="w-1/2 hidden">
-                            <label class="text-[10px] theme-subtext font-semibold block mb-0.5">DROP / MESO %</label>
-                            <div class="flex gap-1">
-                                <input type="number" id="dropRateInput" value="200" placeholder="Drop%" class="w-full ms-inner-box rounded-lg px-2 py-1 text-xs font-mono focus:outline-none focus:border-pink-500" title="Drop Rate %" oninput="saveCurrentState()">
-                                <input type="number" id="mesoRateInput" value="100" placeholder="Meso%" class="w-full ms-inner-box rounded-lg px-2 py-1 text-xs font-mono focus:outline-none focus:border-pink-500" title="Meso Rate %" oninput="saveCurrentState()">
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- PROMINENT PROFIT STATUS BANNER (Meso Positive Badge) -->
             <div id="profitBannerCard" class="ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-emerald-500/50">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
@@ -324,7 +305,6 @@
                 </div>
             </div>
 
-            <!-- EXP & Level Projections Quick View -->
             <div class="ms-card rounded-xl p-4 flex flex-col justify-between shadow-md">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
@@ -350,8 +330,6 @@
 
         <!-- Middle Row: Main Session Controls & Trackers -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-            <!-- LEFT COLUMN: Grind Session Timer (5 cols) -->
             <div class="lg:col-span-5 ms-card rounded-xl p-6 flex flex-col justify-between space-y-6 shadow-xl">
                 <div>
                     <div class="flex items-center justify-between mb-4">
@@ -364,7 +342,6 @@
                         </div>
                     </div>
 
-                    <!-- Main Timer Clock Display -->
                     <div class="ms-inner-box rounded-2xl p-6 text-center relative overflow-hidden group">
                         <div class="absolute -right-10 -bottom-10 opacity-5 text-9xl font-black select-none pointer-events-none">
                             <i class="fa-solid fa-clock"></i>
@@ -379,7 +356,6 @@
                         </div>
                     </div>
 
-                    <!-- Quick Preset Buttons -->
                     <div class="mt-4">
                         <label class="text-[10px] font-bold uppercase tracking-wider theme-subtext block mb-2">Timer Presets (Totem / Buff Duration)</label>
                         <div class="grid grid-cols-4 gap-2">
@@ -391,7 +367,6 @@
                     </div>
                 </div>
 
-                <!-- Timer Controls -->
                 <div class="space-y-3">
                     <div class="grid grid-cols-2 gap-3">
                         <button id="startPauseBtn" onclick="toggleTimer()" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white transition shadow-lg flex items-center justify-center gap-2">
@@ -409,10 +384,7 @@
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: EXP & Meso Numerical Inputs (7 cols) -->
             <div class="lg:col-span-7 space-y-6">
-
-                <!-- EXP Tracker Panel -->
                 <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
                         <h3 class="text-sm font-bold font-header flex items-center gap-2">
@@ -426,11 +398,10 @@
                             <input type="number" step="0.001" id="startExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-pink-500 transition" oninput="updateCalculations(); saveCurrentState();">
                         </div>
                         <div>
-                            <label id="endExpLabelText" class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%)</label>
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%)</label>
                             <input type="number" step="0.001" id="endExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition bg-slate-500/10 cursor-not-allowed" disabled placeholder="Pause timer to enter current EXP" oninput="updateCalculations(); saveCurrentState();">
                         </div>
                     </div>
-                    <!-- Calculated Stat Cards -->
                     <div class="grid grid-cols-2 gap-3 pt-1">
                         <div class="ms-inner-box p-3 rounded-lg">
                             <div class="text-[11px] theme-subtext">Total EXP Gained</div>
@@ -443,7 +414,6 @@
                     </div>
                 </div>
 
-                <!-- Meso Tracker Panel -->
                 <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
                         <h3 class="text-sm font-bold font-header flex items-center gap-2">
@@ -458,21 +428,19 @@
                         </div>
                     </div>
 
-                    <!-- Mode A: Start & End Mesos -->
                     <div id="mesoDiffContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING MESOS</label>
                             <input type="text" id="startMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-pink-500 transition" oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
                         </div>
                         <div>
-                            <label id="endMesoLabelText" class="text-xs theme-subtext font-semibold mb-1 block">ENDING MESOS</label>
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">ENDING MESOS</label>
                             <input type="text" id="endMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition bg-slate-500/10 cursor-not-allowed" disabled placeholder="Pause timer to enter current" oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
                         </div>
                     </div>
 
-                    <!-- Mode B: Direct Meso Picked Up -->
                     <div id="mesoDirectContainer" class="hidden">
-                        <label id="directMesoLabelText" class="text-xs theme-subtext font-semibold mb-1 block">TOTAL MESOS PICKED UP</label>
+                        <label class="text-xs theme-subtext font-semibold mb-1 block">TOTAL MESOS PICKED UP</label>
                         <input type="text" id="directMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition bg-slate-500/10 cursor-not-allowed" disabled oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
                     </div>
 
@@ -487,14 +455,11 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <!-- Bottom Row: Consumables Costs & Extra Drops Value -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-            <!-- Consumables Tracker Card -->
             <div class="ms-card rounded-xl p-5 space-y-4 flex flex-col justify-between shadow-md">
                 <div>
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3 mb-4">
@@ -505,16 +470,9 @@
                             Total Cost: 0 Meso
                         </span>
                     </div>
-
                     <p class="text-xs theme-subtext mb-3">Check active buffs/items or add custom costs used during session:</p>
-
-                    <!-- Presets Grid -->
-                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="consumablesList">
-                        <!-- Dynamic Consumable Items render here -->
-                    </div>
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="consumablesList"></div>
                 </div>
-
-                <!-- Custom Consumable Add Form -->
                 <div class="pt-3 border-t border-slate-300/30">
                     <div class="text-xs font-bold theme-subtext mb-2">Add Custom Consumable / Cost:</div>
                     <div class="grid grid-cols-12 gap-2">
@@ -528,7 +486,6 @@
                 </div>
             </div>
 
-            <!-- Valuable Drops & Extra Loot Card -->
             <div class="ms-card rounded-xl p-5 space-y-4 flex flex-col justify-between shadow-md">
                 <div>
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3 mb-4">
@@ -539,16 +496,9 @@
                             Drops Value: 0 Meso
                         </span>
                     </div>
-
                     <p class="text-xs theme-subtext mb-3">Track tradeable items dropped and set market values to add to revenue:</p>
-
-                    <!-- Drops Grid -->
-                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="dropsList">
-                        <!-- Dynamic Drops render here -->
-                    </div>
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="dropsList"></div>
                 </div>
-
-                <!-- Custom Drop Add Form -->
                 <div class="pt-3 border-t border-slate-300/30">
                     <div class="text-xs font-bold theme-subtext mb-2">Add Custom Drop Item:</div>
                     <div class="grid grid-cols-12 gap-2">
@@ -561,7 +511,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- Session Logs & History Section -->
@@ -581,7 +530,6 @@
                 </div>
             </div>
 
-            <!-- History Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs font-mono">
                     <thead class="theme-subtext uppercase text-[11px] border-b border-slate-300/30">
@@ -596,7 +544,6 @@
                         </tr>
                     </thead>
                     <tbody id="historyTableBody" class="divide-y divide-slate-300/20">
-                        <!-- Dynamic history items -->
                         <tr>
                             <td colspan="7" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td>
                         </tr>
@@ -608,13 +555,8 @@
 
     <!-- Footer -->
     <footer class="max-w-7xl mx-auto w-full mt-8 pt-4 border-t border-slate-400/30 flex flex-col md:flex-row items-center justify-between text-xs theme-subtext gap-2 font-medium">
-        <div class="flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-pink-400"></span>
-            <span>MapleStory Grind Session Tracker & Profit Calculator • Saved to LocalStorage</span>
-        </div>
-        <div>
-            Happy Grinding! ♥
-        </div>
+        <div><span>MapleStory Grind Session Tracker & Profit Calculator • Saved to LocalStorage</span></div>
+        <div>Happy Grinding! ♥</div>
     </footer>
 
     <!-- Toast Notification Overlay -->
@@ -624,15 +566,6 @@
     </div>
 
     <script>
-        // Default Common Consumables
-        const DEFAULT_CONSUMABLES = [
-        ];
-
-        // Default Common Drops
-        const DEFAULT_DROPS = [
-        ];
-
-        // App State
         let state = {
             timerRunning: false,
             startTime: null,
@@ -649,8 +582,8 @@
             startMeso: 0,
             endMeso: 0,
             directMeso: 0,
-            consumables: JSON.parse(JSON.stringify(DEFAULT_CONSUMABLES)),
-            drops: JSON.parse(JSON.stringify(DEFAULT_DROPS)),
+            consumables: [],
+            drops: [],
             history: [],
             currentTheme: 'maple-light'
         };
@@ -662,10 +595,8 @@
             renderHistory();
             updateCalculations();
             
-            // Sync Location Dropdown / Custom input
             const mapSelect = document.getElementById('mapLocationSelect');
             const mapInput = document.getElementById('mapNameInput');
-            
             let matchedOption = Array.from(mapSelect.options).find(opt => opt.value === state.mapName);
             if (matchedOption) {
                 mapSelect.value = state.mapName;
@@ -674,14 +605,11 @@
             } else {
                 mapSelect.value = 'CUSTOM';
                 mapInput.classList.remove('hidden');
-                // Only keep state.mapName if it isn't one of the default options, otherwise leave blank for placeholder
                 const isDefault = Array.from(mapSelect.options).some(opt => opt.value === state.mapName);
                 mapInput.value = (state.mapName && !isDefault) ? state.mapName : '';
             }
 
             document.getElementById('charLevelInput').value = state.charLevel;
-            document.getElementById('dropRateInput').value = state.dropRate;
-            document.getElementById('mesoRateInput').value = state.mesoRate;
             document.getElementById('startExpInput').value = state.startExp;
             document.getElementById('endExpInput').value = state.endExp;
             document.getElementById('mesoInputMode').value = state.mesoInputMode;
@@ -693,16 +621,14 @@
             toggleMesoInputMode();
             updateInputLockStates();
             
-            if (state.timerRunning) {
-                startTimerLoop();
-            }
+            if (state.timerRunning) startTimerLoop();
         };
 
         function handleLocationSelectChange(selectEl) {
             const customInput = document.getElementById('mapNameInput');
             if (selectEl.value === 'CUSTOM') {
                 customInput.classList.remove('hidden');
-                customInput.value = ''; // Clears the value completely so the placeholder shows
+                customInput.value = '';
                 customInput.focus();
                 state.mapName = '';
             } else {
@@ -715,21 +641,15 @@
 
         function changeTheme(themeName) {
             state.currentTheme = themeName;
-            const bodyEl = document.getElementById('app-body');
-            bodyEl.className = `theme-${themeName} min-h-screen flex flex-col justify-between p-3 md:p-6 select-none`;
-            
+            document.getElementById('app-body').className = `theme-${themeName} min-h-screen flex flex-col justify-between p-3 md:p-6 select-none`;
             const selector = document.getElementById('theme-selector');
             if (selector) selector.value = themeName;
-
             saveCurrentState();
         }
 
         function toggleTimer() {
-            if (state.timerRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
+            if (state.timerRunning) pauseTimer();
+            else startTimer();
         }
 
         function startTimer() {
@@ -754,8 +674,7 @@
         function startTimerLoop() {
             clearInterval(state.timerInterval);
             state.timerInterval = setInterval(() => {
-                const now = Date.now();
-                state.elapsedSeconds = Math.floor((now - state.startTime) / 1000);
+                state.elapsedSeconds = Math.floor((Date.now() - state.startTime) / 1000);
                 updateTimerUI();
                 updateCalculations();
             }, 1000);
@@ -778,16 +697,14 @@
         }
 
         function updateTimerUI() {
-            const timerDisplay = document.getElementById('timerDisplay');
+            document.getElementById('timerDisplay').textContent = formatSecondsToHHMMSS(state.elapsedSeconds);
+            document.getElementById('elapsedTotalText').textContent = `${state.elapsedSeconds}s`;
+
             const statusDot = document.getElementById('timerStatusDot');
             const statusText = document.getElementById('timerStatusText');
             const startPauseBtn = document.getElementById('startPauseBtn');
             const startPauseIcon = document.getElementById('startPauseIcon');
             const startPauseLabel = document.getElementById('startPauseLabel');
-            const elapsedTotalText = document.getElementById('elapsedTotalText');
-
-            timerDisplay.textContent = formatSecondsToHHMMSS(state.elapsedSeconds);
-            elapsedTotalText.textContent = `${state.elapsedSeconds}s`;
 
             if (state.timerRunning) {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
@@ -815,83 +732,45 @@
             if (state.timerRunning) {
                 startExpInput.disabled = true;
                 startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
-                
                 startMesoInput.disabled = true;
                 startMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
-
                 endExpInput.disabled = true;
-                endExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-slate-500/10 border border-slate-400/20 text-slate-400 cursor-not-allowed";
-                endExpInput.placeholder = "Pause timer to enter current EXP";
-
                 endMesoInput.disabled = true;
-                endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-slate-500/10 border border-slate-400/20 text-slate-400 cursor-not-allowed";
-
                 directMesoInput.disabled = true;
-                directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-slate-500/10 border border-slate-400/20 text-slate-400 cursor-not-allowed";
-
                 expHint.textContent = "● GRINDING ACTIVE (Starting Stats Locked)";
                 expHint.className = "text-xs theme-subtext font-bold text-emerald-500 animate-pulse";
             } else {
                 startExpInput.disabled = false;
                 startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none focus:border-pink-500";
-
                 startMesoInput.disabled = false;
                 startMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none focus:border-pink-500";
-
                 endExpInput.disabled = false;
                 endExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition ring-2 ring-pink-500/40 bg-pink-500/5";
-                endExpInput.placeholder = "e.g. 5.250";
-
                 endMesoInput.disabled = false;
                 endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition ring-2 ring-pink-500/40 bg-pink-500/5";
-
                 directMesoInput.disabled = false;
                 directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition ring-2 ring-pink-500/40 bg-pink-500/5";
-
                 expHint.textContent = "❚❚ PAUSED (Enter Current EXP & Mesos)";
                 expHint.className = "text-xs theme-subtext font-bold text-amber-500";
             }
         }
 
         function updateCalculations() {
-            let rawLevel = parseInt(document.getElementById('charLevelInput').value) || 1;
-            if (rawLevel > 100) {
-                rawLevel = 100;
-                document.getElementById('charLevelInput').value = 100;
-            } else if (rawLevel < 1) {
-                rawLevel = 1;
-                document.getElementById('charLevelInput').value = 1;
-            }
-            state.charLevel = rawLevel;
-
-            let rawStartExp = parseFloat(document.getElementById('startExpInput').value) || 0;
-            if (rawStartExp > 100) { rawStartExp = 100; document.getElementById('startExpInput').value = 100; }
-            if (rawStartExp < 0) { rawStartExp = 0; document.getElementById('startExpInput').value = 0; }
-            state.startExp = rawStartExp;
-
-            let rawEndExp = parseFloat(document.getElementById('endExpInput').value) || 0;
-            if (rawEndExp > 100) { rawEndExp = 100; document.getElementById('endExpInput').value = 100; }
-            if (rawEndExp < 0) { rawEndExp = 0; document.getElementById('endExpInput').value = 0; }
-            state.endExp = rawEndExp;
+            state.charLevel = Math.max(1, Math.min(100, parseInt(document.getElementById('charLevelInput').value) || 1));
+            state.startExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('startExpInput').value) || 0));
+            state.endExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('endExpInput').value) || 0));
 
             document.getElementById('levelDisplayTag').textContent = `Lv. ${state.charLevel}`;
 
-            let expGained = state.endExp - state.startExp;
-            if (expGained < 0) expGained = 0;
-
-            const effectiveSeconds = Math.max(state.elapsedSeconds, 10);
-            const durationMinutes = effectiveSeconds / 60;
-
+            let expGained = Math.max(0, state.endExp - state.startExp);
+            const durationMinutes = Math.max(state.elapsedSeconds, 10) / 60;
             const expPerMinute = expGained / durationMinutes;
 
-            const remainingExp = 100 - state.endExp;
             let etaText = "--h --m";
+            const remainingExp = 100 - state.endExp;
             if (expPerMinute > 0 && remainingExp > 0) {
-                const minutesNeeded = remainingExp / expPerMinute;
-                const totalMinutes = Math.round(minutesNeeded);
-                const hrs = Math.floor(totalMinutes / 60);
-                const mins = totalMinutes % 60;
-                etaText = `${hrs}h ${mins}m`;
+                const totalMinutes = Math.round(remainingExp / expPerMinute);
+                etaText = `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
             }
 
             document.getElementById('expGainedText').textContent = `+${expGained.toFixed(3)}%`;
@@ -901,26 +780,17 @@
             document.getElementById('statExpPerHour').textContent = `${expPerMinute.toFixed(3)}% / min`;
             document.getElementById('etaToLevel').textContent = etaText;
 
-            let grossMeso = 0;
-            if (state.mesoInputMode === 'diff') {
-                const startM = parseMesoInput(document.getElementById('startMesoInput').value);
-                const endM = parseMesoInput(document.getElementById('endMesoInput').value);
-                grossMeso = Math.max(0, endM - startM);
-            } else {
-                grossMeso = parseMesoInput(document.getElementById('directMesoInput').value);
-            }
+            let grossMeso = state.mesoInputMode === 'diff' 
+                ? Math.max(0, parseMesoInput(document.getElementById('endMesoInput').value) - parseMesoInput(document.getElementById('startMesoInput').value))
+                : parseMesoInput(document.getElementById('directMesoInput').value);
 
             const grossMesoPerMinute = grossMeso / durationMinutes;
 
             let totalConsumableCost = 0;
-            state.consumables.forEach(item => {
-                if (item.active) totalConsumableCost += (item.unitCost * item.qty);
-            });
+            state.consumables.forEach(item => { if (item.active) totalConsumableCost += (item.unitCost * item.qty); });
 
             let totalDropsValue = 0;
-            state.drops.forEach(item => {
-                totalDropsValue += (item.unitValue * item.qty);
-            });
+            state.drops.forEach(item => { totalDropsValue += (item.unitValue * item.qty); });
 
             const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
             const netProfitPerMinute = netProfit / durationMinutes;
@@ -936,8 +806,6 @@
             const netProfitHourly = document.getElementById('netProfitHourly');
 
             const formattedNet = (netProfit >= 0 ? '+' : '') + formatNumberWithCommas(netProfit);
-            const formattedNetMin = (netProfitPerMinute >= 0 ? '+' : '') + formatShortMeso(netProfitPerMinute) + ' / min';
-
             if (netProfit >= 0) {
                 profitBannerCard.className = "ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-emerald-500/50";
                 profitBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center gap-1";
@@ -951,17 +819,15 @@
             }
 
             netProfitAmount.innerHTML = `${formattedNet} <span class="text-xs font-normal opacity-70">mesos</span>`;
-            netProfitHourly.textContent = formattedNetMin;
+            netProfitHourly.textContent = (netProfitPerMinute >= 0 ? '+' : '') + formatShortMeso(netProfitPerMinute) + ' / min';
         }
 
         function renderConsumables() {
             const listEl = document.getElementById('consumablesList');
             listEl.innerHTML = '';
-
             state.consumables.forEach((item, index) => {
                 const row = document.createElement('div');
                 row.className = `flex items-center justify-between p-2 rounded-lg border transition ${item.active ? 'ms-inner-box' : 'opacity-60 ms-card'}`;
-                
                 row.innerHTML = `
                     <div class="flex items-center gap-2 max-w-[60%]">
                         <input type="checkbox" ${item.active ? 'checked' : ''} onchange="toggleConsumable(${index})" class="rounded border-slate-300 text-pink-500 focus:ring-0 cursor-pointer">
@@ -972,78 +838,36 @@
                             <span class="text-[10px] theme-subtext">x</span>
                             <input type="number" value="${item.qty}" min="1" onchange="updateConsumableQty(${index}, this.value)" class="w-10 bg-transparent text-xs font-mono text-center focus:outline-none">
                         </div>
-                        <div class="text-xs font-mono theme-subtext w-20 text-right truncate">
-                            ${formatShortMeso(item.unitCost * item.qty)}
-                        </div>
-                        <button onclick="removeConsumable(${index})" class="theme-subtext hover:text-rose-500 transition text-xs px-1">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
+                        <div class="text-xs font-mono theme-subtext w-20 text-right truncate">${formatShortMeso(item.unitCost * item.qty)}</div>
+                        <button onclick="removeConsumable(${index})" class="theme-subtext hover:text-rose-500 transition text-xs px-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 `;
                 listEl.appendChild(row);
             });
         }
 
-        function toggleConsumable(index) {
-            state.consumables[index].active = !state.consumables[index].active;
-            renderConsumables();
-            updateCalculations();
-            saveCurrentState();
-        }
-
-        function updateConsumableQty(index, val) {
-            state.consumables[index].qty = Math.max(1, parseInt(val) || 1);
-            updateCalculations();
-            saveCurrentState();
-        }
-
-        function removeConsumable(index) {
-            state.consumables.splice(index, 1);
-            renderConsumables();
-            updateCalculations();
-            saveCurrentState();
-        }
+        function toggleConsumable(index) { state.consumables[index].active = !state.consumables[index].active; renderConsumables(); updateCalculations(); saveCurrentState(); }
+        function updateConsumableQty(index, val) { state.consumables[index].qty = Math.max(1, parseInt(val) || 1); updateCalculations(); saveCurrentState(); }
+        function removeConsumable(index) { state.consumables.splice(index, 1); renderConsumables(); updateCalculations(); saveCurrentState(); }
 
         function addCustomConsumable() {
             const nameInput = document.getElementById('customConsumableName');
             const qtyInput = document.getElementById('customConsumableQty');
             const costInput = document.getElementById('customConsumableCost');
-
             const name = nameInput.value.trim();
-            const qty = parseInt(qtyInput.value) || 1;
-            const cost = parseMesoInput(costInput.value);
-
-            if (!name) {
-                showToast("Please enter an item name", "error");
-                return;
-            }
-
-            state.consumables.push({
-                id: 'custom_' + Date.now(),
-                name: name,
-                unitCost: cost,
-                qty: qty,
-                active: true
-            });
-
-            nameInput.value = '';
-            costInput.value = '0';
-            qtyInput.value = '1';
-
-            renderConsumables();
-            updateCalculations();
-            showToast(`Added custom consumable: ${name}`, "success");
-            saveCurrentState();
+            if (!name) return showToast("Please enter an item name", "error");
+            
+            state.consumables.push({ id: 'custom_' + Date.now(), name: name, unitCost: parseMesoInput(costInput.value), qty: parseInt(qtyInput.value) || 1, active: true });
+            nameInput.value = ''; costInput.value = '0'; qtyInput.value = '1';
+            renderConsumables(); updateCalculations(); showToast(`Added consumable: ${name}`, "success"); saveCurrentState();
         }
 
         function renderDrops() {
             const listEl = document.getElementById('dropsList');
             listEl.innerHTML = '';
-
             state.drops.forEach((item, index) => {
                 const row = document.createElement('div');
                 row.className = "flex items-center justify-between p-2 rounded-lg ms-inner-box transition";
-                
                 row.innerHTML = `
                     <div class="flex items-center gap-2 max-w-[55%]">
                         <i class="fa-solid fa-angles-right text-[10px] text-purple-500"></i>
@@ -1054,106 +878,58 @@
                             <span class="text-[10px] theme-subtext">Qty:</span>
                             <input type="number" value="${item.qty}" min="0" onchange="updateDropQty(${index}, this.value)" class="w-10 bg-transparent text-xs font-mono text-center focus:outline-none">
                         </div>
-                        <div class="text-xs font-mono text-purple-600 font-bold w-20 text-right truncate">
-                            +${formatShortMeso(item.unitValue * item.qty)}
-                        </div>
-                        <button onclick="removeDrop(${index})" class="theme-subtext hover:text-rose-500 transition text-xs px-1">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
+                        <div class="text-xs font-mono text-purple-600 font-bold w-20 text-right truncate">+${formatShortMeso(item.unitValue * item.qty)}</div>
+                        <button onclick="removeDrop(${index})" class="theme-subtext hover:text-rose-500 transition text-xs px-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 `;
                 listEl.appendChild(row);
             });
         }
 
-        function updateDropQty(index, val) {
-            state.drops[index].qty = Math.max(0, parseInt(val) || 0);
-            renderDrops();
-            updateCalculations();
-            saveCurrentState();
-        }
-
-        function removeDrop(index) {
-            state.drops.splice(index, 1);
-            renderDrops();
-            updateCalculations();
-            saveCurrentState();
-        }
+        function updateDropQty(index, val) { state.drops[index].qty = Math.max(0, parseInt(val) || 0); renderDrops(); updateCalculations(); saveCurrentState(); }
+        function removeDrop(index) { state.drops.splice(index, 1); renderDrops(); updateCalculations(); saveCurrentState(); }
 
         function addCustomDrop() {
             const nameInput = document.getElementById('customDropName');
             const qtyInput = document.getElementById('customDropQty');
             const valInput = document.getElementById('customDropValue');
-
             const name = nameInput.value.trim();
-            const qty = parseInt(qtyInput.value) || 1;
-            const unitVal = parseMesoInput(valInput.value);
+            if (!name) return showToast("Please enter a drop item name", "error");
 
-            if (!name) {
-                showToast("Please enter a drop item name", "error");
-                return;
-            }
-
-            state.drops.push({
-                id: 'drop_' + Date.now(),
-                name: name,
-                unitValue: unitVal,
-                qty: qty
-            });
-
-            nameInput.value = '';
-            valInput.value = '0';
-            qtyInput.value = '1';
-
-            renderDrops();
-            updateCalculations();
-            showToast(`Added custom drop: ${name}`, "success");
-            saveCurrentState();
+            state.drops.push({ id: 'drop_' + Date.now(), name: name, unitValue: parseMesoInput(valInput.value), qty: parseInt(qtyInput.value) || 1 });
+            nameInput.value = ''; valInput.value = '0'; qtyInput.value = '1';
+            renderDrops(); updateCalculations(); showToast(`Added drop: ${name}`, "success"); saveCurrentState();
         }
 
         function stopAndSaveSession() {
-            if (state.elapsedSeconds < 1) {
-                showToast("Session duration is too short to save (min 1s)", "error");
-                return;
-            }
-
+            if (state.elapsedSeconds < 1) return showToast("Session duration is too short to save (min 1s)", "error");
             pauseTimer();
 
             const mapName = document.getElementById('mapNameInput').value.trim() || 'Unknown Map';
-            const charLv = parseInt(document.getElementById('charLevelInput').value) || 1;
             const expGained = Math.max(0, state.endExp - state.startExp);
             const durationMinutes = state.elapsedSeconds / 60;
-
-            let grossMeso = 0;
-            if (state.mesoInputMode === 'diff') {
-                const startM = parseMesoInput(document.getElementById('startMesoInput').value);
-                const endM = parseMesoInput(document.getElementById('endMesoInput').value);
-                grossMeso = Math.max(0, endM - startM);
-            } else {
-                grossMeso = parseMesoInput(document.getElementById('directMesoInput').value);
-            }
+            const grossMeso = state.mesoInputMode === 'diff' 
+                ? Math.max(0, parseMesoInput(document.getElementById('endMesoInput').value) - parseMesoInput(document.getElementById('startMesoInput').value))
+                : parseMesoInput(document.getElementById('directMesoInput').value);
 
             let totalConsumableCost = 0;
             state.consumables.forEach(item => { if (item.active) totalConsumableCost += (item.unitCost * item.qty); });
-
             let totalDropsValue = 0;
             state.drops.forEach(item => { totalDropsValue += (item.unitValue * item.qty); });
 
             const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
-            const netProfitPerMinute = netProfit / durationMinutes;
 
-            const sessionEntry = {
+            state.history.unshift({
                 id: 'session_' + Date.now(),
                 timestamp: new Date().toLocaleString(),
                 mapName: mapName,
-                level: charLv,
+                level: parseInt(document.getElementById('charLevelInput').value) || 1,
                 durationSeconds: state.elapsedSeconds,
                 expGained: expGained,
                 netProfit: netProfit,
-                netProfitPerMinute: netProfitPerMinute
-            };
+                netProfitPerMinute: netProfit / durationMinutes
+            });
 
-            state.history.unshift(sessionEntry);
             renderHistory();
             showToast("Session successfully saved to history!", "success");
 
@@ -1175,50 +951,35 @@
             const tbody = document.getElementById('historyTableBody');
             const countBadge = document.getElementById('sessionCountBadge');
             const avgMesoHrText = document.getElementById('avgMesoHrText');
-
             countBadge.textContent = `${state.history.length} Saved Sessions`;
 
             if (state.history.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td></tr>`;
                 avgMesoHrText.textContent = "0";
                 return;
             }
 
             tbody.innerHTML = '';
             let totalMesoMinSum = 0;
-
             state.history.forEach((session) => {
                 totalMesoMinSum += session.netProfitPerMinute;
-
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-500/10 transition";
-
                 const isPositive = session.netProfit >= 0;
-                const profitClass = isPositive ? 'text-emerald-500' : 'text-rose-500';
-                const sign = isPositive ? '+' : '';
-
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 theme-subtext text-[11px]">${session.timestamp}</td>
                     <td class="py-2.5 px-3 font-sans font-semibold">${session.mapName} <span class="text-xs text-pink-500">Lv.${session.level}</span></td>
                     <td class="py-2.5 px-3">${formatSecondsToHHMMSS(session.durationSeconds)}</td>
                     <td class="py-2.5 px-3 text-pink-500">+${session.expGained.toFixed(3)}%</td>
-                    <td class="py-2.5 px-3 font-bold ${profitClass}">${sign}${formatShortMeso(session.netProfit)}</td>
-                    <td class="py-2.5 px-3 font-bold ${profitClass}">${sign}${formatShortMeso(session.netProfitPerMinute)}/min</td>
+                    <td class="py-2.5 px-3 font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfit)}</td>
+                    <td class="py-2.5 px-3 font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfitPerMinute)}/min</td>
                     <td class="py-2.5 px-3 text-right">
-                        <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
+                        <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            const avgMesoMin = totalMesoMinSum / state.history.length;
-            avgMesoHrText.textContent = `${formatShortMeso(avgMesoMin)} / min`;
+            avgMesoHrText.textContent = `${formatShortMeso(totalMesoMinSum / state.history.length)} / min`;
         }
 
         function deleteHistoryItem(id) {
@@ -1229,10 +990,10 @@
         }
 
         function clearAllHistory() {
-            if (confirm("Are you sure you want to clear all session history?")) {
+            if (confirm("Clear all session history?")) {
                 state.history = [];
                 renderHistory();
-                showToast("Session history cleared", "info");
+                showToast("History cleared", "info");
                 saveCurrentState();
             }
         }
@@ -1241,43 +1002,22 @@
             state.mesoInputMode = document.getElementById('mesoInputMode').value;
             const diffBox = document.getElementById('mesoDiffContainer');
             const directBox = document.getElementById('mesoDirectContainer');
-
-            if (state.mesoInputMode === 'diff') {
-                diffBox.classList.remove('hidden');
-                directBox.classList.add('hidden');
-            } else {
-                diffBox.classList.add('hidden');
-                directBox.classList.remove('hidden');
-            }
+            if (state.mesoInputMode === 'diff') { diffBox.classList.remove('hidden'); directBox.classList.add('hidden'); }
+            else { diffBox.classList.add('hidden'); directBox.classList.remove('hidden'); }
             updateCalculations();
             saveCurrentState();
         }
 
-        function formatMesoInput(inputEl) {
-            const rawVal = parseMesoInput(inputEl.value);
-            inputEl.value = formatNumberWithCommas(rawVal);
-        }
-
-        function parseMesoInput(str) {
-            if (!str) return 0;
-            const clean = str.toString().replace(/,/g, '').trim();
-            return parseInt(clean, 10) || 0;
-        }
-
-        function formatNumberWithCommas(num) {
-            return Math.round(num).toLocaleString('en-US');
-        }
+        function formatMesoInput(inputEl) { inputEl.value = formatNumberWithCommas(parseMesoInput(inputEl.value)); }
+        function parseMesoInput(str) { return parseInt((str || '').toString().replace(/,/g, '').trim(), 10) || 0; }
+        function formatNumberWithCommas(num) { return Math.round(num).toLocaleString('en-US'); }
 
         function formatShortMeso(num) {
             const abs = Math.abs(num);
             const sign = num < 0 ? '-' : '';
-            if (abs >= 1000000000) {
-                return sign + (abs / 1000000000).toFixed(2) + 'B';
-            } else if (abs >= 1000000) {
-                return sign + (abs / 1000000).toFixed(2) + 'M';
-            } else if (abs >= 1000) {
-                return sign + (abs / 1000).toFixed(1) + 'K';
-            }
+            if (abs >= 1000000000) return sign + (abs / 1000000000).toFixed(2) + 'B';
+            if (abs >= 1000000) return sign + (abs / 1000000).toFixed(2) + 'M';
+            if (abs >= 1000) return sign + (abs / 1000).toFixed(1) + 'K';
             return sign + Math.round(abs).toLocaleString('en-US');
         }
 
@@ -1291,57 +1031,34 @@
         function saveCurrentState() {
             const mapSelect = document.getElementById('mapLocationSelect');
             const mapInput = document.getElementById('mapNameInput');
-            if (mapSelect.value === 'CUSTOM') {
-                state.mapName = mapInput.value;
-            } else {
-                state.mapName = mapSelect.value;
-            }
-
+            state.mapName = mapSelect.value === 'CUSTOM' ? mapInput.value : mapSelect.value;
             state.charLevel = parseInt(document.getElementById('charLevelInput').value) || 1;
-            state.dropRate = parseFloat(document.getElementById('dropRateInput').value) || 0;
-            state.mesoRate = parseFloat(document.getElementById('mesoRateInput').value) || 0;
             state.startExp = parseFloat(document.getElementById('startExpInput').value) || 0;
             state.endExp = parseFloat(document.getElementById('endExpInput').value) || 0;
             state.startMeso = parseMesoInput(document.getElementById('startMesoInput').value);
             state.endMeso = parseMesoInput(document.getElementById('endMesoInput').value);
             state.directMeso = parseMesoInput(document.getElementById('directMesoInput').value);
-
             localStorage.setItem('maple_grind_tracker_state_v2', JSON.stringify(state));
         }
 
         function loadSavedState() {
             const saved = localStorage.getItem('maple_grind_tracker_state_v2');
             if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    state = { ...state, ...parsed };
-                } catch(e) {
-                    console.error("Failed to parse saved state", e);
-                }
+                try { state = { ...state, ...JSON.parse(saved) }; } catch(e) {}
             }
         }
 
         function resetCurrentSessionData() {
-            if (confirm("Reset current session timer & input values? (History will be kept)")) {
+            if (confirm("Reset current session timer & inputs?")) {
                 pauseTimer();
-                state.elapsedSeconds = 0;
-                state.startExp = 0.000;
-                state.endExp = 0.000;
-                state.startMeso = 0;
-                state.endMeso = 0;
-                state.directMeso = 0;
-
+                state.elapsedSeconds = 0; state.startExp = 0; state.endExp = 0; state.startMeso = 0; state.endMeso = 0; state.directMeso = 0;
                 document.getElementById('startExpInput').value = '0.000';
                 document.getElementById('endExpInput').value = '0.000';
                 document.getElementById('startMesoInput').value = '0';
                 document.getElementById('endMesoInput').value = '0';
                 document.getElementById('directMesoInput').value = '0';
-
-                updateTimerUI();
-                updateCalculations();
-                updateInputLockStates();
-                saveCurrentState();
-                showToast("Session inputs reset", "info");
+                updateTimerUI(); updateCalculations(); updateInputLockStates(); saveCurrentState();
+                showToast("Session reset", "info");
             }
         }
 
@@ -1353,46 +1070,28 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
-            showToast("Data exported as JSON file", "success");
+            showToast("Data exported", "success");
         }
 
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const imported = JSON.parse(e.target.result);
-                    state = { ...state, ...imported };
+                    state = { ...state, ...JSON.parse(e.target.result) };
                     location.reload();
-                } catch(err) {
-                    showToast("Invalid JSON file", "error");
-                }
+                } catch(err) { showToast("Invalid JSON file", "error"); }
             };
             reader.readAsText(file);
         }
 
         function showToast(msg, type = "info") {
             const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMsg.textContent = msg;
-
-            if (type === "success") {
-                toastIcon.className = "fa-solid fa-circle-check text-emerald-500";
-            } else if (type === "error") {
-                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-500";
-            } else {
-                toastIcon.className = "fa-solid fa-circle-info text-pink-500";
-            }
-
+            document.getElementById('toastMessage').textContent = msg;
+            document.getElementById('toastIcon').className = type === "success" ? "fa-solid fa-circle-check text-emerald-500" : (type === "error" ? "fa-solid fa-triangle-exclamation text-rose-500" : "fa-solid fa-circle-info text-pink-500");
             toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-            
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-            }, 3000);
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'); }, 3000);
         }
     </script>
 </body>
