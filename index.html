@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapleStory Tracker Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                        header: ['"Fredoka"', 'sans-serif'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Theme Palettes */
+        body.theme-dark {
+            --bg-body-from: rgba(15, 20, 28, 0.8);
+            --bg-body-to: rgba(13, 17, 23, 0.95);
+            --bg-body-color: #0d1117;
+            --text-main: #e2e8f0;
+            --glass-bg: rgba(24, 32, 44, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --card-border: #1e293b;
+            --accent-primary: #10b981;
+            --subtext: #94a3b8;
+            --inner-bg: rgba(2, 6, 23, 0.8);
+            --inner-border: rgba(30, 41, 59, 0.8);
+        }
+
+        body.theme-maple-light {
+            --bg-body-from: #a2d2ff;
+            --bg-body-to: #bde0fe;
+            --bg-body-color: #bde0fe;
+            --text-main: #4a2810;
+            --glass-bg: #fffbf0;
+            --glass-border: #8b5a2b;
+            --card-bg: #fff8e7;
+            --card-border: #734222;
+            --accent-primary: #f43f5e;
+            --subtext: #8c5a3c;
+            --inner-bg: #fff2d6;
+            --inner-border: #e6cb9e;
+        }
+
+        body.theme-maple {
+            --bg-body-from: rgba(40, 25, 15, 0.85);
+            --bg-body-to: rgba(25, 15, 8, 0.95);
+            --bg-body-color: #1a0f08;
+            --text-main: #fef3c7;
+            --glass-bg: rgba(54, 34, 20, 0.85);
+            --glass-border: rgba(251, 191, 36, 0.2);
+            --card-bg: rgba(43, 24, 12, 0.7);
+            --card-border: #573216;
+            --accent-primary: #f59e0b;
+            --subtext: #d97706;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #573216;
+        }
+
+        body.theme-cyber {
+            --bg-body-from: rgba(10, 5, 25, 0.9);
+            --bg-body-to: rgba(5, 2, 15, 0.98);
+            --bg-body-color: #05020f;
+            --text-main: #f0abfc;
+            --glass-bg: rgba(30, 10, 50, 0.85);
+            --glass-border: rgba(217, 70, 239, 0.3);
+            --card-bg: rgba(20, 8, 35, 0.8);
+            --card-border: #4a1d70;
+            --accent-primary: #d946ef;
+            --subtext: #c084fc;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #4a1d70;
+        }
+
+        body {
+            background-color: var(--bg-body-color);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+                linear-gradient(to bottom, var(--bg-body-from), var(--bg-body-to));
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .ms-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .ms-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+        }
+
+        .ms-inner-box {
+            background: var(--inner-bg);
+            border: 1px solid var(--inner-border);
+        }
+
+        .ms-button {
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        .ms-button:active {
+            transform: translateY(1px);
+        }
+        
+        .theme-subtext {
+            color: var(--subtext);
+        }
+    </style>
+</head>
+<body id="app-body" class="theme-maple-light min-h-screen flex flex-col justify-between p-4 md:p-8 select-none">
+
+    <div class="max-w-4xl mx-auto w-full space-y-6">
+        <!-- Header Matching Your Tracker -->
+        <header class="ms-glass rounded-2xl p-4 md:p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-pink-400/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shadow-pink-500/30">
+                        <i class="fa-solid font-bold fa-maple-leaf"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-header text-2xl md:text-3xl font-bold tracking-wide text-pink-500 drop-shadow-sm">
+                                MapleStory Tool Hub
+                            </h1>
+                        </div>
+                        <p class="text-xs md:text-sm theme-subtext mt-0.5 font-medium">
+                            Select a tracker below to get started ♥
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Theme Selector -->
+                <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
+                    <i class="fa-solid fa-palette text-pink-500"></i>
+                    <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
+                        <option value="maple-light" class="bg-amber-50 text-pink-600">Default Maple Light</option>
+                        <option value="dark" class="bg-slate-900 text-slate-200">Default Dark</option>
+                        <option value="maple" class="bg-amber-950 text-amber-200">Maple Classic</option>
+                        <option value="cyber" class="bg-purple-950 text-fuchsia-300">Maple Cyber</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tool Selection Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            
+            <!-- Grind Session Tracker Card -->
+            <div class="ms-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition hover:scale-[1.01]">
+                <div class="space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-500 text-xl">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                    <h2 class="font-header text-xl font-bold">Grind Session Tracker</h2>
+                    <p class="text-xs md:text-sm theme-subtext leading-relaxed">
+                        Track your live experience gains, meso loot rates, consumables, and expenses with real-time timers and session history logs.
+                    </p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-300/30">
+                    <a href="grind.html" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> Open Grind Tracker
+                    </a>
+                </div>
+            </div>
+
+            <!-- Fairy Respawn Tracker Card -->
+            <div class="ms-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition hover:scale-[1.01]">
+                <div class="space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-500 text-xl">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h2 class="font-header text-xl font-bold">Fairy Respawn Tracker</h2>
+                    <p class="text-xs md:text-sm theme-subtext leading-relaxed">
+                        Keep track of fairy spawn timings across your channels, manage countdown alerts, and never miss a spawn cycle.
+                    </p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-300/30">
+                    <a href="fairy.html" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> Open Fairy Tracker
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="max-w-4xl mx-auto w-full mt-8 pt-4 border-t border-slate-400/30 flex flex-col md:flex-row items-center justify-between text-xs theme-subtext gap-2 font-medium">
+        <div>
+            <span>MapleStory Utility Hub • Powered by GitHub Pages</span>
+        </div>
+        <div>
+            Happy Grinding! ♥
+        </div>
+    </footer>
+
+    <script>
+        function changeTheme(themeName) {
+            const bodyEl = document.getElementById('app-body');
+            bodyEl.className = `theme-${themeName} min-h-screen flex flex-col justify-between p-4 md:p-8 select-none`;
+            localStorage.setItem('hub_theme', themeName);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('hub_theme') || 'maple-light';
+            document.getElementById('theme-selector').value = savedTheme;
+            changeTheme(savedTheme);
+        };
+    </script>
+</body>
+</html>
