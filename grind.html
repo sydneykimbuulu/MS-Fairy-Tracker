@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapleStory Grind Tracker & Session Timer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                        header: ['"Fredoka"', 'sans-serif'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Theme Palettes from Index */
+        body.theme-dark {
+            --bg-body-from: rgba(15, 20, 28, 0.8);
+            --bg-body-to: rgba(13, 17, 23, 0.95);
+            --bg-body-color: #0d1117;
+            --text-main: #e2e8f0;
+            --glass-bg: rgba(24, 32, 44, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --card-border: #1e293b;
+            --accent-primary: #10b981;
+            --accent-secondary: #06b6d4;
+            --scrollbar-bg: #0f141c;
+            --scrollbar-thumb: #2a3649;
+            --scrollbar-thumb-hover: #3b4c66;
+            --inner-bg: rgba(2, 6, 23, 0.8);
+            --inner-border: rgba(30, 41, 59, 0.8);
+            --subtext: #94a3b8;
+        }
+
+        body.theme-maple-light {
+            --bg-body-from: #a2d2ff;
+            --bg-body-to: #bde0fe;
+            --bg-body-color: #bde0fe;
+            --text-main: #4a2810;
+            --glass-bg: #fffbf0;
+            --glass-border: #8b5a2b;
+            --card-bg: #fff8e7;
+            --card-border: #734222;
+            --accent-primary: #f43f5e;
+            --accent-secondary: #f472b6;
+            --scrollbar-bg: #bde0fe;
+            --scrollbar-thumb: #8b5a2b;
+            --scrollbar-thumb-hover: #5c3a19;
+            --inner-bg: #fff2d6;
+            --inner-border: #e6cb9e;
+            --subtext: #8c5a3c;
+        }
+
+        body.theme-maple {
+            --bg-body-from: rgba(40, 25, 15, 0.85);
+            --bg-body-to: rgba(25, 15, 8, 0.95);
+            --bg-body-color: #1a0f08;
+            --text-main: #fef3c7;
+            --glass-bg: rgba(54, 34, 20, 0.85);
+            --glass-border: rgba(251, 191, 36, 0.2);
+            --card-bg: rgba(43, 24, 12, 0.7);
+            --card-border: #573216;
+            --accent-primary: #f59e0b;
+            --accent-secondary: #ea580c;
+            --scrollbar-bg: #1a0f08;
+            --scrollbar-thumb: #573216;
+            --scrollbar-thumb-hover: #78441a;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #573216;
+            --subtext: #d97706;
+        }
+
+        body.theme-cyber {
+            --bg-body-from: rgba(10, 5, 25, 0.9);
+            --bg-body-to: rgba(5, 2, 15, 0.98);
+            --bg-body-color: #05020f;
+            --text-main: #f0abfc;
+            --glass-bg: rgba(30, 10, 50, 0.85);
+            --glass-border: rgba(217, 70, 239, 0.3);
+            --card-bg: rgba(20, 8, 35, 0.8);
+            --card-border: #4a1d70;
+            --accent-primary: #d946ef;
+            --accent-secondary: #38bdf8;
+            --scrollbar-bg: #05020f;
+            --scrollbar-thumb: #4a1d70;
+            --scrollbar-thumb-hover: #701a75;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #4a1d70;
+            --subtext: #c084fc;
+        }
+
+        body.theme-crimson {
+            --bg-body-from: rgba(25, 8, 8, 0.9);
+            --bg-body-to: rgba(10, 3, 3, 0.98);
+            --bg-body-color: #0a0303;
+            --text-main: #fecdd3;
+            --glass-bg: rgba(45, 12, 12, 0.85);
+            --glass-border: rgba(244, 63, 94, 0.3);
+            --card-bg: rgba(30, 8, 8, 0.8);
+            --card-border: #5c1824;
+            --accent-primary: #f43f5e;
+            --accent-secondary: #fb923c;
+            --scrollbar-bg: #0a0303;
+            --scrollbar-thumb: #5c1824;
+            --scrollbar-thumb-hover: #881337;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #5c1824;
+            --subtext: #f87171;
+        }
+
+        body.theme-moss {
+            --bg-body-from: rgba(10, 22, 15, 0.9);
+            --bg-body-to: rgba(5, 12, 8, 0.98);
+            --bg-body-color: #050c08;
+            --text-main: #d1fae5;
+            --glass-bg: rgba(12, 35, 22, 0.85);
+            --glass-border: rgba(52, 211, 153, 0.3);
+            --card-bg: rgba(8, 25, 15, 0.8);
+            --card-border: #14532d;
+            --accent-primary: #34d399;
+            --accent-secondary: #a3e635;
+            --scrollbar-bg: #050c08;
+            --scrollbar-thumb: #14532d;
+            --scrollbar-thumb-hover: #166534;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #14532d;
+            --subtext: #34d399;
+        }
+
+        body {
+            background-color: var(--bg-body-color);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+                linear-gradient(to bottom, var(--bg-body-from), var(--bg-body-to));
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--scrollbar-thumb-hover);
+        }
+
+        .ms-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .ms-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+        }
+
+        .ms-inner-box {
+            background: var(--inner-bg);
+            border: 1px solid var(--inner-border);
+        }
+
+        .ms-button {
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        .ms-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-subtext {
+            color: var(--subtext);
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            margin: 0; 
+        }
+    </style>
+</head>
+<body id="app-body" class="theme-maple-light min-h-screen flex flex-col justify-between p-3 md:p-6 select-none">
+
+    <div class="max-w-7xl mx-auto w-full space-y-6">
+        <!-- Top Header Navigation -->
+        <header class="ms-glass rounded-2xl p-4 md:p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-pink-400/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shadow-pink-500/30">
+                        <i class="fa-solid font-bold fa-maple-leaf"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-header text-2xl md:text-3xl font-bold tracking-wide text-pink-500 drop-shadow-sm">
+                                MS Classic Grind Session Tracker
+                            </h1>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-pink-100 border border-pink-300 text-pink-700">
+                                v2.5
+                            </span>
+                        </div>
+                        <p class="text-xs md:text-sm theme-subtext mt-0.5 font-medium">
+                            Session Tracker & Meso Profit Analyzer | By Sunshine ♥
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                    <!-- Theme Selector Dropdown -->
+                    <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
+                        <i class="fa-solid fa-palette text-pink-500"></i>
+                        <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
+                            <option value="maple-light" class="bg-amber-50 text-pink-600">Default Maple Light</option>
+                            <option value="dark" class="bg-slate-900 text-slate-200">Default Dark</option>
+                            <option value="maple" class="bg-amber-950 text-amber-200">Maple Classic</option>
+                            <option value="moss" class="bg-emerald-950 text-emerald-300">Maple Forest</option>
+                            <option value="cyber" class="bg-purple-950 text-fuchsia-300">Maple Cyber</option>
+                            <option value="crimson" class="bg-rose-950 text-rose-300">Maple Crimson</option>
+                        </select>
+                    </div>
+
+                    <button onclick="exportData()" class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-download text-pink-500"></i> Export
+                    </button>
+                    <label class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-upload text-pink-500"></i> Import
+                        <input type="file" id="importFileInput" onchange="importData(event)" class="hidden" accept=".json">
+                    </label>
+                    <button onclick="resetCurrentSessionData()" class="ms-button ms-inner-box px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 text-rose-500 hover:text-rose-600">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Session
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Banner Alert / Quick Info Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Map & Session Info Card -->
+            <div class="ms-card rounded-xl p-4 flex flex-col justify-between shadow-md">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                        <i class="fa-solid fa-map-location-dot text-pink-500"></i> Grind Location
+                    </label>
+                    <span id="levelDisplayTag" class="text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">Lv. 1</span>
+                </div>
+                <div class="space-y-2">
+                    <!-- Location Dropdown Select -->
+                    <select id="mapLocationSelect" onchange="handleLocationSelectChange(this)" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500 font-medium transition cursor-pointer">
+                        <optgroup label="Victoria Island">
+                            <option value="Victoria Road : Henesys">Henesys</option>
+                            <option value="Victoria Road : Ellinia">Ellinia</option>
+                            <option value="Victoria Road : Kerning City">Kerning City</option>
+                            <option value="Victoria Road : Perion">Perion</option>
+                            <option value="Victoria Road : Lith Harbor">Lith Harbor</option>
+                            <option value="Victoria Road : Sleepywood">Sleepywood / Ant Tunnel</option>
+                            <option value="CUSTOM">-- Custom Location Input --</option>
+                        </optgroup>
+                    </select>
+
+                    <input type="text" id="mapNameInput" value="Victoria Road : Henesys Hunting Ground I" placeholder="e.g. Victoria Road : Custom Training Map" class="hidden w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500 font-medium transition mt-1" oninput="saveCurrentState()">
+                    <div class="flex gap-2">
+                        <div class="w-1/2">
+                            <label class="text-[10px] theme-subtext font-semibold block mb-0.5">CHARACTER LEVEL</label>
+                            <input type="number" id="charLevelInput" value="1" min="1" max="100" class="w-full ms-inner-box rounded-lg px-2.5 py-1 text-xs font-mono focus:outline-none focus:border-pink-500" oninput="updateCalculations(); saveCurrentState();">
+                        </div>
+                        <div class="w-1/2 hidden">
+                            <label class="text-[10px] theme-subtext font-semibold block mb-0.5">DROP / MESO %</label>
+                            <div class="flex gap-1">
+                                <input type="number" id="dropRateInput" value="200" placeholder="Drop%" class="w-full ms-inner-box rounded-lg px-2 py-1 text-xs font-mono focus:outline-none focus:border-pink-500" title="Drop Rate %" oninput="saveCurrentState()">
+                                <input type="number" id="mesoRateInput" value="100" placeholder="Meso%" class="w-full ms-inner-box rounded-lg px-2 py-1 text-xs font-mono focus:outline-none focus:border-pink-500" title="Meso Rate %" oninput="saveCurrentState()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROMINENT PROFIT STATUS BANNER (Meso Positive Badge) -->
+            <div id="profitBannerCard" class="ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-emerald-500/50">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                        <i class="fa-solid fa-scale-balanced text-pink-500"></i> Profitability Status
+                    </span>
+                    <span id="profitBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i> MESO POSITIVE
+                    </span>
+                </div>
+                <div class="my-2">
+                    <div class="text-xs theme-subtext mb-0.5">Net Profit / Loss</div>
+                    <div id="netProfitAmount" class="text-3xl font-extrabold font-mono text-emerald-500 tracking-tight">
+                        +0 <span class="text-xs font-normal opacity-70">mesos</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between border-t border-slate-300/30 pt-2 text-xs">
+                    <span class="theme-subtext">Net Rate / Min:</span>
+                    <span id="netProfitHourly" class="font-mono font-bold text-emerald-600">+0 / min</span>
+                </div>
+            </div>
+
+            <!-- EXP & Level Projections Quick View -->
+            <div class="ms-card rounded-xl p-4 flex flex-col justify-between shadow-md">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line text-pink-500"></i> Leveling Pace & ETA
+                    </span>
+                    <span class="text-xs text-pink-500 font-mono font-bold" id="expRateDisplay">0.00% / min</span>
+                </div>
+                <div class="my-2 space-y-1">
+                    <div class="flex justify-between text-xs">
+                        <span class="theme-subtext">EXP Gained:</span>
+                        <span id="expGainedText" class="font-mono font-bold text-emerald-500">+0.000%</span>
+                    </div>
+                    <div class="w-full ms-inner-box h-2.5 rounded-full overflow-hidden">
+                        <div id="expProgressBar" class="bg-gradient-to-r from-pink-400 to-rose-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between border-t border-slate-300/30 pt-2 text-xs">
+                    <span class="theme-subtext">Est. Time to Level Up:</span>
+                    <span id="etaToLevel" class="font-mono font-bold text-pink-500">--h --m</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Row: Main Session Controls & Trackers -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- LEFT COLUMN: Grind Session Timer (5 cols) -->
+            <div class="lg:col-span-5 ms-card rounded-xl p-6 flex flex-col justify-between space-y-6 shadow-xl">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-stopwatch text-pink-500"></i> Session Timer
+                        </h2>
+                        <div class="flex items-center gap-2">
+                            <span id="timerStatusDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                            <span id="timerStatusText" class="text-xs font-mono uppercase theme-subtext font-bold">Stopped</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Timer Clock Display -->
+                    <div class="ms-inner-box rounded-2xl p-6 text-center relative overflow-hidden group">
+                        <div class="absolute -right-10 -bottom-10 opacity-5 text-9xl font-black select-none pointer-events-none">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-wider text-pink-500 drop-shadow-sm">
+                            00:00:00
+                        </div>
+                        <div class="text-xs theme-subtext font-mono mt-2 flex justify-center gap-4">
+                            <span>Target: <strong class="text-current">Open-ended</strong></span>
+                            <span>|</span>
+                            <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Preset Buttons -->
+                    <div class="mt-4">
+                        <label class="text-[10px] font-bold uppercase tracking-wider theme-subtext block mb-2">Timer Presets (Totem / Buff Duration)</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="setTimerPreset(15)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:text-pink-600 transition">15m</button>
+                            <button onclick="setTimerPreset(30)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:text-pink-600 transition">30m</button>
+                            <button onclick="setTimerPreset(60)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:text-pink-600 transition">1 Hour</button>
+                            <button onclick="setTimerPreset(120)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:text-pink-600 transition">2 Hours</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer Controls -->
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="startPauseBtn" onclick="toggleTimer()" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white transition shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play" id="startPauseIcon"></i>
+                            <span id="startPauseLabel">Start Session</span>
+                        </button>
+                        <button onclick="stopAndSaveSession()" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-box-archive"></i>
+                            <span>Finish & Save</span>
+                        </button>
+                    </div>
+                    <button onclick="resetTimerOnly()" class="w-full py-2 px-3 rounded-lg text-xs font-semibold theme-subtext hover:text-pink-600 transition flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-arrows-rotate"></i> Reset Timer Clock
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: EXP & Meso Numerical Inputs (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- EXP Tracker Panel -->
+                <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
+                    <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
+                        <h3 class="text-sm font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-pink-500"></i> Experience (EXP) Tracker
+                        </h3>
+                        <span id="expInputModeHint" class="text-xs theme-subtext font-semibold text-amber-500">Ready to enter starting EXP</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING EXP (%)</label>
+                            <input type="number" step="0.001" id="startExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-pink-500 transition" oninput="updateCalculations(); saveCurrentState();">
+                        </div>
+                        <div>
+                            <label id="endExpLabelText" class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%)</label>
+                            <input type="number" step="0.001" id="endExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition bg-slate-500/10 cursor-not-allowed" disabled placeholder="Pause timer to enter current EXP" oninput="updateCalculations(); saveCurrentState();">
+                        </div>
+                    </div>
+                    <!-- Calculated Stat Cards -->
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div class="ms-inner-box p-3 rounded-lg">
+                            <div class="text-[11px] theme-subtext">Total EXP Gained</div>
+                            <div id="statTotalExp" class="text-lg font-bold font-mono text-emerald-500">+0.000%</div>
+                        </div>
+                        <div class="ms-inner-box p-3 rounded-lg">
+                            <div class="text-[11px] theme-subtext">Projected EXP / Min</div>
+                            <div id="statExpPerHour" class="text-lg font-bold font-mono text-pink-500">0.00% / min</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meso Tracker Panel -->
+                <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
+                    <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
+                        <h3 class="text-sm font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-coins text-pink-500"></i> Raw Meso Loot Tracker
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs theme-subtext">Quick Input Mode:</label>
+                            <select id="mesoInputMode" onchange="toggleMesoInputMode()" class="ms-inner-box rounded px-2 py-0.5 text-xs text-pink-500 font-bold">
+                                <option value="diff">Start & End Balance</option>
+                                <option value="direct">Direct Total Picked Up</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Mode A: Start & End Mesos -->
+                    <div id="mesoDiffContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING MESOS</label>
+                            <input type="text" id="startMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-pink-500 transition" oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
+                        </div>
+                        <div>
+                            <label id="endMesoLabelText" class="text-xs theme-subtext font-semibold mb-1 block">ENDING MESOS</label>
+                            <input type="text" id="endMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition bg-slate-500/10 cursor-not-allowed" disabled placeholder="Pause timer to enter current" oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
+                        </div>
+                    </div>
+
+                    <!-- Mode B: Direct Meso Picked Up -->
+                    <div id="mesoDirectContainer" class="hidden">
+                        <label id="directMesoLabelText" class="text-xs theme-subtext font-semibold mb-1 block">TOTAL MESOS PICKED UP</label>
+                        <input type="text" id="directMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition bg-slate-500/10 cursor-not-allowed" disabled oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div class="ms-inner-box p-3 rounded-lg">
+                            <div class="text-[11px] theme-subtext">Gross Meso Looted</div>
+                            <div id="statGrossMeso" class="text-lg font-bold font-mono text-amber-500">0</div>
+                        </div>
+                        <div class="ms-inner-box p-3 rounded-lg">
+                            <div class="text-[11px] theme-subtext">Gross Meso / Min</div>
+                            <div id="statMesoPerHour" class="text-lg font-bold font-mono text-pink-500">0 / min</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bottom Row: Consumables Costs & Extra Drops Value -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- Consumables Tracker Card -->
+            <div class="ms-card rounded-xl p-5 space-y-4 flex flex-col justify-between shadow-md">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-300/30 pb-3 mb-4">
+                        <h3 class="text-sm font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-flask text-rose-500"></i> Consumables & Buff Expenses
+                        </h3>
+                        <span id="totalConsumableCostTag" class="text-xs font-mono font-bold text-rose-500 px-2.5 py-1 rounded bg-rose-100 border border-rose-300">
+                            Total Cost: 0 Meso
+                        </span>
+                    </div>
+
+                    <p class="text-xs theme-subtext mb-3">Check active buffs/items or add custom costs used during session:</p>
+
+                    <!-- Presets Grid -->
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="consumablesList">
+                        <!-- Dynamic Consumable Items render here -->
+                    </div>
+                </div>
+
+                <!-- Custom Consumable Add Form -->
+                <div class="pt-3 border-t border-slate-300/30">
+                    <div class="text-xs font-bold theme-subtext mb-2">Add Custom Consumable / Cost:</div>
+                    <div class="grid grid-cols-12 gap-2">
+                        <input type="text" id="customConsumableName" placeholder="e.g. Exp Coupon 3x" class="col-span-5 ms-inner-box rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-pink-500">
+                        <input type="number" id="customConsumableQty" placeholder="Qty" min="1" class="col-span-2 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-pink-500">
+                        <input type="text" id="customConsumableCost" placeholder="Unit Cost" class="col-span-3 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-pink-500" oninput="formatMesoInput(this)">
+                        <button onclick="addCustomConsumable()" class="col-span-2 ms-button bg-pink-500 text-white rounded text-xs font-bold hover:bg-pink-400 transition flex items-center justify-center">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Valuable Drops & Extra Loot Card -->
+            <div class="ms-card rounded-xl p-5 space-y-4 flex flex-col justify-between shadow-md">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-300/30 pb-3 mb-4">
+                        <h3 class="text-sm font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-gem text-purple-500"></i> Valuable Drops & Extra Revenue
+                        </h3>
+                        <span id="totalDropsValueTag" class="text-xs font-mono font-bold text-purple-600 px-2.5 py-1 rounded bg-purple-100 border border-purple-300">
+                            Drops Value: 0 Meso
+                        </span>
+                    </div>
+
+                    <p class="text-xs theme-subtext mb-3">Track tradeable items dropped and set market values to add to revenue:</p>
+
+                    <!-- Drops Grid -->
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="dropsList">
+                        <!-- Dynamic Drops render here -->
+                    </div>
+                </div>
+
+                <!-- Custom Drop Add Form -->
+                <div class="pt-3 border-t border-slate-300/30">
+                    <div class="text-xs font-bold theme-subtext mb-2">Add Custom Drop Item:</div>
+                    <div class="grid grid-cols-12 gap-2">
+                        <input type="text" id="customDropName" placeholder="e.g. Familiar Card" class="col-span-5 ms-inner-box rounded px-2.5 py-1.5 text-xs focus:outline-none focus:border-pink-500">
+                        <input type="number" id="customDropQty" placeholder="Qty" min="1" class="col-span-2 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-pink-500">
+                        <input type="text" id="customDropValue" placeholder="Vendor Price" class="col-span-3 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-pink-500" oninput="formatMesoInput(this)">
+                        <button onclick="addCustomDrop()" class="col-span-2 ms-button bg-purple-600 text-white rounded text-xs font-bold hover:bg-purple-500 transition flex items-center justify-center">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Session Logs & History Section -->
+        <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-300/30 pb-3 gap-2">
+                <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold font-header flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-pink-500"></i> Grind Session History Log
+                    </h3>
+                    <span id="sessionCountBadge" class="text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">0 Saved Sessions</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs">
+                    <span class="theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="text-pink-500 font-mono">0</strong></span>
+                    <button onclick="clearAllHistory()" class="text-rose-500 hover:underline text-xs flex items-center gap-1 font-semibold">
+                        <i class="fa-solid fa-trash-can"></i> Clear History
+                    </button>
+                </div>
+            </div>
+
+            <!-- History Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead class="theme-subtext uppercase text-[11px] border-b border-slate-300/30">
+                        <tr>
+                            <th class="py-2.5 px-3">Date & Time</th>
+                            <th class="py-2.5 px-3">Map & Lv</th>
+                            <th class="py-2.5 px-3">Duration</th>
+                            <th class="py-2.5 px-3">EXP Gained</th>
+                            <th class="py-2.5 px-3">Net Profit</th>
+                            <th class="py-2.5 px-3">Net Rate / Min</th>
+                            <th class="py-2.5 px-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody" class="divide-y divide-slate-300/20">
+                        <!-- Dynamic history items -->
+                        <tr>
+                            <td colspan="7" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto w-full mt-8 pt-4 border-t border-slate-400/30 flex flex-col md:flex-row items-center justify-between text-xs theme-subtext gap-2 font-medium">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-pink-400"></span>
+            <span>MapleStory Grind Session Tracker & Profit Calculator • Saved to LocalStorage</span>
+        </div>
+        <div>
+            Happy Grinding! ♥
+        </div>
+    </footer>
+
+    <!-- Toast Notification Overlay -->
+    <div id="toast" class="fixed bottom-5 right-5 ms-glass text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none flex items-center gap-2 z-50">
+        <i class="fa-solid fa-circle-info text-pink-500" id="toastIcon"></i>
+        <span id="toastMessage">Notification message</span>
+    </div>
+
+    <script>
+        // Default Common Consumables
+        const DEFAULT_CONSUMABLES = [
+        ];
+
+        // Default Common Drops
+        const DEFAULT_DROPS = [
+        ];
+
+        // App State
+        let state = {
+            timerRunning: false,
+            startTime: null,
+            elapsedSeconds: 0,
+            targetSeconds: 0,
+            timerInterval: null,
+            mapName: 'Victoria Road',
+            charLevel: 1,
+            dropRate: 200,
+            mesoRate: 100,
+            startExp: 0.000,
+            endExp: 0.000,
+            mesoInputMode: 'diff',
+            startMeso: 0,
+            endMeso: 0,
+            directMeso: 0,
+            consumables: JSON.parse(JSON.stringify(DEFAULT_CONSUMABLES)),
+            drops: JSON.parse(JSON.stringify(DEFAULT_DROPS)),
+            history: [],
+            currentTheme: 'maple-light'
+        };
+
+        window.onload = function() {
+            loadSavedState();
+            renderConsumables();
+            renderDrops();
+            renderHistory();
+            updateCalculations();
+            
+            // Sync Location Dropdown / Custom input
+            const mapSelect = document.getElementById('mapLocationSelect');
+            const mapInput = document.getElementById('mapNameInput');
+            
+            let matchedOption = Array.from(mapSelect.options).find(opt => opt.value === state.mapName);
+            if (matchedOption) {
+                mapSelect.value = state.mapName;
+                mapInput.classList.add('hidden');
+                mapInput.value = state.mapName;
+            } else {
+                mapSelect.value = 'CUSTOM';
+                mapInput.classList.remove('hidden');
+                // Only keep state.mapName if it isn't one of the default options, otherwise leave blank for placeholder
+                const isDefault = Array.from(mapSelect.options).some(opt => opt.value === state.mapName);
+                mapInput.value = (state.mapName && !isDefault) ? state.mapName : '';
+            }
+
+            document.getElementById('charLevelInput').value = state.charLevel;
+            document.getElementById('dropRateInput').value = state.dropRate;
+            document.getElementById('mesoRateInput').value = state.mesoRate;
+            document.getElementById('startExpInput').value = state.startExp;
+            document.getElementById('endExpInput').value = state.endExp;
+            document.getElementById('mesoInputMode').value = state.mesoInputMode;
+            document.getElementById('startMesoInput').value = formatNumberWithCommas(state.startMeso);
+            document.getElementById('endMesoInput').value = formatNumberWithCommas(state.endMeso);
+            document.getElementById('directMesoInput').value = formatNumberWithCommas(state.directMeso);
+            changeTheme(state.currentTheme || 'maple-light');
+
+            toggleMesoInputMode();
+            updateInputLockStates();
+            
+            if (state.timerRunning) {
+                startTimerLoop();
+            }
+        };
+
+        function handleLocationSelectChange(selectEl) {
+            const customInput = document.getElementById('mapNameInput');
+            if (selectEl.value === 'CUSTOM') {
+                customInput.classList.remove('hidden');
+                customInput.value = ''; // Clears the value completely so the placeholder shows
+                customInput.focus();
+                state.mapName = '';
+            } else {
+                customInput.classList.add('hidden');
+                customInput.value = selectEl.value;
+                state.mapName = selectEl.value;
+            }
+            saveCurrentState();
+        }
+
+        function changeTheme(themeName) {
+            state.currentTheme = themeName;
+            const bodyEl = document.getElementById('app-body');
+            bodyEl.className = `theme-${themeName} min-h-screen flex flex-col justify-between p-3 md:p-6 select-none`;
+            
+            const selector = document.getElementById('theme-selector');
+            if (selector) selector.value = themeName;
+
+            saveCurrentState();
+        }
+
+        function toggleTimer() {
+            if (state.timerRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            state.timerRunning = true;
+            state.startTime = Date.now() - (state.elapsedSeconds * 1000);
+            startTimerLoop();
+            updateTimerUI();
+            updateInputLockStates();
+            showToast("Session timer started! Starting values locked in.", "success");
+            saveCurrentState();
+        }
+
+        function pauseTimer() {
+            state.timerRunning = false;
+            clearInterval(state.timerInterval);
+            updateTimerUI();
+            updateInputLockStates();
+            showToast("Session paused. Current/Ending values unlocked for entry!", "info");
+            saveCurrentState();
+        }
+
+        function startTimerLoop() {
+            clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(() => {
+                const now = Date.now();
+                state.elapsedSeconds = Math.floor((now - state.startTime) / 1000);
+                updateTimerUI();
+                updateCalculations();
+            }, 1000);
+        }
+
+        function resetTimerOnly() {
+            pauseTimer();
+            state.elapsedSeconds = 0;
+            state.targetSeconds = 0;
+            updateTimerUI();
+            updateCalculations();
+            showToast("Timer reset to 00:00:00", "info");
+            saveCurrentState();
+        }
+
+        function setTimerPreset(minutes) {
+            state.targetSeconds = minutes * 60;
+            updateTimerUI();
+            showToast(`Timer target set to ${minutes} mins`, "info");
+        }
+
+        function updateTimerUI() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            const statusDot = document.getElementById('timerStatusDot');
+            const statusText = document.getElementById('timerStatusText');
+            const startPauseBtn = document.getElementById('startPauseBtn');
+            const startPauseIcon = document.getElementById('startPauseIcon');
+            const startPauseLabel = document.getElementById('startPauseLabel');
+            const elapsedTotalText = document.getElementById('elapsedTotalText');
+
+            timerDisplay.textContent = formatSecondsToHHMMSS(state.elapsedSeconds);
+            elapsedTotalText.textContent = `${state.elapsedSeconds}s`;
+
+            if (state.timerRunning) {
+                statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                statusText.textContent = "Active";
+                startPauseBtn.className = "w-full py-3 px-4 rounded-xl font-bold text-sm bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg flex items-center justify-center gap-2";
+                startPauseIcon.className = "fa-solid fa-pause";
+                startPauseLabel.textContent = "Pause Session";
+            } else {
+                statusDot.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
+                statusText.textContent = "Paused";
+                startPauseBtn.className = "w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white transition shadow-lg flex items-center justify-center gap-2";
+                startPauseIcon.className = "fa-solid fa-play";
+                startPauseLabel.textContent = state.elapsedSeconds > 0 ? "Resume Session" : "Start Session";
+            }
+        }
+
+        function updateInputLockStates() {
+            const startExpInput = document.getElementById('startExpInput');
+            const endExpInput = document.getElementById('endExpInput');
+            const startMesoInput = document.getElementById('startMesoInput');
+            const endMesoInput = document.getElementById('endMesoInput');
+            const directMesoInput = document.getElementById('directMesoInput');
+            const expHint = document.getElementById('expInputModeHint');
+
+            if (state.timerRunning) {
+                startExpInput.disabled = true;
+                startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
+                
+                startMesoInput.disabled = true;
+                startMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
+
+                endExpInput.disabled = true;
+                endExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-slate-500/10 border border-slate-400/20 text-slate-400 cursor-not-allowed";
+                endExpInput.placeholder = "Pause timer to enter current EXP";
+
+                endMesoInput.disabled = true;
+                endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-slate-500/10 border border-slate-400/20 text-slate-400 cursor-not-allowed";
+
+                directMesoInput.disabled = true;
+                directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-slate-500/10 border border-slate-400/20 text-slate-400 cursor-not-allowed";
+
+                expHint.textContent = "● GRINDING ACTIVE (Starting Stats Locked)";
+                expHint.className = "text-xs theme-subtext font-bold text-emerald-500 animate-pulse";
+            } else {
+                startExpInput.disabled = false;
+                startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none focus:border-pink-500";
+
+                startMesoInput.disabled = false;
+                startMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none focus:border-pink-500";
+
+                endExpInput.disabled = false;
+                endExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition ring-2 ring-pink-500/40 bg-pink-500/5";
+                endExpInput.placeholder = "e.g. 5.250";
+
+                endMesoInput.disabled = false;
+                endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition ring-2 ring-pink-500/40 bg-pink-500/5";
+
+                directMesoInput.disabled = false;
+                directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition ring-2 ring-pink-500/40 bg-pink-500/5";
+
+                expHint.textContent = "❚❚ PAUSED (Enter Current EXP & Mesos)";
+                expHint.className = "text-xs theme-subtext font-bold text-amber-500";
+            }
+        }
+
+        function updateCalculations() {
+            let rawLevel = parseInt(document.getElementById('charLevelInput').value) || 1;
+            if (rawLevel > 100) {
+                rawLevel = 100;
+                document.getElementById('charLevelInput').value = 100;
+            } else if (rawLevel < 1) {
+                rawLevel = 1;
+                document.getElementById('charLevelInput').value = 1;
+            }
+            state.charLevel = rawLevel;
+
+            let rawStartExp = parseFloat(document.getElementById('startExpInput').value) || 0;
+            if (rawStartExp > 100) { rawStartExp = 100; document.getElementById('startExpInput').value = 100; }
+            if (rawStartExp < 0) { rawStartExp = 0; document.getElementById('startExpInput').value = 0; }
+            state.startExp = rawStartExp;
+
+            let rawEndExp = parseFloat(document.getElementById('endExpInput').value) || 0;
+            if (rawEndExp > 100) { rawEndExp = 100; document.getElementById('endExpInput').value = 100; }
+            if (rawEndExp < 0) { rawEndExp = 0; document.getElementById('endExpInput').value = 0; }
+            state.endExp = rawEndExp;
+
+            document.getElementById('levelDisplayTag').textContent = `Lv. ${state.charLevel}`;
+
+            let expGained = state.endExp - state.startExp;
+            if (expGained < 0) expGained = 0;
+
+            const effectiveSeconds = Math.max(state.elapsedSeconds, 10);
+            const durationMinutes = effectiveSeconds / 60;
+
+            const expPerMinute = expGained / durationMinutes;
+
+            const remainingExp = 100 - state.endExp;
+            let etaText = "--h --m";
+            if (expPerMinute > 0 && remainingExp > 0) {
+                const minutesNeeded = remainingExp / expPerMinute;
+                const totalMinutes = Math.round(minutesNeeded);
+                const hrs = Math.floor(totalMinutes / 60);
+                const mins = totalMinutes % 60;
+                etaText = `${hrs}h ${mins}m`;
+            }
+
+            document.getElementById('expGainedText').textContent = `+${expGained.toFixed(3)}%`;
+            document.getElementById('expProgressBar').style.width = `${Math.min(100, Math.max(0, state.endExp))}%`;
+            document.getElementById('expRateDisplay').textContent = `${expPerMinute.toFixed(3)}% / min`;
+            document.getElementById('statTotalExp').textContent = `+${expGained.toFixed(3)}%`;
+            document.getElementById('statExpPerHour').textContent = `${expPerMinute.toFixed(3)}% / min`;
+            document.getElementById('etaToLevel').textContent = etaText;
+
+            let grossMeso = 0;
+            if (state.mesoInputMode === 'diff') {
+                const startM = parseMesoInput(document.getElementById('startMesoInput').value);
+                const endM = parseMesoInput(document.getElementById('endMesoInput').value);
+                grossMeso = Math.max(0, endM - startM);
+            } else {
+                grossMeso = parseMesoInput(document.getElementById('directMesoInput').value);
+            }
+
+            const grossMesoPerMinute = grossMeso / durationMinutes;
+
+            let totalConsumableCost = 0;
+            state.consumables.forEach(item => {
+                if (item.active) totalConsumableCost += (item.unitCost * item.qty);
+            });
+
+            let totalDropsValue = 0;
+            state.drops.forEach(item => {
+                totalDropsValue += (item.unitValue * item.qty);
+            });
+
+            const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
+            const netProfitPerMinute = netProfit / durationMinutes;
+
+            document.getElementById('statGrossMeso').textContent = formatNumberWithCommas(grossMeso);
+            document.getElementById('statMesoPerHour').textContent = `${formatShortMeso(grossMesoPerMinute)} / min`;
+            document.getElementById('totalConsumableCostTag').textContent = `Total Cost: ${formatShortMeso(totalConsumableCost)} Meso`;
+            document.getElementById('totalDropsValueTag').textContent = `Drops Value: ${formatShortMeso(totalDropsValue)} Meso`;
+
+            const profitBannerCard = document.getElementById('profitBannerCard');
+            const profitBadge = document.getElementById('profitBadge');
+            const netProfitAmount = document.getElementById('netProfitAmount');
+            const netProfitHourly = document.getElementById('netProfitHourly');
+
+            const formattedNet = (netProfit >= 0 ? '+' : '') + formatNumberWithCommas(netProfit);
+            const formattedNetMin = (netProfitPerMinute >= 0 ? '+' : '') + formatShortMeso(netProfitPerMinute) + ' / min';
+
+            if (netProfit >= 0) {
+                profitBannerCard.className = "ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-emerald-500/50";
+                profitBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center gap-1";
+                profitBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> MESO POSITIVE`;
+                netProfitAmount.className = "text-3xl font-extrabold font-mono text-emerald-500 tracking-tight";
+            } else {
+                profitBannerCard.className = "ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-rose-500/50";
+                profitBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-700 border border-rose-300 flex items-center gap-1";
+                profitBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> MESO NEGATIVE`;
+                netProfitAmount.className = "text-3xl font-extrabold font-mono text-rose-500 tracking-tight";
+            }
+
+            netProfitAmount.innerHTML = `${formattedNet} <span class="text-xs font-normal opacity-70">mesos</span>`;
+            netProfitHourly.textContent = formattedNetMin;
+        }
+
+        function renderConsumables() {
+            const listEl = document.getElementById('consumablesList');
+            listEl.innerHTML = '';
+
+            state.consumables.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-2 rounded-lg border transition ${item.active ? 'ms-inner-box' : 'opacity-60 ms-card'}`;
+                
+                row.innerHTML = `
+                    <div class="flex items-center gap-2 max-w-[60%]">
+                        <input type="checkbox" ${item.active ? 'checked' : ''} onchange="toggleConsumable(${index})" class="rounded border-slate-300 text-pink-500 focus:ring-0 cursor-pointer">
+                        <span class="text-xs font-medium truncate" title="${item.name}">${item.name}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1 ms-inner-box px-1.5 py-0.5 rounded">
+                            <span class="text-[10px] theme-subtext">x</span>
+                            <input type="number" value="${item.qty}" min="1" onchange="updateConsumableQty(${index}, this.value)" class="w-10 bg-transparent text-xs font-mono text-center focus:outline-none">
+                        </div>
+                        <div class="text-xs font-mono theme-subtext w-20 text-right truncate">
+                            ${formatShortMeso(item.unitCost * item.qty)}
+                        </div>
+                        <button onclick="removeConsumable(${index})" class="theme-subtext hover:text-rose-500 transition text-xs px-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        function toggleConsumable(index) {
+            state.consumables[index].active = !state.consumables[index].active;
+            renderConsumables();
+            updateCalculations();
+            saveCurrentState();
+        }
+
+        function updateConsumableQty(index, val) {
+            state.consumables[index].qty = Math.max(1, parseInt(val) || 1);
+            updateCalculations();
+            saveCurrentState();
+        }
+
+        function removeConsumable(index) {
+            state.consumables.splice(index, 1);
+            renderConsumables();
+            updateCalculations();
+            saveCurrentState();
+        }
+
+        function addCustomConsumable() {
+            const nameInput = document.getElementById('customConsumableName');
+            const qtyInput = document.getElementById('customConsumableQty');
+            const costInput = document.getElementById('customConsumableCost');
+
+            const name = nameInput.value.trim();
+            const qty = parseInt(qtyInput.value) || 1;
+            const cost = parseMesoInput(costInput.value);
+
+            if (!name) {
+                showToast("Please enter an item name", "error");
+                return;
+            }
+
+            state.consumables.push({
+                id: 'custom_' + Date.now(),
+                name: name,
+                unitCost: cost,
+                qty: qty,
+                active: true
+            });
+
+            nameInput.value = '';
+            costInput.value = '0';
+            qtyInput.value = '1';
+
+            renderConsumables();
+            updateCalculations();
+            showToast(`Added custom consumable: ${name}`, "success");
+            saveCurrentState();
+        }
+
+        function renderDrops() {
+            const listEl = document.getElementById('dropsList');
+            listEl.innerHTML = '';
+
+            state.drops.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between p-2 rounded-lg ms-inner-box transition";
+                
+                row.innerHTML = `
+                    <div class="flex items-center gap-2 max-w-[55%]">
+                        <i class="fa-solid fa-angles-right text-[10px] text-purple-500"></i>
+                        <span class="text-xs font-medium truncate" title="${item.name}">${item.name}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1 ms-card px-1.5 py-0.5 rounded">
+                            <span class="text-[10px] theme-subtext">Qty:</span>
+                            <input type="number" value="${item.qty}" min="0" onchange="updateDropQty(${index}, this.value)" class="w-10 bg-transparent text-xs font-mono text-center focus:outline-none">
+                        </div>
+                        <div class="text-xs font-mono text-purple-600 font-bold w-20 text-right truncate">
+                            +${formatShortMeso(item.unitValue * item.qty)}
+                        </div>
+                        <button onclick="removeDrop(${index})" class="theme-subtext hover:text-rose-500 transition text-xs px-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        function updateDropQty(index, val) {
+            state.drops[index].qty = Math.max(0, parseInt(val) || 0);
+            renderDrops();
+            updateCalculations();
+            saveCurrentState();
+        }
+
+        function removeDrop(index) {
+            state.drops.splice(index, 1);
+            renderDrops();
+            updateCalculations();
+            saveCurrentState();
+        }
+
+        function addCustomDrop() {
+            const nameInput = document.getElementById('customDropName');
+            const qtyInput = document.getElementById('customDropQty');
+            const valInput = document.getElementById('customDropValue');
+
+            const name = nameInput.value.trim();
+            const qty = parseInt(qtyInput.value) || 1;
+            const unitVal = parseMesoInput(valInput.value);
+
+            if (!name) {
+                showToast("Please enter a drop item name", "error");
+                return;
+            }
+
+            state.drops.push({
+                id: 'drop_' + Date.now(),
+                name: name,
+                unitValue: unitVal,
+                qty: qty
+            });
+
+            nameInput.value = '';
+            valInput.value = '0';
+            qtyInput.value = '1';
+
+            renderDrops();
+            updateCalculations();
+            showToast(`Added custom drop: ${name}`, "success");
+            saveCurrentState();
+        }
+
+        function stopAndSaveSession() {
+            if (state.elapsedSeconds < 1) {
+                showToast("Session duration is too short to save (min 1s)", "error");
+                return;
+            }
+
+            pauseTimer();
+
+            const mapName = document.getElementById('mapNameInput').value.trim() || 'Unknown Map';
+            const charLv = parseInt(document.getElementById('charLevelInput').value) || 1;
+            const expGained = Math.max(0, state.endExp - state.startExp);
+            const durationMinutes = state.elapsedSeconds / 60;
+
+            let grossMeso = 0;
+            if (state.mesoInputMode === 'diff') {
+                const startM = parseMesoInput(document.getElementById('startMesoInput').value);
+                const endM = parseMesoInput(document.getElementById('endMesoInput').value);
+                grossMeso = Math.max(0, endM - startM);
+            } else {
+                grossMeso = parseMesoInput(document.getElementById('directMesoInput').value);
+            }
+
+            let totalConsumableCost = 0;
+            state.consumables.forEach(item => { if (item.active) totalConsumableCost += (item.unitCost * item.qty); });
+
+            let totalDropsValue = 0;
+            state.drops.forEach(item => { totalDropsValue += (item.unitValue * item.qty); });
+
+            const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
+            const netProfitPerMinute = netProfit / durationMinutes;
+
+            const sessionEntry = {
+                id: 'session_' + Date.now(),
+                timestamp: new Date().toLocaleString(),
+                mapName: mapName,
+                level: charLv,
+                durationSeconds: state.elapsedSeconds,
+                expGained: expGained,
+                netProfit: netProfit,
+                netProfitPerMinute: netProfitPerMinute
+            };
+
+            state.history.unshift(sessionEntry);
+            renderHistory();
+            showToast("Session successfully saved to history!", "success");
+
+            state.startExp = state.endExp;
+            if (state.mesoInputMode === 'diff') {
+                state.startMeso = parseMesoInput(document.getElementById('endMesoInput').value);
+                document.getElementById('startMesoInput').value = formatNumberWithCommas(state.startMeso);
+            }
+            document.getElementById('startExpInput').value = state.startExp;
+
+            state.elapsedSeconds = 0;
+            updateTimerUI();
+            updateCalculations();
+            updateInputLockStates();
+            saveCurrentState();
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            const countBadge = document.getElementById('sessionCountBadge');
+            const avgMesoHrText = document.getElementById('avgMesoHrText');
+
+            countBadge.textContent = `${state.history.length} Saved Sessions`;
+
+            if (state.history.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td>
+                    </tr>
+                `;
+                avgMesoHrText.textContent = "0";
+                return;
+            }
+
+            tbody.innerHTML = '';
+            let totalMesoMinSum = 0;
+
+            state.history.forEach((session) => {
+                totalMesoMinSum += session.netProfitPerMinute;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-500/10 transition";
+
+                const isPositive = session.netProfit >= 0;
+                const profitClass = isPositive ? 'text-emerald-500' : 'text-rose-500';
+                const sign = isPositive ? '+' : '';
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 theme-subtext text-[11px]">${session.timestamp}</td>
+                    <td class="py-2.5 px-3 font-sans font-semibold">${session.mapName} <span class="text-xs text-pink-500">Lv.${session.level}</span></td>
+                    <td class="py-2.5 px-3">${formatSecondsToHHMMSS(session.durationSeconds)}</td>
+                    <td class="py-2.5 px-3 text-pink-500">+${session.expGained.toFixed(3)}%</td>
+                    <td class="py-2.5 px-3 font-bold ${profitClass}">${sign}${formatShortMeso(session.netProfit)}</td>
+                    <td class="py-2.5 px-3 font-bold ${profitClass}">${sign}${formatShortMeso(session.netProfitPerMinute)}/min</td>
+                    <td class="py-2.5 px-3 text-right">
+                        <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const avgMesoMin = totalMesoMinSum / state.history.length;
+            avgMesoHrText.textContent = `${formatShortMeso(avgMesoMin)} / min`;
+        }
+
+        function deleteHistoryItem(id) {
+            state.history = state.history.filter(item => item.id !== id);
+            renderHistory();
+            showToast("Log entry deleted", "info");
+            saveCurrentState();
+        }
+
+        function clearAllHistory() {
+            if (confirm("Are you sure you want to clear all session history?")) {
+                state.history = [];
+                renderHistory();
+                showToast("Session history cleared", "info");
+                saveCurrentState();
+            }
+        }
+
+        function toggleMesoInputMode() {
+            state.mesoInputMode = document.getElementById('mesoInputMode').value;
+            const diffBox = document.getElementById('mesoDiffContainer');
+            const directBox = document.getElementById('mesoDirectContainer');
+
+            if (state.mesoInputMode === 'diff') {
+                diffBox.classList.remove('hidden');
+                directBox.classList.add('hidden');
+            } else {
+                diffBox.classList.add('hidden');
+                directBox.classList.remove('hidden');
+            }
+            updateCalculations();
+            saveCurrentState();
+        }
+
+        function formatMesoInput(inputEl) {
+            const rawVal = parseMesoInput(inputEl.value);
+            inputEl.value = formatNumberWithCommas(rawVal);
+        }
+
+        function parseMesoInput(str) {
+            if (!str) return 0;
+            const clean = str.toString().replace(/,/g, '').trim();
+            return parseInt(clean, 10) || 0;
+        }
+
+        function formatNumberWithCommas(num) {
+            return Math.round(num).toLocaleString('en-US');
+        }
+
+        function formatShortMeso(num) {
+            const abs = Math.abs(num);
+            const sign = num < 0 ? '-' : '';
+            if (abs >= 1000000000) {
+                return sign + (abs / 1000000000).toFixed(2) + 'B';
+            } else if (abs >= 1000000) {
+                return sign + (abs / 1000000).toFixed(2) + 'M';
+            } else if (abs >= 1000) {
+                return sign + (abs / 1000).toFixed(1) + 'K';
+            }
+            return sign + Math.round(abs).toLocaleString('en-US');
+        }
+
+        function formatSecondsToHHMMSS(totalSeconds) {
+            const hrs = Math.floor(totalSeconds / 3600);
+            const mins = Math.floor((totalSeconds % 3600) / 60);
+            const secs = totalSeconds % 60;
+            return [hrs, mins, secs].map(v => v < 10 ? "0" + v : v).join(":");
+        }
+
+        function saveCurrentState() {
+            const mapSelect = document.getElementById('mapLocationSelect');
+            const mapInput = document.getElementById('mapNameInput');
+            if (mapSelect.value === 'CUSTOM') {
+                state.mapName = mapInput.value;
+            } else {
+                state.mapName = mapSelect.value;
+            }
+
+            state.charLevel = parseInt(document.getElementById('charLevelInput').value) || 1;
+            state.dropRate = parseFloat(document.getElementById('dropRateInput').value) || 0;
+            state.mesoRate = parseFloat(document.getElementById('mesoRateInput').value) || 0;
+            state.startExp = parseFloat(document.getElementById('startExpInput').value) || 0;
+            state.endExp = parseFloat(document.getElementById('endExpInput').value) || 0;
+            state.startMeso = parseMesoInput(document.getElementById('startMesoInput').value);
+            state.endMeso = parseMesoInput(document.getElementById('endMesoInput').value);
+            state.directMeso = parseMesoInput(document.getElementById('directMesoInput').value);
+
+            localStorage.setItem('maple_grind_tracker_state_v2', JSON.stringify(state));
+        }
+
+        function loadSavedState() {
+            const saved = localStorage.getItem('maple_grind_tracker_state_v2');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    state = { ...state, ...parsed };
+                } catch(e) {
+                    console.error("Failed to parse saved state", e);
+                }
+            }
+        }
+
+        function resetCurrentSessionData() {
+            if (confirm("Reset current session timer & input values? (History will be kept)")) {
+                pauseTimer();
+                state.elapsedSeconds = 0;
+                state.startExp = 0.000;
+                state.endExp = 0.000;
+                state.startMeso = 0;
+                state.endMeso = 0;
+                state.directMeso = 0;
+
+                document.getElementById('startExpInput').value = '0.000';
+                document.getElementById('endExpInput').value = '0.000';
+                document.getElementById('startMesoInput').value = '0';
+                document.getElementById('endMesoInput').value = '0';
+                document.getElementById('directMesoInput').value = '0';
+
+                updateTimerUI();
+                updateCalculations();
+                updateInputLockStates();
+                saveCurrentState();
+                showToast("Session inputs reset", "info");
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `maple_grind_session_data_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Data exported as JSON file", "success");
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    state = { ...state, ...imported };
+                    location.reload();
+                } catch(err) {
+                    showToast("Invalid JSON file", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function showToast(msg, type = "info") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = msg;
+
+            if (type === "success") {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-500";
+            } else if (type === "error") {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-500";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-info text-pink-500";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
