@@ -215,7 +215,7 @@
                                 MS Classic Grind Session Tracker
                             </h1>
                             <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-pink-100 border border-pink-300 text-pink-700">
-                                v2.5
+                                v1.0
                             </span>
                         </div>
                         <p class="text-xs md:text-sm theme-subtext mt-0.5 font-medium">
@@ -263,21 +263,21 @@
                 </div>
                 <div class="space-y-2">
                     <select id="mapLocationSelect" onchange="handleLocationSelectChange(this)" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500 font-medium transition cursor-pointer">
-                        <optgroup label="Victoria Island">
+					<optgroup label="Victoria Island">
                             <option value="Victoria Road : Henesys">Henesys</option>
-                            <option value="Victoria Road : Ellinia">Ellinia</option>
                             <option value="Victoria Road : Kerning City">Kerning City</option>
                             <option value="Victoria Road : Perion">Perion</option>
-                            <option value="Victoria Road : Lith Harbor">Lith Harbor</option>
+                            <option value="Victoria Road : Ellinia">Ellinia</option>
                             <option value="Victoria Road : Sleepywood">Sleepywood / Ant Tunnel</option>
-                            <option value="CUSTOM">-- Custom Location Input --</option>
+					<optgroup label="Other">
+							<option value="CUSTOM">-- Custom Location/Mob Input --</option>
                         </optgroup>
                     </select>
 
-                    <input type="text" id="mapNameInput" value="Victoria Road : Henesys Hunting Ground I" placeholder="e.g. Victoria Road : Custom Training Map" class="hidden w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500 font-medium transition mt-1" oninput="saveCurrentState()">
+                    <input type="text" id="mapNameInput" placeholder="e.g. Sleepy Wood : Evil Eyes" class="hidden w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500 font-medium transition mt-1" oninput="saveCurrentState()">
                     <div class="flex gap-2">
                         <div class="w-1/2">
-                            <label class="text-[10px] theme-subtext font-semibold block mb-0.5">CHARACTER LEVEL</label>
+                            <label class="text-[10px] theme-subtext font-semibold block mb-0.5">CHARACTER LEVEL (MAX 100)</label>
                             <input type="number" id="charLevelInput" value="1" min="1" max="100" class="w-full ms-inner-box rounded-lg px-2.5 py-1 text-xs font-mono focus:outline-none focus:border-pink-500" oninput="updateCalculations(); saveCurrentState();">
                         </div>
                     </div>
@@ -357,7 +357,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <label class="text-[10px] font-bold uppercase tracking-wider theme-subtext block mb-2">Timer Presets (Totem / Buff Duration)</label>
+                        <label class="text-[10px] font-bold uppercase tracking-wider theme-subtext block mb-2">Timer Presets</label>
                         <div class="grid grid-cols-4 gap-2">
                             <button onclick="setTimerPreset(15)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:text-pink-600 transition">15m</button>
                             <button onclick="setTimerPreset(30)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:text-pink-600 transition">30m</button>
@@ -388,17 +388,17 @@
                 <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
                         <h3 class="text-sm font-bold font-header flex items-center gap-2">
-                            <i class="fa-solid fa-bolt text-pink-500"></i> Experience (EXP) Tracker
+                            <i class="fa-solid fa-bolt text-pink-500"></i> Experience (EXP) Tracker (Max 100%)
                         </h3>
                         <span id="expInputModeHint" class="text-xs theme-subtext font-semibold text-amber-500">Ready to enter starting EXP</span>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING EXP (%)</label>
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING EXP (%) [0 - 100]</label>
                             <input type="number" step="0.001" id="startExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-pink-500 transition" oninput="updateCalculations(); saveCurrentState();">
                         </div>
                         <div>
-                            <label class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%)</label>
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%) [0 - 100]</label>
                             <input type="number" step="0.001" id="endExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono text-pink-500 font-bold focus:outline-none focus:border-pink-500 transition bg-slate-500/10 cursor-not-allowed" disabled placeholder="Pause timer to enter current EXP" oninput="updateCalculations(); saveCurrentState();">
                         </div>
                     </div>
@@ -757,8 +757,13 @@
 
         function updateCalculations() {
             state.charLevel = Math.max(1, Math.min(100, parseInt(document.getElementById('charLevelInput').value) || 1));
+            document.getElementById('charLevelInput').value = state.charLevel;
+
             state.startExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('startExpInput').value) || 0));
+            document.getElementById('startExpInput').value = state.startExp;
+
             state.endExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('endExpInput').value) || 0));
+            document.getElementById('endExpInput').value = state.endExp;
 
             document.getElementById('levelDisplayTag').textContent = `Lv. ${state.charLevel}`;
 
