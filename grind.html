@@ -43,6 +43,9 @@
             --inner-border: rgba(30, 41, 59, 0.8);
             --subtext: #94a3b8;
             --header-title-color: var(--accent-primary);
+            --break-btn-bg: rgba(100, 116, 139, 0.25);
+            --break-btn-text: #cbd5e1;
+            --break-btn-border: rgba(100, 116, 139, 0.4);
         }
 
         body.theme-maple-light {
@@ -63,6 +66,9 @@
             --inner-border: #e6cb9e;
             --subtext: #8c5a3c;
             --header-title-color: #ec4899;
+            --break-btn-bg: #f4e8c1;
+            --break-btn-text: #5c3a19;
+            --break-btn-border: #c29b68;
         }
 
         body.theme-maple {
@@ -82,7 +88,10 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #573216;
             --subtext: #d97706;
-            --header-title-color: #facc15; /* Yellow */
+            --header-title-color: #facc15;
+            --break-btn-bg: rgba(100, 116, 139, 0.25);
+            --break-btn-text: #cbd5e1;
+            --break-btn-border: rgba(100, 116, 139, 0.4);
         }
 
         body.theme-cyber {
@@ -102,7 +111,10 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #4a1d70;
             --subtext: #c084fc;
-            --header-title-color: #fef08a; /* Pale Yellow */
+            --header-title-color: #fef08a;
+            --break-btn-bg: rgba(100, 116, 139, 0.25);
+            --break-btn-text: #cbd5e1;
+            --break-btn-border: rgba(100, 116, 139, 0.4);
         }
 
         body.theme-crimson {
@@ -122,7 +134,10 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #5c1824;
             --subtext: #f87171;
-            --header-title-color: #fbbf24; /* Complimentary Warm Yellow */
+            --header-title-color: #fbbf24;
+            --break-btn-bg: rgba(100, 116, 139, 0.25);
+            --break-btn-text: #cbd5e1;
+            --break-btn-border: rgba(100, 116, 139, 0.4);
         }
 
         body.theme-moss {
@@ -142,7 +157,10 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #14532d;
             --subtext: #34d399;
-            --header-title-color: #facc15; /* Yellow */
+            --header-title-color: #facc15;
+            --break-btn-bg: rgba(100, 116, 139, 0.25);
+            --break-btn-text: #cbd5e1;
+            --break-btn-border: rgba(100, 116, 139, 0.4);
         }
 
         body {
@@ -158,6 +176,15 @@
 
         .header-main-title {
             color: var(--header-title-color);
+        }
+
+        .break-idle-btn {
+            background-color: var(--break-btn-bg);
+            color: var(--break-btn-text);
+            border: 1px solid var(--break-btn-border);
+        }
+        .break-idle-btn:hover {
+            filter: brightness(0.95);
         }
 
         body.theme-dark .theme-accent-text { color: var(--accent-primary) !important; }
@@ -214,6 +241,15 @@
         .btn-clicked {
             animation: btnClickPulse 0.2s ease-in-out;
         }
+
+        @keyframes errorPulse {
+            0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); border-color: #f43f5e; }
+            50% { box-shadow: 0 0 0 8px rgba(244, 63, 94, 0.2); border-color: #f43f5e; background-color: rgba(244, 63, 94, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); border-color: #f43f5e; }
+        }
+        .input-error-pulse {
+            animation: errorPulse 1s infinite ease-in-out;
+        }
         
         .theme-subtext { color: var(--subtext); }
 
@@ -243,8 +279,9 @@
                     <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl theme-accent-gradient flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg">
                         <i class="fa-solid font-bold fa-maple-leaf"></i>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
+                    <!-- Fixed height layout container to keep header size constant -->
+                    <div class="flex flex-col justify-center min-h-[56px]">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <h1 class="header-main-title font-header text-2xl md:text-3xl font-bold tracking-wide drop-shadow-sm">
                                 MS Classic Grind Session Tracker
                             </h1>
@@ -252,14 +289,31 @@
                                 v1.0
                             </span>
                         </div>
-                        <p class="text-xs md:text-sm theme-subtext mt-0.5 font-medium">
-                            Session Tracker & Meso Profit Analyzer | By Sunshine ♥
-                        </p>
+                        <div class="relative">
+                            <p id="headerSubtitle" class="text-xs md:text-sm theme-subtext mt-0.5 font-medium transition-all">
+                                Session Tracker & Meso Profit Analyzer | By Sunshine ♥
+                            </p>
+                            
+                            <!-- Set Character & Level Badge -->
+                            <div id="activeCharDisplayBadge" class="hidden items-center gap-2 absolute top-0 left-0 flex-wrap">
+                                <div class="flex items-center gap-1.5 ms-inner-box px-2.5 py-1 rounded-lg text-xs font-bold">
+                                    <i class="fa-solid fa-user theme-accent-text"></i>
+                                    <span id="badgeCharNameText" class="theme-accent-text">Sunshine</span>
+                                    <span class="opacity-40">|</span>
+                                    <span class="theme-subtext">Lv.</span>
+                                    <span id="badgeCharLevelText" class="font-mono">1</span>
+                                </div>
+                                <button onclick="editCharacterDetails(); animateClick(this)" class="ms-button ms-inner-box px-2 py-1 rounded-lg text-[11px] font-bold theme-subtext hover:theme-accent-text transition flex items-center gap-1 interactive-btn" title="Edit Character IGN & Level">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Right Side Controls -->
                 <div class="flex items-center gap-2 flex-wrap">
+                    <!-- Theme Dropdown Menu -->
                     <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
                         <i class="fa-solid fa-palette theme-accent-text"></i>
                         <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
@@ -286,79 +340,102 @@
             </div>
         </header>
 
-        <!-- Banner Alert / Quick Info Row -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="ms-card rounded-xl p-4 flex flex-col justify-start space-y-3 shadow-md">
-                <div class="flex items-center justify-between">
-                    <label class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
-                        <i class="fa-solid fa-map-location-dot theme-accent-text"></i> Grind Location
-                    </label>
+        <!-- Top Row: Cards in a Single Row -->
+        <div id="topCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 1. Character Profile & Level -->
+            <div id="charInputCard" class="ms-card rounded-xl p-4 flex flex-col justify-center space-y-3 shadow-md">
+                <div class="flex items-center justify-between border-b border-slate-300/30 pb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5 truncate">
+                        <i class="fa-solid fa-id-card theme-accent-text"></i> Character & Level
+                    </span>
                     <div class="flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">
                         <span class="theme-subtext">Lv.</span>
-                        <input type="number" id="charLevelInput" placeholder="1" min="1" max="100" class="w-10 bg-transparent text-center focus:outline-none theme-accent-text font-bold" oninput="updateCalculations(); saveCurrentState();">
+                        <input type="number" id="charLevelInput" placeholder="1" min="1" max="100" class="w-8 bg-transparent text-center focus:outline-none theme-accent-text font-bold" oninput="updateCalculations(); saveCurrentState();">
                     </div>
                 </div>
+                <div class="space-y-1.5">
+                    <label class="text-[11px] theme-subtext font-semibold block">CHARACTER IGN</label>
+                    <div class="flex items-center gap-1.5">
+                        <input type="text" id="charNameInput" placeholder="insert your IGN" class="w-full ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition" oninput="saveCurrentState()">
+                        <button onclick="setAndHideCharacterCard(); animateClick(this)" class="ms-button theme-accent-bg text-white px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1">
+                            <i class="fa-solid fa-check"></i> Set
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Training Location / Map (Dropdown/Input placed at the TOP of the card) -->
+            <div class="ms-card rounded-xl p-4 flex flex-col justify-center space-y-3 shadow-md">
+                <div class="flex items-center justify-between border-b border-slate-300/30 pb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5 truncate">
+                        <i class="fa-solid fa-map-location-dot theme-accent-text"></i> Training Location
+                    </span>
+                    <span id="mapLockStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Unlocked</span>
+                </div>
                 <div class="space-y-2">
-                    <select id="mapLocationSelect" onchange="handleLocationSelectChange(this)" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none theme-accent-border font-medium transition cursor-pointer">
-					<optgroup label="Victoria Island">
+                    <select id="mapLocationSelect" onchange="handleLocationSelectChange(this)" class="w-full ms-inner-box rounded-lg px-2.5 py-2 text-xs focus:outline-none theme-accent-border font-semibold transition cursor-pointer">
+                        <optgroup label="Victoria Island">
                             <option value="Victoria Road : Henesys">Henesys</option>
                             <option value="Victoria Road : Kerning City">Kerning City</option>
                             <option value="Victoria Road : Perion">Perion</option>
                             <option value="Victoria Road : Ellinia">Ellinia</option>
                             <option value="Victoria Road : Sleepywood">Sleepywood / Ant Tunnel</option>
-					<optgroup label="Other">
-							<option value="CUSTOM">-- Custom Location/Mob Input --</option>
+                        </optgroup>
+                        <optgroup label="Other">
+                            <option value="CUSTOM">-- Custom Location/Mob --</option>
                         </optgroup>
                     </select>
 
-                    <div id="customMapContainer" class="hidden flex items-center gap-2">
-                        <input type="text" id="mapNameInput" placeholder="e.g. Sleepy Wood : Evil Eyes" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none theme-accent-border font-medium transition" oninput="saveCurrentState()">
-                        <button id="mapLockBtn" onclick="toggleMapLock(); animateClick(this)" class="ms-button theme-accent-bg text-white px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1">
+                    <div id="customMapContainer" class="hidden flex items-center gap-1.5">
+                        <input type="text" id="mapNameInput" placeholder="e.g. Evil Eyes" class="w-full ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition" oninput="saveCurrentState()">
+                        <button id="mapLockBtn" onclick="toggleMapLock(); animateClick(this)" class="ms-button theme-accent-bg text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1">
                             <i class="fa-solid fa-lock" id="mapLockIcon"></i> <span id="mapLockLabel">Set</span>
                         </button>
                     </div>
                 </div>
             </div>
 
+            <!-- 3. Profitability Status -->
             <div id="profitBannerCard" class="ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-emerald-500/50">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5 truncate">
                         <i class="fa-solid fa-scale-balanced theme-accent-text"></i> Profitability Status
                     </span>
-                    <span id="profitBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-check"></i> MESO POSITIVE
+                    <span id="profitBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i> POSITIVE
                     </span>
                 </div>
-                <div class="my-2">
-                    <div class="text-xs theme-subtext mb-0.5">Net Profit / Loss</div>
-                    <div id="netProfitAmount" class="text-3xl font-extrabold font-mono text-emerald-500 tracking-tight">
-                        +0 <span class="text-xs font-normal opacity-70">mesos</span>
+                <div class="my-1.5">
+                    <div class="text-[11px] theme-subtext mb-0.5">Net Profit / Loss</div>
+                    <div id="netProfitAmount" class="text-2xl font-extrabold font-mono text-emerald-500 tracking-tight">
+                        +0 <span class="text-[10px] font-normal opacity-70">mesos</span>
                     </div>
                 </div>
-                <div class="flex items-center justify-between border-t border-slate-300/30 pt-2 text-xs">
+                <div class="flex items-center justify-between border-t border-slate-300/30 pt-1.5 text-[11px]">
                     <span class="theme-subtext">Net Rate / Min:</span>
                     <span id="netProfitHourly" class="font-mono font-bold text-emerald-600">+0 / min</span>
                 </div>
             </div>
 
+            <!-- 4. Leveling Pace & ETA -->
             <div class="ms-card rounded-xl p-4 flex flex-col justify-between shadow-md">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                    <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5 truncate">
                         <i class="fa-solid fa-chart-line theme-accent-text"></i> Leveling Pace & ETA
                     </span>
-                    <span class="text-xs theme-accent-text font-mono font-bold" id="expRateDisplay">0.00% / min</span>
+                    <span class="text-[11px] theme-accent-text font-mono font-bold" id="expRateDisplay">0.00% / min</span>
                 </div>
-                <div class="my-2 space-y-1">
-                    <div class="flex justify-between text-xs">
+                <div class="my-1.5 space-y-1">
+                    <div class="flex justify-between text-[11px]">
                         <span class="theme-subtext">EXP Gained:</span>
                         <span id="expGainedText" class="font-mono font-bold text-emerald-500">+0.000%</span>
                     </div>
-                    <div class="w-full ms-inner-box h-2.5 rounded-full overflow-hidden">
+                    <div class="w-full ms-inner-box h-2 rounded-full overflow-hidden">
                         <div id="expProgressBar" class="theme-accent-gradient h-full transition-all duration-300" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="flex items-center justify-between border-t border-slate-300/30 pt-2 text-xs">
-                    <span class="theme-subtext">Est. Time to Level Up:</span>
+                <div class="flex items-center justify-between border-t border-slate-300/30 pt-1.5 text-[11px]">
+                    <span class="theme-subtext">Est. Time to Level:</span>
                     <span id="etaToLevel" class="font-mono font-bold theme-accent-text">--h --m</span>
                 </div>
             </div>
@@ -366,78 +443,112 @@
 
         <!-- Middle Row: Main Session Controls & Trackers -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-5 ms-card rounded-xl p-5 flex flex-col justify-start items-center text-center space-y-3.5 shadow-xl">
-                <!-- Top Header Bar -->
-                <div class="flex items-center justify-between w-full border-b border-slate-300/20 pb-2.5">
-                    <h2 class="text-lg font-bold font-header flex items-center gap-2">
-                        <i class="fa-solid fa-stopwatch theme-accent-text"></i> Session Timer
-                    </h2>
-                    <div class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
-                        <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-                        <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
+            <!-- Left Column: Combined Master Card (Timer ~75%, Break Logger ~20%) -->
+            <div class="lg:col-span-6 ms-card rounded-xl p-5 flex flex-col justify-between shadow-xl space-y-3">
+                <!-- Section 1: Session Timer (~75% space) -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-300/20 pb-2.5">
+                        <h2 class="text-lg font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-stopwatch theme-accent-text"></i> Session Timer
+                        </h2>
+                        <div class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
+                            <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                            <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Clock Display Container -->
-                <div class="ms-inner-box rounded-xl py-4 px-3 text-center relative overflow-hidden group w-full">
-                    <div class="absolute -right-8 -bottom-8 opacity-5 text-8xl font-black select-none pointer-events-none">
-                        <i class="fa-solid fa-clock"></i>
+                    <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
+                        <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
+                            00:00:00
+                        </div>
+                        <div class="text-xs theme-subtext font-mono mt-1 flex justify-center gap-3 font-semibold">
+                            <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
+                            <span>|</span>
+                            <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+                        </div>
                     </div>
-                    <div id="timerDisplay" class="text-5xl sm:text-6xl md:text-7xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
-                        00:00:00
-                    </div>
-                    <div class="text-xs theme-subtext font-mono mt-0.5 flex justify-center gap-3 font-semibold">
-                        <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
-                        <span>|</span>
-                        <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
-                    </div>
-                </div>
 
-                <!-- Timer Presets Row -->
-                <div class="w-full">
-                    <label class="text-[10px] font-bold uppercase tracking-wider theme-subtext block mb-1 text-left">Timer Presets</label>
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
-                        <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
-                        <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1 Hour</button>
-                        <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2 Hours</button>
+                        <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
+                        <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
+                        <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1 Hour</button>
+                        <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2 Hours</button>
                     </div>
-                </div>
 
-                <!-- Action Buttons Row -->
-                <div class="space-y-2 w-full pt-0.5">
                     <div class="grid grid-cols-2 gap-2.5">
-                        <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-90 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                        <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
                             <i class="fa-solid fa-play" id="startPauseIcon"></i>
                             <span id="startPauseLabel">Start Session</span>
                         </button>
-                        <button onclick="stopAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                        <button onclick="promptFinishAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
                             <i class="fa-solid fa-box-archive"></i>
                             <span>Finish & Save</span>
                         </button>
                     </div>
-                    <button onclick="resetTimerOnly(); animateClick(this)" class="w-full py-1 px-2 rounded-lg text-xs font-semibold theme-subtext hover:opacity-80 transition flex items-center justify-center gap-1 interactive-btn">
-                        <i class="fa-solid fa-arrows-rotate"></i> Reset Timer Clock
-                    </button>
+
+                    <!-- Reset Timer Clock button -->
+                    <div class="text-center pt-1">
+                        <button onclick="resetTimerOnly(); animateClick(this)" class="text-xs theme-subtext hover:theme-accent-text transition inline-flex items-center gap-1 font-semibold interactive-btn">
+                            <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset Timer Clock
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-slate-300/30 pt-2"></div>
+
+                <!-- Section 2: Session Break Logger (~20% compact space) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
+                            <i class="fa-solid fa-mug-hot theme-accent-text"></i> Session Break Logger
+                        </h3>
+                        <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="flex-1 py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 interactive-btn">
+                            <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Start Break</span>
+                        </button>
+                        <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <div class="ms-inner-box rounded-lg px-2.5 py-1.5 space-y-1">
+                        <div class="flex items-center justify-between text-[11px] font-semibold border-b border-slate-300/20 pb-0.5">
+                            <span class="theme-subtext">Logged Breaks</span>
+                            <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">Total: 0m 0s</span>
+                        </div>
+                        <div id="breakLogsList" class="space-y-1 max-h-20 overflow-y-auto pr-1 text-[11px] font-mono">
+                            <div class="text-center py-1 text-slate-400 italic font-sans text-[10px]">No breaks logged yet.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-7 space-y-6">
+            <!-- Right Column: EXP Tracker & Raw Meso Loot Tracker -->
+            <div class="lg:col-span-6 space-y-6">
                 <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
                         <h3 class="text-lg font-bold font-header flex items-center gap-2">
-                            <i class="fa-solid fa-bolt theme-accent-text"></i> Experience (EXP) Tracker (Max 100%)
+                            <i class="fa-solid fa-bolt theme-accent-text"></i> Experience (EXP) Tracker
                         </h3>
-                        <span id="expInputModeHint" class="text-xs theme-subtext font-semibold text-amber-500">Ready to enter starting EXP</span>
+                        <div class="flex items-center gap-2">
+                            <button id="levelUpBtn" onclick="triggerLevelUpPrompt(); animateClick(this)" class="ms-button bg-slate-600/30 text-slate-400 px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-not-allowed opacity-60" disabled title="Pause session or finish to enable Level Up">
+                                <i class="fa-solid fa-arrow-up"></i> Level Up!
+                            </button>
+                            <span id="expInputModeHint" class="text-xs theme-subtext font-semibold text-amber-500">Ready</span>
+                        </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING EXP (%) [0 - 100]</label>
-                            <input type="number" step="0.001" id="startExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none theme-accent-border transition" oninput="updateCalculations(); saveCurrentState();">
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING EXP (%)</label>
+                            <input type="text" id="startExpInput" value="" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none theme-accent-border transition" oninput="handleExpInput(this); updateCalculations(); saveCurrentState(); removeInputError(this);" placeholder="e.g. 15.5 or 15.5%">
                         </div>
                         <div>
-                            <label class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%) [0 - 100]</label>
-                            <input type="number" step="0.001" id="endExpInput" value="0.000" min="0" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition bg-slate-500/10 cursor-not-allowed" disabled placeholder="Pause timer to enter current EXP" oninput="updateCalculations(); saveCurrentState();">
+                            <label class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%)</label>
+                            <input type="text" id="endExpInput" value="0.000" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition" oninput="handleExpInput(this); updateCalculations(); saveCurrentState();" placeholder="Always editable">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3 pt-1">
@@ -469,7 +580,7 @@
                     <div id="mesoDiffContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING MESOS</label>
-                            <input type="text" id="startMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none theme-accent-border transition" oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
+                            <input type="text" id="startMesoInput" value="" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none theme-accent-border transition" oninput="formatMesoInput(this); updateCalculations(); saveCurrentState(); removeInputError(this);" placeholder="e.g. 1,000">
                         </div>
                         <div>
                             <label class="text-xs theme-subtext font-semibold mb-1 block">ENDING MESOS</label>
@@ -479,7 +590,7 @@
 
                     <div id="mesoDirectContainer" class="hidden">
                         <label class="text-xs theme-subtext font-semibold mb-1 block">TOTAL MESOS PICKED UP</label>
-                        <input type="text" id="directMesoInput" value="0" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition bg-slate-500/10 cursor-not-allowed" disabled oninput="formatMesoInput(this); updateCalculations(); saveCurrentState();">
+                        <input type="text" id="directMesoInput" value="" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition bg-slate-500/10 cursor-not-allowed" disabled oninput="formatMesoInput(this); updateCalculations(); saveCurrentState(); removeInputError(this);" placeholder="starting mesos">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 pt-1">
@@ -560,11 +671,17 @@
                     </h3>
                     <span id="sessionCountBadge" class="text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">0 Saved Sessions</span>
                 </div>
-                <div class="flex items-center gap-3 text-xs">
+                <div class="flex items-center gap-3 text-xs flex-wrap">
                     <span class="theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="theme-accent-text font-mono">0</strong></span>
-                    <button onclick="clearAllHistory(); animateClick(this)" class="text-rose-500 hover:underline text-xs flex items-center gap-1 font-semibold interactive-btn">
-                        <i class="fa-solid fa-trash-can"></i> Clear History
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <label class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold cursor-pointer flex items-center gap-1.5 interactive-btn">
+                            <i class="fa-solid fa-upload theme-accent-text"></i> Upload Log
+                            <input type="file" id="importHistoryInput" onchange="importHistoryLogFile(event)" class="hidden" accept=".json">
+                        </label>
+                        <button onclick="clearAllHistory(); animateClick(this)" class="text-rose-500 hover:underline text-xs flex items-center gap-1 font-semibold interactive-btn">
+                            <i class="fa-solid fa-trash-can"></i> Clear History
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -573,7 +690,7 @@
                     <thead class="theme-subtext uppercase text-[11px] border-b border-slate-300/30">
                         <tr>
                             <th class="py-2.5 px-3">Date & Time</th>
-                            <th class="py-2.5 px-3">Map & Lv</th>
+                            <th class="py-2.5 px-3">Character & Map</th>
                             <th class="py-2.5 px-3">Duration</th>
                             <th class="py-2.5 px-3">EXP Gained</th>
                             <th class="py-2.5 px-3">Net Profit</th>
@@ -587,6 +704,98 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cute & Exciting Level Up Modal Popup -->
+    <div id="levelUpModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden animate-fadeIn">
+        <div class="ms-glass rounded-3xl p-6 md:p-8 max-w-md w-full space-y-6 shadow-2xl relative border-4 border-pink-400 text-center overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-pink-500/30 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-purple-500/30 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="space-y-2 relative z-10">
+                <div class="text-4xl animate-bounce">🎉✨⭐</div>
+                <h3 class="text-3xl font-black font-header theme-accent-text tracking-wide drop-shadow-sm">
+                    LEVEL UP!
+                </h3>
+                <p class="text-xs md:text-sm theme-subtext font-semibold">
+                    Woohoo! Incredible grinding! What's your new EXP percentage right after leveling up? (% e.g., 5.25)
+                </p>
+            </div>
+
+            <div class="relative z-10 space-y-2">
+                <div class="ms-inner-box p-3 rounded-2xl border-2 border-pink-400/50">
+                    <input type="text" id="modalLevelUpExpInput" placeholder="experience after leveling" class="w-full bg-transparent text-center text-xl md:text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
+                </div>
+                <span class="text-[11px] theme-subtext block italic">Enter your starting percentage on the fresh level bar!</span>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 relative z-10 pt-2">
+                <button onclick="closeLevelUpModal(false)" class="ms-button ms-inner-box px-5 py-2.5 rounded-xl text-xs font-bold theme-subtext hover:text-slate-200 transition">
+                    Cancel
+                </button>
+                <button onclick="confirmLevelUp()" class="ms-button theme-accent-gradient text-white px-7 py-2.5 rounded-xl text-sm font-extrabold shadow-lg hover:scale-105 transition flex items-center gap-2">
+                    <i class="fa-solid fa-sparkles"></i> Claim Level Up! 🌟
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Finish & Save Modal Prompt -->
+    <div id="finishModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden animate-fadeIn">
+        <div class="ms-glass rounded-3xl p-6 md:p-8 max-w-md w-full space-y-6 shadow-2xl relative border-4 border-amber-400 text-center overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/30 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-pink-500/30 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="space-y-2 relative z-10">
+                <div class="text-3xl">📦✨</div>
+                <h3 class="text-2xl font-black font-header theme-accent-text tracking-wide drop-shadow-sm">
+                    Finish & Save Session
+                </h3>
+                <p class="text-xs md:text-sm theme-subtext font-semibold">
+                    What is your current/ending EXP percentage (%) right now?
+                </p>
+            </div>
+
+            <div class="relative z-10 space-y-2">
+                <div class="ms-inner-box p-3 rounded-2xl border-2 border-amber-400/50">
+                    <input type="text" id="modalFinishExpInput" placeholder="0.000" class="w-full bg-transparent text-center text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 relative z-10 pt-2">
+                <button onclick="document.getElementById('finishModal').classList.add('hidden')" class="ms-button ms-inner-box px-5 py-2.5 rounded-xl text-xs font-bold theme-subtext hover:text-slate-200 transition">
+                    Cancel
+                </button>
+                <button onclick="confirmStopAndSaveSession()" class="ms-button bg-amber-400 hover:bg-amber-300 text-slate-950 px-7 py-2.5 rounded-xl text-sm font-extrabold shadow-lg hover:scale-105 transition flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive"></i> Save Session! 💾
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Detail Modal Popup -->
+    <div id="sessionModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="ms-glass rounded-2xl p-6 md:p-8 max-w-2xl w-full space-y-5 shadow-2xl relative border-2 border-pink-500/50">
+            <div class="flex items-center justify-between border-b border-slate-300/30 pb-4">
+                <h3 class="text-xl font-bold font-header flex items-center gap-2.5 theme-accent-text">
+                    <i class="fa-solid fa-file-invoice text-xl"></i> Session Breakdown Details
+                </h3>
+                <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-2.5 py-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div id="modalContent" class="space-y-4 text-sm font-mono max-h-[65vh] overflow-y-auto pr-2">
+                <!-- Populated dynamically -->
+            </div>
+
+            <div class="pt-3 border-t border-slate-300/30 flex items-center justify-between">
+                <button id="modalDownloadBtn" onclick="" class="ms-button ms-inner-box px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 theme-accent-text hover:opacity-80 transition interactive-btn">
+                    <i class="fa-solid fa-download"></i> Download Breakdown (JSON)
+                </button>
+                <button onclick="closeSessionModal()" class="ms-button theme-accent-bg text-white px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition interactive-btn">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -610,21 +819,27 @@
             elapsedSeconds: 0,
             targetSeconds: 0,
             timerInterval: null,
-            mapName: 'Victoria Road',
+            charName: '',
+            charNameLocked: false,
+            mapName: 'Victoria Road : Henesys',
             mapLocked: false,
             charLevel: '',
             dropRate: 200,
             mesoRate: 100,
-            startExp: 0.000,
+            startExp: '',
             endExp: 0.000,
+            levelUpsCount: 0,
             mesoInputMode: 'diff',
-            startMeso: 0,
+            startMeso: '',
             endMeso: 0,
-            directMeso: 0,
+            directMeso: '',
             consumables: [],
             drops: [],
             history: [],
-            currentTheme: 'dark'
+            currentTheme: 'maple-light',
+            breakActive: false,
+            breakStartTime: null,
+            breakLogs: []
         };
 
         function animateClick(element) {
@@ -638,6 +853,7 @@
             renderConsumables();
             renderDrops();
             renderHistory();
+            renderBreakLogs();
             updateCalculations();
             
             const mapSelect = document.getElementById('mapLocationSelect');
@@ -656,18 +872,24 @@
                 mapInput.value = (state.mapName && !isDefault) ? state.mapName : '';
             }
 
+            document.getElementById('charNameInput').value = state.charName || '';
             document.getElementById('charLevelInput').value = state.charLevel !== '' ? state.charLevel : '';
-            document.getElementById('startExpInput').value = state.startExp;
+            document.getElementById('startExpInput').value = state.startExp !== '' ? state.startExp : '';
             document.getElementById('endExpInput').value = state.endExp;
             document.getElementById('mesoInputMode').value = state.mesoInputMode;
-            document.getElementById('startMesoInput').value = formatNumberWithCommas(state.startMeso);
+            document.getElementById('startMesoInput').value = state.startMeso !== '' ? formatNumberWithCommas(state.startMeso) : '';
             document.getElementById('endMesoInput').value = formatNumberWithCommas(state.endMeso);
-            document.getElementById('directMesoInput').value = formatNumberWithCommas(state.directMeso);
-            changeTheme(state.currentTheme || 'dark');
+            document.getElementById('directMesoInput').value = state.directMeso !== '' ? formatNumberWithCommas(state.directMeso) : '';
+            
+            const themeSelector = document.getElementById('theme-selector');
+            if (themeSelector) themeSelector.value = state.currentTheme || 'maple-light';
+            changeTheme(state.currentTheme || 'maple-light');
 
             updateMapLockUI();
+            updateCharacterDisplayUI();
             toggleMesoInputMode();
             updateInputLockStates();
+            updateBreakUI();
             
             if (state.targetSeconds > 0) {
                 const presetMins = state.targetSeconds / 60;
@@ -680,6 +902,72 @@
 
             if (state.timerRunning) startTimerLoop();
         };
+
+        function setAndHideCharacterCard() {
+            const nameVal = document.getElementById('charNameInput').value.trim();
+            const levelVal = document.getElementById('charLevelInput').value.trim();
+
+            if (!nameVal) {
+                document.getElementById('charNameInput').classList.add('input-error-pulse');
+                return showToast("Please enter a character name", "error");
+            }
+            if (!levelVal) {
+                document.getElementById('charLevelInput').classList.add('input-error-pulse');
+                return showToast("Please enter a character level", "error");
+            }
+
+            removeInputError(document.getElementById('charNameInput'));
+            removeInputError(document.getElementById('charLevelInput'));
+
+            state.charName = nameVal;
+            state.charLevel = parseInt(levelVal, 10);
+            state.charNameLocked = true;
+
+            updateCharacterDisplayUI();
+            saveCurrentState();
+            showToast("Character details saved!", "success");
+        }
+
+        function removeInputError(el) {
+            if (el) el.classList.remove('input-error-pulse');
+        }
+
+        function editCharacterDetails() {
+            state.charNameLocked = false;
+            updateCharacterDisplayUI();
+            showToast("Character details unlocked for editing", "info");
+        }
+
+        function updateCharacterDisplayUI() {
+            const cardEl = document.getElementById('charInputCard');
+            const gridEl = document.getElementById('topCardsGrid');
+            const badgeEl = document.getElementById('activeCharDisplayBadge');
+            const subtitleEl = document.getElementById('headerSubtitle');
+            const nameText = document.getElementById('badgeCharNameText');
+            const levelText = document.getElementById('badgeCharLevelText');
+
+            if (state.charNameLocked && state.charName) {
+                cardEl.classList.add('hidden');
+                if (gridEl) {
+                    gridEl.className = "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4";
+                }
+                subtitleEl.style.opacity = '0';
+                badgeEl.classList.remove('hidden');
+                badgeEl.classList.add('flex');
+                nameText.textContent = state.charName;
+                levelText.textContent = state.charLevel || 1;
+            } else {
+                cardEl.classList.remove('hidden');
+                if (gridEl) {
+                    gridEl.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4";
+                }
+                badgeEl.classList.remove('flex');
+                badgeEl.classList.add('hidden');
+                subtitleEl.style.opacity = '1';
+                if (state.charName) document.getElementById('charNameInput').value = state.charName;
+                if (state.charLevel) document.getElementById('charLevelInput').value = state.charLevel;
+            }
+        }
 
         function handleLocationSelectChange(selectEl) {
             const customContainer = document.getElementById('customMapContainer');
@@ -695,6 +983,7 @@
                 mapInput.value = selectEl.value;
                 state.mapName = selectEl.value;
                 state.mapLocked = true;
+                removeInputError(mapInput);
             }
             updateMapLockUI();
             saveCurrentState();
@@ -704,7 +993,11 @@
             const mapInput = document.getElementById('mapNameInput');
             if (!state.mapLocked) {
                 const val = mapInput.value.trim();
-                if (!val) return showToast("Please enter a custom map name first", "error");
+                if (!val) {
+                    mapInput.classList.add('input-error-pulse');
+                    return showToast("Please enter a custom map name first", "error");
+                }
+                removeInputError(mapInput);
                 state.mapName = val;
                 state.mapLocked = true;
                 showToast("Map name locked in!", "success");
@@ -722,21 +1015,30 @@
             const lockIcon = document.getElementById('mapLockIcon');
             const lockLabel = document.getElementById('mapLockLabel');
             const mapSelect = document.getElementById('mapLocationSelect');
+            const statusBadge = document.getElementById('mapLockStatusBadge');
 
-            if (mapSelect.value !== 'CUSTOM') return;
+            if (mapSelect.value !== 'CUSTOM') {
+                statusBadge.textContent = "Preset";
+                statusBadge.className = "text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold theme-accent-text";
+                return;
+            }
 
             if (state.mapLocked) {
                 mapInput.disabled = true;
-                mapInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-medium transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
-                lockBtn.className = "ms-button bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1";
+                mapInput.className = "w-full ms-inner-box rounded-lg px-2.5 py-1.5 text-xs font-medium transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
+                lockBtn.className = "ms-button bg-amber-500 hover:bg-amber-400 text-slate-950 px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1";
                 lockIcon.className = "fa-solid fa-lock-open";
                 lockLabel.textContent = "Unlock";
+                statusBadge.textContent = "Locked";
+                statusBadge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 font-bold";
             } else {
                 mapInput.disabled = false;
-                mapInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none theme-accent-border font-medium transition";
-                lockBtn.className = "ms-button theme-accent-bg text-white px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1";
+                mapInput.className = "w-full ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
+                lockBtn.className = "ms-button theme-accent-bg text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1";
                 lockIcon.className = "fa-solid fa-lock";
                 lockLabel.textContent = "Set";
+                statusBadge.textContent = "Unlocked";
+                statusBadge.className = "text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400";
             }
         }
 
@@ -748,9 +1050,80 @@
             saveCurrentState();
         }
 
+        function triggerLevelUpPrompt() {
+            if (state.timerRunning) return showToast("Level up can only be pressed when paused or when session ends!", "error");
+            document.getElementById('modalLevelUpExpInput').value = '';
+            document.getElementById('levelUpModal').classList.remove('hidden');
+            setTimeout(() => { document.getElementById('modalLevelUpExpInput').focus(); }, 100);
+        }
+
+        function closeLevelUpModal(isConfirmed) {
+            document.getElementById('levelUpModal').classList.add('hidden');
+            if (isConfirmed) {
+                const inputVal = document.getElementById('modalLevelUpExpInput').value;
+                const newExp = parseExpInput(inputVal);
+                if (isNaN(newExp) || newExp < 0 || newExp > 100) {
+                    return showToast("Please enter a valid percentage between 0 and 100", "error");
+                }
+
+                state.levelUpsCount = (state.levelUpsCount || 0) + 1;
+                state.charLevel = (state.charLevel || 1) + 1;
+                document.getElementById('charLevelInput').value = state.charLevel;
+                document.getElementById('badgeCharLevelText').textContent = state.charLevel;
+
+                state.endExp = newExp;
+                document.getElementById('endExpInput').value = state.endExp;
+                updateCalculations();
+                showToast(`🎉 Level Up! Now Level ${state.charLevel}! (+${state.levelUpsCount} level ups)`, "success");
+                saveCurrentState();
+            }
+        }
+
+        function confirmLevelUp() {
+            closeLevelUpModal(true);
+        }
+
+        function validateInputsBeforeStart() {
+            const nameInput = document.getElementById('charNameInput');
+            const levelInput = document.getElementById('charLevelInput');
+            const mapSelectVal = document.getElementById('mapLocationSelect').value;
+            const mapInput = document.getElementById('mapNameInput');
+            const startExpInput = document.getElementById('startExpInput');
+            const startMesoInput = document.getElementById('startMesoInput');
+            const directMesoInput = document.getElementById('directMesoInput');
+
+            const nameVal = state.charName || nameInput.value.trim();
+            const levelVal = state.charLevel || levelInput.value.trim();
+            const customMapVal = mapInput.value.trim();
+            const hasValidMap = mapSelectVal !== 'CUSTOM' || (mapSelectVal === 'CUSTOM' && state.mapLocked && customMapVal !== '');
+            const startExpVal = startExpInput.value.trim();
+            const hasValidMeso = state.mesoInputMode === 'diff' ? startMesoInput.value.trim() !== '' : directMesoInput.value.trim() !== '';
+
+            let isValid = true;
+            if (!state.charNameLocked && !nameVal) { nameInput.classList.add('input-error-pulse'); isValid = false; }
+            if (!state.charNameLocked && !levelVal) { levelInput.classList.add('input-error-pulse'); isValid = false; }
+            if (!hasValidMap) { mapInput.classList.add('input-error-pulse'); isValid = false; }
+            if (!startExpVal) { startExpInput.classList.add('input-error-pulse'); isValid = false; }
+            if (!hasValidMeso) {
+                if (state.mesoInputMode === 'diff') startMesoInput.classList.add('input-error-pulse');
+                else directMesoInput.classList.add('input-error-pulse');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                showToast("Please fill in all required starting fields (pulsing in red)!", "error");
+                return false;
+            }
+            return true;
+        }
+
         function toggleTimer() {
-            if (state.timerRunning) pauseTimer();
-            else startTimer();
+            if (state.timerRunning) {
+                pauseTimer();
+            } else {
+                if (!validateInputsBeforeStart()) return;
+                startTimer();
+            }
         }
 
         function startTimer() {
@@ -759,7 +1132,7 @@
             startTimerLoop();
             updateTimerUI();
             updateInputLockStates();
-            showToast("Session timer started! Starting values locked in.", "success");
+            showToast("Session timer started! Starting EXP is now locked.", "success");
             saveCurrentState();
         }
 
@@ -768,7 +1141,7 @@
             clearInterval(state.timerInterval);
             updateTimerUI();
             updateInputLockStates();
-            showToast("Session paused. Current/Ending values unlocked for entry!", "info");
+            showToast("Session paused.", "info");
             saveCurrentState();
         }
 
@@ -792,6 +1165,7 @@
             });
             updateTimerUI();
             updateCalculations();
+            updateInputLockStates();
             showToast("Timer reset to 00:00:00", "info");
             saveCurrentState();
         }
@@ -824,6 +1198,7 @@
             const startPauseBtn = document.getElementById('startPauseBtn');
             const startPauseIcon = document.getElementById('startPauseIcon');
             const startPauseLabel = document.getElementById('startPauseLabel');
+            const levelUpBtn = document.getElementById('levelUpBtn');
 
             if (state.timerRunning) {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
@@ -831,12 +1206,132 @@
                 startPauseBtn.className = "w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn";
                 startPauseIcon.className = "fa-solid fa-pause";
                 startPauseLabel.textContent = "Pause Session";
+                
+                levelUpBtn.disabled = true;
+                levelUpBtn.className = "ms-button bg-slate-600/30 text-slate-400 px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-not-allowed opacity-60";
+                levelUpBtn.setAttribute('title', 'Pause session or finish to enable Level Up');
             } else {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
                 statusText.textContent = "Paused";
                 startPauseBtn.className = "w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn";
                 startPauseIcon.className = "fa-solid fa-play";
                 startPauseLabel.textContent = state.elapsedSeconds > 0 ? "Resume Session" : "Start Session";
+
+                levelUpBtn.disabled = false;
+                levelUpBtn.className = "ms-button bg-amber-500 hover:bg-amber-400 text-slate-950 px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 interactive-btn";
+                levelUpBtn.removeAttribute('title');
+            }
+        }
+
+        function toggleBreakSession() {
+            if (!state.breakActive) {
+                state.breakActive = true;
+                state.breakStartTime = new Date();
+                
+                // Clicking start break also pauses the session timer
+                if (state.timerRunning) {
+                    pauseTimer();
+                }
+
+                updateBreakUI();
+                showToast("Break started! Session timer paused.", "info");
+            } else {
+                state.breakActive = false;
+                const breakEndTime = new Date();
+                const durationSeconds = Math.floor((breakEndTime - state.breakStartTime) / 1000);
+                
+                state.breakLogs.unshift({
+                    id: 'break_' + Date.now(),
+                    startTime: state.breakStartTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                    endTime: breakEndTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                    durationSeconds: durationSeconds
+                });
+
+                state.breakStartTime = null;
+                updateBreakUI();
+                renderBreakLogs();
+                showToast("Break ended and logged successfully!", "success");
+            }
+            saveCurrentState();
+        }
+
+        function updateBreakUI() {
+            const btn = document.getElementById('breakToggleBtn');
+            const icon = document.getElementById('breakToggleIcon');
+            const label = document.getElementById('breakToggleLabel');
+            const badge = document.getElementById('breakStatusBadge');
+
+            if (state.breakActive) {
+                btn.className = "flex-1 py-1.5 px-3 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1.5 interactive-btn";
+                icon.className = "fa-solid fa-stop";
+                label.textContent = "End Break";
+                badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/30 font-bold animate-pulse";
+                badge.textContent = "On Break";
+            } else {
+                btn.className = "flex-1 py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 interactive-btn";
+                icon.className = "fa-solid fa-play";
+                label.textContent = "Start Break";
+                badge.className = "text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400";
+                badge.textContent = "Idle";
+            }
+        }
+
+        function renderBreakLogs() {
+            const listEl = document.getElementById('breakLogsList');
+            const totalDisplay = document.getElementById('totalBreakTimeDisplay');
+
+            if (!state.breakLogs || state.breakLogs.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-1 text-slate-400 italic font-sans text-[10px]">No breaks logged yet.</div>`;
+                totalDisplay.textContent = "Total: 0m 0s";
+                return;
+            }
+
+            let totalSecsSum = 0;
+            listEl.innerHTML = '';
+            state.breakLogs.forEach((item) => {
+                totalSecsSum += item.durationSeconds;
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between p-1 rounded ms-inner-box text-[11px]";
+                
+                const mins = Math.floor(item.durationSeconds / 60);
+                const secs = item.durationSeconds % 60;
+                const durStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-1 text-slate-300">
+                        <i class="fa-solid fa-clock text-[9px] theme-accent-text"></i>
+                        <span>${item.startTime} - ${item.endTime}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-bold theme-accent-text">(${durStr})</span>
+                        <button onclick="removeBreakLog('${item.id}')" class="text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+                listEl.appendChild(row);
+            });
+
+            const totalMins = Math.floor(totalSecsSum / 60);
+            const totalSecs = totalSecsSum % 60;
+            totalDisplay.textContent = `Total: ${totalMins}m ${totalSecs}s`;
+        }
+
+        function removeBreakLog(id) {
+            state.breakLogs = state.breakLogs.filter(b => b.id !== id);
+            renderBreakLogs();
+            showToast("Break log removed", "info");
+            saveCurrentState();
+        }
+
+        function clearBreakLogs() {
+            if (state.breakLogs.length === 0) return;
+            if (confirm("Clear all break logs?")) {
+                state.breakLogs = [];
+                state.breakActive = false;
+                state.breakStartTime = null;
+                updateBreakUI();
+                renderBreakLogs();
+                showToast("Break logs cleared", "info");
+                saveCurrentState();
             }
         }
 
@@ -848,29 +1343,56 @@
             const directMesoInput = document.getElementById('directMesoInput');
             const expHint = document.getElementById('expInputModeHint');
 
+            endExpInput.disabled = false;
+            endExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition ring-1 ring-pink-500/30 bg-pink-500/5";
+
             if (state.timerRunning) {
                 startExpInput.disabled = true;
                 startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
+                
                 startMesoInput.disabled = true;
                 startMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
-                endExpInput.disabled = true;
-                endMesoInput.disabled = true;
-                directMesoInput.disabled = true;
-                expHint.textContent = "● GRINDING ACTIVE (Starting Stats Locked)";
+                
+                endMesoInput.disabled = false;
+                endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition ring-2 ring-pink-500/40 bg-pink-500/5";
+                
+                directMesoInput.disabled = false;
+                directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition ring-2 ring-pink-500/40 bg-pink-500/5";
+                
+                expHint.textContent = "● ACTIVE (Starting EXP Locked)";
                 expHint.className = "text-xs theme-subtext font-bold text-emerald-500 animate-pulse";
             } else {
                 startExpInput.disabled = false;
                 startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none theme-accent-border";
+                
                 startMesoInput.disabled = false;
                 startMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none theme-accent-border";
-                endExpInput.disabled = false;
-                endExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition ring-2 ring-pink-500/40 bg-pink-500/5";
-                endMesoInput.disabled = false;
-                endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition ring-2 ring-pink-500/40 bg-pink-500/5";
-                directMesoInput.disabled = false;
-                directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition ring-2 ring-pink-500/40 bg-pink-500/5";
-                expHint.textContent = "❚❚ PAUSED (Enter Current EXP & Mesos)";
+                
+                endMesoInput.disabled = true;
+                endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition bg-slate-500/10 cursor-not-allowed";
+                
+                directMesoInput.disabled = true;
+                directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition bg-slate-500/10 cursor-not-allowed";
+                
+                expHint.textContent = "❚❚ READY / PAUSED";
                 expHint.className = "text-xs theme-subtext font-bold text-amber-500";
+            }
+        }
+
+        function parseExpInput(valStr) {
+            if (!valStr) return '';
+            // Strip out '%' if typed by the user, then parse float
+            let clean = valStr.toString().replace(/%/g, '').trim();
+            let num = parseFloat(clean);
+            if (isNaN(num)) return '';
+            return Math.max(0, Math.min(100, num));
+        }
+
+        function handleExpInput(inputEl) {
+            let parsed = parseExpInput(inputEl.value);
+            if (parsed !== '' && parsed > 100) {
+                parsed = 100;
+                inputEl.value = '100';
             }
         }
 
@@ -885,33 +1407,43 @@
                 }
             }
 
-            state.startExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('startExpInput').value) || 0));
-            document.getElementById('startExpInput').value = state.startExp;
+            const startExpVal = document.getElementById('startExpInput').value;
+            state.startExp = startExpVal === '' ? '' : parseExpInput(startExpVal);
 
-            state.endExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('endExpInput').value) || 0));
-            document.getElementById('endExpInput').value = state.endExp;
+            state.endExp = parseExpInput(document.getElementById('endExpInput').value) || 0;
 
-            let expGained = Math.max(0, state.endExp - state.startExp);
+            let expGained = state.startExp !== '' ? (((state.levelUpsCount || 0) * 100) + Math.max(0, state.endExp - state.startExp)) : 0;
             const durationMinutes = Math.max(state.elapsedSeconds, 10) / 60;
             const expPerMinute = expGained / durationMinutes;
 
             let etaText = "--h --m";
             const remainingExp = 100 - state.endExp;
-            if (expPerMinute > 0 && remainingExp > 0) {
+            if (expPerMinute > 0 && remainingExp > 0 && (state.levelUpsCount || 0) === 0) {
                 const totalMinutes = Math.round(remainingExp / expPerMinute);
                 etaText = `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
+            } else if ((state.levelUpsCount || 0) > 0) {
+                etaText = "Leveled Up!";
             }
 
-            document.getElementById('expGainedText').textContent = `+${expGained.toFixed(3)}%`;
+            document.getElementById('expGainedText').textContent = state.startExp !== '' ? `+${expGained.toFixed(3)}%` : '+0.000%';
             document.getElementById('expProgressBar').style.width = `${Math.min(100, Math.max(0, state.endExp))}%`;
             document.getElementById('expRateDisplay').textContent = `${expPerMinute.toFixed(3)}% / min`;
-            document.getElementById('statTotalExp').textContent = `+${expGained.toFixed(3)}%`;
+            document.getElementById('statTotalExp').textContent = state.startExp !== '' ? `+${expGained.toFixed(3)}%` : '+0.000%';
             document.getElementById('statExpPerHour').textContent = `${expPerMinute.toFixed(3)}% / min`;
             document.getElementById('etaToLevel').textContent = etaText;
 
-            let grossMeso = state.mesoInputMode === 'diff' 
-                ? Math.max(0, parseMesoInput(document.getElementById('endMesoInput').value) - parseMesoInput(document.getElementById('startMesoInput').value))
-                : parseMesoInput(document.getElementById('directMesoInput').value);
+            let grossMeso = 0;
+            if (state.mesoInputMode === 'diff') {
+                const startMesoVal = document.getElementById('startMesoInput').value;
+                if (startMesoVal !== '') {
+                    grossMeso = Math.max(0, parseMesoInput(document.getElementById('endMesoInput').value) - parseMesoInput(startMesoVal));
+                }
+            } else {
+                const directVal = document.getElementById('directMesoInput').value;
+                if (directVal !== '') {
+                    grossMeso = parseMesoInput(directVal);
+                }
+            }
 
             const grossMesoPerMinute = grossMeso / durationMinutes;
 
@@ -937,17 +1469,17 @@
             const formattedNet = (netProfit >= 0 ? '+' : '') + formatNumberWithCommas(netProfit);
             if (netProfit >= 0) {
                 profitBannerCard.className = "ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-emerald-500/50";
-                profitBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center gap-1";
-                profitBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> MESO POSITIVE`;
-                netProfitAmount.className = "text-3xl font-extrabold font-mono text-emerald-500 tracking-tight";
+                profitBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 flex items-center gap-1";
+                profitBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> POSITIVE`;
+                netProfitAmount.className = "text-2xl font-extrabold font-mono text-emerald-500 tracking-tight";
             } else {
                 profitBannerCard.className = "ms-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 shadow-md border-2 border-rose-500/50";
-                profitBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-500 border border-rose-500/30 flex items-center gap-1";
-                profitBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> MESO NEGATIVE`;
-                netProfitAmount.className = "text-3xl font-extrabold font-mono text-rose-500 tracking-tight";
+                profitBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 border border-rose-500/30 flex items-center gap-1";
+                profitBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> NEGATIVE`;
+                netProfitAmount.className = "text-2xl font-extrabold font-mono text-rose-500 tracking-tight";
             }
 
-            netProfitAmount.innerHTML = `${formattedNet} <span class="text-xs font-normal opacity-70">mesos</span>`;
+            netProfitAmount.innerHTML = `${formattedNet} <span class="text-[10px] font-normal opacity-70">mesos</span>`;
             netProfitHourly.textContent = (netProfitPerMinute >= 0 ? '+' : '') + formatShortMeso(netProfitPerMinute) + ' / min';
         }
 
@@ -1030,12 +1562,31 @@
             renderDrops(); updateCalculations(); showToast(`Added drop: ${name}`, "success"); saveCurrentState();
         }
 
-        function stopAndSaveSession() {
+        function promptFinishAndSaveSession() {
             if (state.elapsedSeconds < 1) return showToast("Session duration is too short to save (min 1s)", "error");
+            document.getElementById('modalFinishExpInput').value = document.getElementById('endExpInput').value || '0.000';
+            document.getElementById('finishModal').classList.remove('hidden');
+            setTimeout(() => { document.getElementById('modalFinishExpInput').focus(); }, 100);
+        }
+
+        function confirmStopAndSaveSession() {
+            const expVal = parseExpInput(document.getElementById('modalFinishExpInput').value);
+            if (isNaN(expVal) || expVal < 0 || expVal > 100) {
+                return showToast("Please enter a valid ending EXP percentage between 0 and 100", "error");
+            }
+            state.endExp = expVal;
+            document.getElementById('endExpInput').value = state.endExp;
+            document.getElementById('finishModal').classList.add('hidden');
+            stopAndSaveSession();
+        }
+
+        function stopAndSaveSession() {
             pauseTimer();
 
             const mapName = document.getElementById('mapNameInput').value.trim() || 'Unknown Map';
-            const expGained = Math.max(0, state.endExp - state.startExp);
+            const charName = state.charName || 'Unnamed';
+            const startExpVal = state.startExp !== '' ? state.startExp : 0;
+            const expGained = ((state.levelUpsCount || 0) * 100) + Math.max(0, state.endExp - startExpVal);
             const durationMinutes = state.elapsedSeconds / 60;
             const grossMeso = state.mesoInputMode === 'diff' 
                 ? Math.max(0, parseMesoInput(document.getElementById('endMesoInput').value) - parseMesoInput(document.getElementById('startMesoInput').value))
@@ -1051,18 +1602,25 @@
             state.history.unshift({
                 id: 'session_' + Date.now(),
                 timestamp: new Date().toLocaleString(),
+                charName: charName,
                 mapName: mapName,
-                level: document.getElementById('charLevelInput').value !== '' ? parseInt(document.getElementById('charLevelInput').value, 10) : 1,
+                level: state.charLevel || 1,
+                levelUps: state.levelUpsCount || 0,
                 durationSeconds: state.elapsedSeconds,
                 expGained: expGained,
                 netProfit: netProfit,
-                netProfitPerMinute: netProfit / durationMinutes
+                netProfitPerMinute: netProfit / durationMinutes,
+                breaksSnapshot: [...state.breakLogs],
+                grossMeso: grossMeso,
+                consumableCost: totalConsumableCost,
+                dropsValue: totalDropsValue
             });
 
             renderHistory();
             showToast("Session successfully saved to history!", "success");
 
             state.startExp = state.endExp;
+            state.levelUpsCount = 0;
             if (state.mesoInputMode === 'diff') {
                 state.startMeso = parseMesoInput(document.getElementById('endMesoInput').value);
                 document.getElementById('startMesoInput').value = formatNumberWithCommas(state.startMeso);
@@ -1095,20 +1653,136 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-500/10 transition";
                 const isPositive = session.netProfit >= 0;
+                const charDisplay = session.charName && session.charName !== 'Unnamed' ? `[${session.charName}] ` : '';
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 theme-subtext text-[11px]">${session.timestamp}</td>
-                    <td class="py-2.5 px-3 font-sans font-semibold">${session.mapName} <span class="text-xs theme-accent-text">Lv.${session.level}</span></td>
+                    <td class="py-2.5 px-3 font-sans font-semibold">${charDisplay}${session.mapName} <span class="text-xs theme-accent-text">Lv.${session.level}</span></td>
                     <td class="py-2.5 px-3">${formatSecondsToHHMMSS(session.durationSeconds)}</td>
                     <td class="py-2.5 px-3 theme-accent-text">+${session.expGained.toFixed(3)}%</td>
                     <td class="py-2.5 px-3 font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfit)}</td>
                     <td class="py-2.5 px-3 font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfitPerMinute)}/min</td>
-                    <td class="py-2.5 px-3 text-right">
-                        <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition"><i class="fa-solid fa-trash-can"></i></button>
+                    <td class="py-2.5 px-3 text-right flex items-center justify-end gap-2">
+                        <button onclick="openSessionModal('${session.id}')" class="theme-subtext hover:theme-accent-text transition text-sm px-1" title="View Breakdown Details"><i class="fa-solid fa-eye"></i></button>
+                        <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition text-sm px-1" title="Delete Log"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
             avgMesoHrText.textContent = `${formatShortMeso(totalMesoMinSum / state.history.length)} / min`;
+        }
+
+        function importHistoryLogFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        state.history = [...importedData, ...state.history];
+                    } else if (importedData && importedData.id) {
+                        state.history.unshift(importedData);
+                    } else {
+                        throw new Error("Invalid format");
+                    }
+                    renderHistory();
+                    saveCurrentState();
+                    showToast("Session history uploaded successfully!", "success");
+                } catch(err) {
+                    showToast("Invalid JSON history file", "error");
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function openSessionModal(sessionId) {
+            const session = state.history.find(s => s.id === sessionId);
+            if (!session) return;
+
+            const modalContent = document.getElementById('modalContent');
+            const downloadBtn = document.getElementById('modalDownloadBtn');
+            const isPositive = session.netProfit >= 0;
+
+            let breaksHtml = '<div class="text-slate-400 italic">No breaks recorded for this session.</div>';
+            if (session.breaksSnapshot && session.breaksSnapshot.length > 0) {
+                breaksHtml = '<div class="space-y-2 max-h-36 overflow-y-auto pr-1">';
+                session.breaksSnapshot.forEach(b => {
+                    const bMins = Math.floor(b.durationSeconds / 60);
+                    const bSecs = b.durationSeconds % 60;
+                    const bDur = bMins > 0 ? `${bMins}m ${bSecs}s` : `${bSecs}s`;
+                    breaksHtml += `
+                        <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
+                            <span class="text-slate-300"><i class="fa-solid fa-clock theme-accent-text text-xs mr-1"></i> ${b.startTime} - ${b.endTime}</span>
+                            <span class="font-bold theme-accent-text">(${bDur})</span>
+                        </div>
+                    `;
+                });
+                breaksHtml += '</div>';
+            }
+
+            modalContent.innerHTML = `
+                <div class="ms-inner-box p-4 rounded-xl space-y-3 text-xs md:text-sm">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                        <span class="theme-subtext font-semibold">Date & Time:</span>
+                        <span class="font-bold">${session.timestamp}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                        <span class="theme-subtext font-semibold">Character IGN:</span>
+                        <span class="font-bold theme-accent-text">${session.charName || 'Unnamed'}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                        <span class="theme-subtext font-semibold">Map & Level:</span>
+                        <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                        <span class="theme-subtext font-semibold">Duration:</span>
+                        <span class="font-bold">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                        <span class="theme-subtext font-semibold">EXP Gained:</span>
+                        <span class="font-bold text-emerald-500">+${session.expGained.toFixed(3)}%</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                        <span class="theme-subtext font-semibold">Gross Meso Looted:</span>
+                        <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                        <span class="theme-subtext font-semibold">Net Profit:</span>
+                        <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</span>
+                    </div>
+                    <div class="flex justify-between pb-1">
+                        <span class="theme-subtext font-semibold">Net Rate / Min:</span>
+                        <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfitPerMinute)} / min</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5 pt-1">
+                    <div class="text-xs md:text-sm font-bold theme-subtext">Breaks Breakdown:</div>
+                    ${breaksHtml}
+                </div>
+            `;
+
+            downloadBtn.onclick = function() {
+                downloadSessionJSON(session);
+            };
+
+            document.getElementById('sessionModal').classList.remove('hidden');
+        }
+
+        function downloadSessionJSON(session) {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(session, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `maple_session_breakdown_${session.id}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Session breakdown downloaded!", "success");
+        }
+
+        function closeSessionModal() {
+            document.getElementById('sessionModal').classList.add('hidden');
         }
 
         function deleteHistoryItem(id) {
@@ -1137,8 +1811,12 @@
             saveCurrentState();
         }
 
-        function formatMesoInput(inputEl) { inputEl.value = formatNumberWithCommas(parseMesoInput(inputEl.value)); }
-        function parseMesoInput(str) { return parseInt((str || '').toString().replace(/,/g, '').trim(), 10) || 0; }
+        function formatMesoInput(inputEl) { 
+            // Allow only numbers (strip out commas or letters for safety before formatting)
+            let raw = (inputEl.value || '').toString().replace(/[^0-9]/g, '');
+            inputEl.value = raw ? formatNumberWithCommas(raw) : ''; 
+        }
+        function parseMesoInput(str) { return parseInt((str || '').toString().replace(/[^0-9]/g, '').trim(), 10) || 0; }
         function formatNumberWithCommas(num) { return Math.round(num).toLocaleString('en-US'); }
 
         function formatShortMeso(num) {
@@ -1161,13 +1839,22 @@
             const mapSelect = document.getElementById('mapLocationSelect');
             const mapInput = document.getElementById('mapNameInput');
             state.mapName = mapSelect.value === 'CUSTOM' ? mapInput.value : mapSelect.value;
-            const rawLevel = document.getElementById('charLevelInput').value;
-            state.charLevel = rawLevel === '' ? '' : parseInt(rawLevel, 10);
-            state.startExp = parseFloat(document.getElementById('startExpInput').value) || 0;
-            state.endExp = parseFloat(document.getElementById('endExpInput').value) || 0;
-            state.startMeso = parseMesoInput(document.getElementById('startMesoInput').value);
-            state.endMeso = parseMesoInput(document.getElementById('endMesoInput').value);
-            state.directMeso = parseMesoInput(document.getElementById('directMesoInput').value);
+            if (!state.charNameLocked) {
+                state.charName = document.getElementById('charNameInput').value.trim();
+                const rawLevel = document.getElementById('charLevelInput').value;
+                state.charLevel = rawLevel === '' ? '' : parseInt(rawLevel, 10);
+            }
+            const startExpVal = document.getElementById('startExpInput').value;
+            state.startExp = startExpVal === '' ? '' : parseExpInput(startExpVal);
+            state.endExp = parseExpInput(document.getElementById('endExpInput').value) || 0;
+            
+            const startMesoVal = document.getElementById('startMesoInput').value;
+            state.startMeso = startMesoVal === '' ? '' : parseMesoInput(startMesoVal);
+            state.endMeso = parseMsesInputHelper = parseMesoInput(document.getElementById('endMesoInput').value);
+            
+            const directMesoVal = document.getElementById('directMesoInput').value;
+            state.directMeso = directMesoVal === '' ? '' : parseMesoInput(directMesoVal);
+
             localStorage.setItem('maple_grind_tracker_state_v2', JSON.stringify(state));
         }
 
@@ -1181,12 +1868,12 @@
         function resetCurrentSessionData() {
             if (confirm("Reset current session timer & inputs?")) {
                 pauseTimer();
-                state.elapsedSeconds = 0; state.startExp = 0; state.endExp = 0; state.startMeso = 0; state.endMeso = 0; state.directMeso = 0;
-                document.getElementById('startExpInput').value = '0.000';
+                state.elapsedSeconds = 0; state.startExp = ''; state.endExp = 0; state.levelUpsCount = 0; state.startMeso = ''; state.endMeso = 0; state.directMeso = '';
+                document.getElementById('startExpInput').value = '';
                 document.getElementById('endExpInput').value = '0.000';
-                document.getElementById('startMesoInput').value = '0';
+                document.getElementById('startMesoInput').value = '';
                 document.getElementById('endMesoInput').value = '0';
-                document.getElementById('directMesoInput').value = '0';
+                document.getElementById('directMesoInput').value = '';
                 updateTimerUI(); updateCalculations(); updateInputLockStates(); saveCurrentState();
                 showToast("Session reset", "info");
             }
@@ -1196,7 +1883,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `maple_grind_session_data_${Date.now()}.json`);
+            downloadAnchor.setAttribute("download", `maple_session_breakdown_${Date.now()}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
