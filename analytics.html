@@ -274,7 +274,7 @@
             </div>
         </header>
 
-        <!-- Top Summary Cards (Updated to include Total KPQ Runs) -->
+        <!-- Top Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
             <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
                 <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
@@ -297,7 +297,7 @@
                     <i class="fa-solid fa-people-group text-fuchsia-500"></i> Total KPQ Runs
                 </div>
                 <div id="statTotalKpq" class="text-2xl font-extrabold font-mono mt-2 text-fuchsia-500">0</div>
-                <div class="text-[11px] theme-subtext font-bold mt-1">Total KPQ runs finished</div>
+                <div class="text-[11px] theme-subtext font-bold mt-1" id="statTotalKpqSub">Total KPQ runs finished</div>
             </div>
 
             <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
@@ -362,7 +362,7 @@
             </div>
         </div>
 
-        <!-- Full Aggregated Sessions Table (Updated with KPQ Stats Column) -->
+        <!-- Full Aggregated Sessions Table -->
         <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-900/20 pb-3 gap-3">
                 <div class="flex items-center gap-2">
@@ -572,18 +572,20 @@
             let totalSessions = sessions.length;
             let totalSeconds = 0;
             let totalKpqCount = 0;
+            let totalKpqBonusCount = 0;
             let totalExp = 0;
             let totalLevelUps = 0;
             let totalNetProfit = 0;
             let totalGrossMeso = 0;
 
             sessions.forEach(s => {
-                totalSeconds += (s.durationSeconds || 0);
-                totalKpqCount += (s.kpqCount || 0);
-                totalExp += (s.expGained || 0);
-                totalLevelUps += (s.levelUps || 0);
-                totalNetProfit += (s.netProfit || 0);
-                totalGrossMeso += (s.grossMeso || 0);
+                totalSeconds += Number(s.durationSeconds || 0);
+                totalKpqCount += Number(s.kpqCount || 0);
+                totalKpqBonusCount += Number(s.kpqBonusCount || 0);
+                totalExp += Number(s.expGained || 0);
+                totalLevelUps += Number(s.levelUps || 0);
+                totalNetProfit += Number(s.netProfit || 0);
+                totalGrossMeso += Number(s.grossMeso || 0);
             });
 
             const totalHours = Math.floor(totalSeconds / 3600);
@@ -593,7 +595,14 @@
 
             document.getElementById('statTotalSessions').textContent = totalSessions;
             document.getElementById('statTotalTime').textContent = `${totalHours}h ${totalMins < 10 ? '0' : ''}${totalMins}m`;
-            document.getElementById('statTotalKpq').textContent = totalKpqCount;
+            
+            // Total KPQ Display format: #(+#Bonus)
+            const kpqDisplayVal = totalKpqBonusCount > 0 
+                ? `${totalKpqCount} <span class="text-sm font-normal text-fuchsia-400">(+${totalKpqBonusCount} Bonus)</span>` 
+                : totalKpqCount;
+            document.getElementById('statTotalKpq').innerHTML = kpqDisplayVal;
+            document.getElementById('statTotalKpqSub').textContent = totalKpqBonusCount > 0 ? `${totalKpqBonusCount} total bonus runs` : 'Total KPQ runs finished';
+
             document.getElementById('statTotalExp').textContent = `+${totalExp.toFixed(3)}%`;
             document.getElementById('statLevelUpsSub').textContent = `${totalLevelUps} Level Ups`;
             document.getElementById('statTotalNetProfit').textContent = formatShortMeso(totalNetProfit) + ' mesos';
@@ -603,13 +612,14 @@
             sessions.forEach(s => {
                 const mapName = s.mapName || 'Unknown Map';
                 if (!mapStats[mapName]) {
-                    mapStats[mapName] = { count: 0, timeSec: 0, kpq: 0, exp: 0, netProfit: 0 };
+                    mapStats[mapName] = { count: 0, timeSec: 0, kpq: 0, kpqBonus: 0, exp: 0, netProfit: 0 };
                 }
                 mapStats[mapName].count += 1;
-                mapStats[mapName].timeSec += (s.durationSeconds || 0);
-                mapStats[mapName].kpq += (s.kpqCount || 0);
-                mapStats[mapName].exp += (s.expGained || 0);
-                mapStats[mapName].netProfit += (s.netProfit || 0);
+                mapStats[mapName].timeSec += Number(s.durationSeconds || 0);
+                mapStats[mapName].kpq += Number(s.kpqCount || 0);
+                mapStats[mapName].kpqBonus += Number(s.kpqBonusCount || 0);
+                mapStats[mapName].exp += Number(s.expGained || 0);
+                mapStats[mapName].netProfit += Number(s.netProfit || 0);
             });
 
             const mapListEl = document.getElementById('mapBreakdownList');
@@ -623,12 +633,13 @@
                 sortedMaps.forEach(mapName => {
                     const data = mapStats[mapName];
                     const mTimeHrs = (data.timeSec / 3600).toFixed(1);
+                    const mapKpqStr = data.kpq > 0 ? `${data.kpq}${data.kpqBonus > 0 ? ` (+\${data.kpqBonus} Bonus)` : ''} KPQ` : '0 KPQ';
                     const row = document.createElement('div');
                     row.className = "ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs";
                     row.innerHTML = `
                         <div class="flex flex-col max-w-[55%]">
                             <span class="font-extrabold font-sans text-slate-900 truncate"><i class="fa-solid fa-map text-xs mr-1 theme-accent-text"></i>${mapName}</span>
-                            <span class="text-[10px] theme-subtext font-bold">${data.count} run(s) • ${data.kpq} KPQ • ${mTimeHrs} hrs</span>
+                            <span class="text-[10px] theme-subtext font-bold">${data.count} run(s) • ${mapKpqStr} • ${mTimeHrs} hrs</span>
                         </div>
                         <div class="flex flex-col items-end">
                             <span class="font-bold font-mono ${data.netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${data.netProfit >= 0 ? '+' : ''}${formatShortMeso(data.netProfit)} mesos</span>
@@ -646,6 +657,7 @@
                 const bestProfitSession = [...sessions].sort((a, b) => b.netProfit - a.netProfit)[0];
                 const bestExpSession = [...sessions].sort((a, b) => b.expGained - a.expGained)[0];
                 const bestKpqSession = [...sessions].sort((a, b) => (b.kpqCount || 0) - (a.kpqCount || 0))[0];
+                const bestKpqDisplay = bestKpqSession ? `${bestKpqSession.kpqCount || 0}${bestKpqSession.kpqBonusCount > 0 ? ` (+\${bestKpqSession.kpqBonusCount} Bonus)` : ''} Runs` : '0 Runs';
 
                 highlightsEl.innerHTML = `
                     <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
@@ -667,7 +679,7 @@
                                 <div class="text-[10px] theme-subtext font-bold">${bestKpqSession.mapName} (${bestKpqSession.timestamp})</div>
                             </div>
                         </div>
-                        <div class="font-extrabold font-mono text-fuchsia-500">${bestKpqSession.kpqCount || 0} Runs</div>
+                        <div class="font-extrabold font-mono text-fuchsia-500">${bestKpqDisplay}</div>
                     </div>
 
                     <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
@@ -705,11 +717,17 @@
                 const charDisplay = s.charName && s.charName !== 'Unnamed' ? `[${s.charName}] ` : '';
                 
                 const kpqRuns = s.kpqCount || 0;
+                const kpqBonus = s.kpqBonusCount || 0;
                 const kpqSecs = s.kpqSeconds || 0;
                 const kpqMins = Math.floor(kpqSecs / 60);
                 const kpqRemSecs = kpqSecs % 60;
                 const kpqTimeStr = [kpqMins, kpqRemSecs].map(v => v < 10 ? "0" + v : v).join(":");
-                const kpqStatsDisplay = kpqRuns > 0 ? `<span class="text-fuchsia-500 font-bold">${kpqRuns} Runs</span> <span class="theme-subtext text-[10px]">(${kpqTimeStr})</span>` : '<span class="theme-subtext italic">None</span>';
+                
+                let kpqStatsDisplay = '<span class="theme-subtext italic">None</span>';
+                if (kpqRuns > 0) {
+                    const bonusDisplay = kpqBonus > 0 ? ` (+${kpqBonus} Bonus)` : '';
+                    kpqStatsDisplay = `<span class="text-fuchsia-500 font-bold">${kpqRuns}${bonusDisplay}</span> <span class="theme-subtext text-[10px]">(${kpqTimeStr})</span>`;
+                }
 
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 theme-subtext text-[11px] font-bold">${s.timestamp}</td>
