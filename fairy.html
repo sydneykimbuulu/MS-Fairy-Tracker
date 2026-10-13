@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -30,14 +31,15 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --card-bg: rgba(15, 23, 42, 0.6);
             --card-border: #1e293b;
-            --accent-primary: #10b981;
-            --accent-secondary: #06b6d4;
+            --accent-primary: #c084fc;
+            --accent-secondary: #e879f9;
             --scrollbar-bg: #0f141c;
             --scrollbar-thumb: #2a3649;
             --scrollbar-thumb-hover: #3b4c66;
             --inner-bg: rgba(2, 6, 23, 0.8);
             --inner-border: rgba(30, 41, 59, 0.8);
             --subtext: #94a3b8;
+            --header-title-color: var(--accent-primary);
         }
 
         body.theme-maple-light {
@@ -57,6 +59,7 @@
             --inner-bg: #fff2d6;
             --inner-border: #e6cb9e;
             --subtext: #8c5a3c;
+            --header-title-color: #ec4899;
         }
 
         body.theme-maple {
@@ -76,6 +79,7 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #573216;
             --subtext: #d97706;
+            --header-title-color: #facc15;
         }
 
         body.theme-cyber {
@@ -95,6 +99,7 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #4a1d70;
             --subtext: #c084fc;
+            --header-title-color: #fef08a;
         }
 
         body.theme-crimson {
@@ -114,6 +119,7 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #5c1824;
             --subtext: #f87171;
+            --header-title-color: #fbbf24;
         }
 
         body.theme-moss {
@@ -133,6 +139,7 @@
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #14532d;
             --subtext: #34d399;
+            --header-title-color: #facc15;
         }
 
         body {
@@ -145,6 +152,20 @@
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
         }
+
+        .header-main-title {
+            color: var(--header-title-color);
+        }
+
+        body.theme-dark .theme-accent-text { color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-bg { background-color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-border { border-color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-gradient { background-image: linear-gradient(to bottom right, var(--accent-primary), var(--accent-secondary)) !important; }
+
+        body:not(.theme-dark) .theme-accent-text { color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-bg { background-color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-border { border-color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-gradient { background-image: linear-gradient(to bottom right, var(--accent-primary), var(--accent-secondary)) !important; }
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
@@ -210,26 +231,26 @@
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
                 <div class="flex items-center gap-3">
-                    <!-- Back Button Updated to match Grind Hub style -->
-                    <a href="index.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 text-pink-500 hover:text-pink-600 transition hover:scale-105" title="Back to Main Hub">
+                    <!-- Back Button -->
+                    <a href="index.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition hover:scale-105" title="Back to Main Hub">
                         <i class="fa-solid fa-chevron-left text-xs"></i>
                         <i class="fa-solid fa-house"></i>
                     </a>
 
-                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shadow-pink-500/30">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl theme-accent-gradient flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="font-header text-2xl md:text-3xl font-bold tracking-wide text-pink-500 drop-shadow-sm">
+                            <h1 class="header-main-title font-header text-2xl md:text-3xl font-bold tracking-wide drop-shadow-sm">
                                 Sunshine's MS Fairy Tracker
                             </h1>
-                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-pink-100 border border-pink-300 text-pink-700">
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-pink-100/20 border border-pink-300/30 theme-accent-text">
                                 3m Respawn Cycle
                             </span>
                         </div>
                         <p class="text-xs md:text-sm theme-subtext mt-0.5 flex items-center gap-2 font-medium">
-                            <span><i class="fa-solid fa-map-pin text-pink-500 mr-1"></i>Ellinia | Tree Dungeon, Forest Up North VI</span>
+                            <span><i class="fa-solid fa-map-pin theme-accent-text mr-1"></i>Ellinia | Tree Dungeon, Forest Up North VI</span>
                             <span class="opacity-50">•</span>
                             <span>18 Channels</span>
                         </p>
@@ -244,7 +265,7 @@
                     <div class="h-8 w-[1px] bg-slate-300/40"></div>
                     <div class="text-center px-3 py-1">
                         <div class="text-xs theme-subtext font-semibold">Active</div>
-                        <div id="stat-active" class="text-lg md:text-xl font-bold font-mono text-pink-500">0</div>
+                        <div id="stat-active" class="text-lg md:text-xl font-bold font-mono theme-accent-text">0</div>
                     </div>
                     <div class="h-8 w-[1px] bg-slate-300/40"></div>
                     <div class="text-center px-3 py-1">
@@ -268,21 +289,21 @@
         <!-- Controls & Filter Toolbar -->
         <div class="ms-glass rounded-xl p-3 md:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center ms-inner-box p-1 rounded-lg text-xs md:text-sm">
-                <button onclick="setFilter('all')" id="btn-filter-all" class="px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all">
+                <button onclick="setFilter('all')" id="btn-filter-all" class="px-3 py-1.5 rounded-md font-medium theme-accent-text bg-slate-500/10 shadow-sm transition-all">
                     <i class="fa-solid fa-list text-xs mr-1.5"></i>By Ch # (18)
                 </button>
-                <button onclick="setFilter('ready')" id="btn-filter-ready" class="px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all">
+                <button onclick="setFilter('ready')" id="btn-filter-ready" class="px-3 py-1.5 rounded-md font-medium theme-subtext hover:opacity-85 transition-all">
                     <i class="fa-solid fa-circle-check text-xs text-amber-500 mr-1.5"></i>Ready First
                 </button>
-                <button onclick="setFilter('active')" id="btn-filter-active" class="px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all">
-                    <i class="fa-solid fa-hourglass-half text-xs text-pink-500 mr-1.5"></i>Active First
+                <button onclick="setFilter('active')" id="btn-filter-active" class="px-3 py-1.5 rounded-md font-medium theme-subtext hover:opacity-85 transition-all">
+                    <i class="fa-solid fa-hourglass-half text-xs theme-accent-text mr-1.5"></i>Active First
                 </button>
             </div>
 
             <!-- Global Action Controls -->
-            <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-2 md:gap-4 flex-wrap">
                 <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
-                    <i class="fa-solid fa-palette text-pink-500"></i>
+                    <i class="fa-solid fa-palette theme-accent-text"></i>
                     <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
                         <option value="maple-light" class="bg-amber-50 text-pink-600">Default Maple Light</option>
                         <option value="dark" class="bg-slate-900 text-slate-200">Default Dark</option>
@@ -294,16 +315,16 @@
                 </div>
 
                 <button id="toggle-sound-btn" onclick="toggleSound()" class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2">
-                    <i id="sound-icon" class="fa-solid fa-volume-high text-pink-500"></i>
+                    <i id="sound-icon" class="fa-solid fa-volume-high theme-accent-text"></i>
                     <span id="sound-text">Audio Alerts: ON</span>
                 </button>
 
                 <button onclick="playAlertSound()" class="ms-button ms-inner-box px-2.5 py-1.5 rounded-lg text-xs font-medium" title="Test Beep Sound">
-                    <i class="fa-solid fa-bell text-pink-500"></i>
+                    <i class="fa-solid fa-bell theme-accent-text"></i>
                 </button>
 
-                <button onclick="confirmResetAll()" class="ms-button ms-inner-box px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 hover:text-pink-600">
-                    <i class="fa-solid fa-rotate-right"></i> Reset All to Idle
+                <button onclick="confirmResetAll()" class="ms-button ms-inner-box px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 hover:opacity-85">
+                    <i class="fa-solid fa-rotate-left"></i> Reset All to Idle
                 </button>
             </div>
         </div>
@@ -315,7 +336,7 @@
 
     <footer class="max-w-7xl mx-auto w-full mt-8 pt-4 border-t border-slate-400/30 flex flex-col md:flex-row items-center justify-between text-xs theme-subtext gap-2 font-medium">
         <div class="flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-pink-400"></span>
+            <span class="inline-block w-2 h-2 rounded-full theme-accent-bg"></span>
             <span>All channels start in <b>IDLE</b>. Click <b>Killed (Start 3m)</b> when you clear a Fairy to start its timer.</span>
         </div>
         <div>MapleStory Fairy Farm Tracker • From Sunshine ♥</div>
@@ -384,7 +405,7 @@
             const icon = document.getElementById('sound-icon');
             if (soundEnabled) {
                 btnText.textContent = "Audio Alerts: ON";
-                icon.className = "fa-solid fa-volume-high text-pink-500";
+                icon.className = "fa-solid fa-volume-high theme-accent-text";
             } else {
                 btnText.textContent = "Audio Alerts: OFF";
                 icon.className = "fa-solid fa-volume-xmark opacity-50";
@@ -541,9 +562,9 @@
 
         function setFilter(filter) {
             activeFilter = filter;
-            document.getElementById('btn-filter-all').className = filter === 'all' ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
-            document.getElementById('btn-filter-ready').className = filter === 'ready' ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
-            document.getElementById('btn-filter-active').className = filter === 'active' ? "px-3 py-1.5 rounded-md font-medium text-pink-700 bg-pink-100 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:text-pink-600 transition-all";
+            document.getElementById('btn-filter-all').className = filter === 'all' ? "px-3 py-1.5 rounded-md font-medium theme-accent-text bg-slate-500/10 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:opacity-85 transition-all";
+            document.getElementById('btn-filter-ready').className = filter === 'ready' ? "px-3 py-1.5 rounded-md font-medium theme-accent-text bg-slate-500/10 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:opacity-85 transition-all";
+            document.getElementById('btn-filter-active').className = filter === 'active' ? "px-3 py-1.5 rounded-md font-medium theme-accent-text bg-slate-500/10 shadow-sm transition-all" : "px-3 py-1.5 rounded-md font-medium theme-subtext hover:opacity-85 transition-all";
             renderGrid();
         }
 
@@ -636,15 +657,15 @@
             let statusBadgeClass = "ms-inner-box opacity-75 font-semibold";
             let cardBorderClass = "ms-card opacity-90";
             let timerColor = "opacity-50";
-            let progressBg = "bg-pink-400";
+            let progressBg = "theme-accent-bg";
             let crowdedOverlay = "";
 
             if (ch.status === 'active') {
                 statusText = "COUNTING...";
-                statusBadgeClass = "bg-pink-100 border-pink-300 text-pink-700 font-bold";
+                statusBadgeClass = "ms-inner-box theme-accent-text font-bold";
                 cardBorderClass = "ms-card shadow-md";
-                timerColor = "text-pink-500";
-                progressBg = "bg-gradient-to-r from-pink-400 to-rose-500";
+                timerColor = "theme-accent-text";
+                progressBg = "theme-accent-gradient";
             } else if (ch.status === 'ready') {
                 statusText = "⚡ FAIRY READY!";
                 statusBadgeClass = "bg-amber-400 border-amber-200 text-slate-950 font-extrabold shadow-lg animate-pulse";
@@ -700,7 +721,7 @@
 
                     <div class="mt-2 space-y-2">
                         <div class="grid grid-cols-12 gap-1.5">
-                            <button onclick="startTimer(${ch.id})" class="col-span-8 ms-button bg-gradient-to-r ${ch.status === 'ready' ? 'from-amber-400 to-yellow-400 text-slate-950 font-black ring-2 ring-amber-300' : 'from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white'} font-extrabold text-xs py-1.5 rounded-lg flex flex-col items-center justify-center gap-0.5 shadow-md">
+                            <button onclick="startTimer(${ch.id})" class="col-span-8 ms-button ${ch.status === 'ready' ? 'bg-amber-400 text-slate-950 font-black ring-2 ring-amber-300' : 'theme-accent-gradient text-white'} font-extrabold text-xs py-1.5 rounded-lg flex flex-col items-center justify-center gap-0.5 shadow-md">
                                 <div class="flex items-center gap-1.5">
                                     <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
                                     <span>${ch.status === 'ready' ? 'Killed! Restart' : 'Killed'}</span>
@@ -708,14 +729,14 @@
                                 <span class="text-[10px] opacity-90">${ch.status === 'ready' ? '(3m)' : '(Start 3m)'}</span>
                             </button>
 
-                            <button onclick="handleMissedTimer(${ch.id})" class="col-span-4 ms-button ms-inner-box hover:border-pink-400 text-amber-600 font-bold text-[11px] py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm" title="Missed or Late? Sets/adds time">
+                            <button onclick="handleMissedTimer(${ch.id})" class="col-span-4 ms-button ms-inner-box hover:opacity-85 text-amber-600 font-bold text-[11px] py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm" title="Missed or Late? Sets/adds time">
                                 <i class="fa-solid fa-clock-rotate-left text-[10px]"></i>
                                 <span>Missed</span>
                             </button>
                         </div>
 
                         <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-300/40">
-                            <button onclick="markCrowded(${ch.id})" class="theme-subtext hover:text-purple-600 text-[11px] font-medium transition-colors flex items-center gap-1" title="Mark as Crowded / Keep Idle">
+                            <button onclick="markCrowded(${ch.id})" class="theme-subtext hover:opacity-85 text-[11px] font-medium transition-colors flex items-center gap-1" title="Mark as Crowded / Keep Idle">
                                 <i class="fa-solid fa-users text-[10px]"></i>
                                 <span>Crowded</span>
                             </button>
