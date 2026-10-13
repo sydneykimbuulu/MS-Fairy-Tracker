@@ -72,7 +72,7 @@
             --break-btn-border: #c29b68;
             --break-log-bg: #faebd7;
             --break-log-text: #4a2810;
-            --history-exp-color: #b45309;
+            --history-exp-color: #34D399;
         }
 
         body.theme-maple {
@@ -809,17 +809,20 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs font-mono">
                     <thead class="theme-subtext uppercase text-[11px] border-b border-slate-300/30">
-                        <tr>
-                            <th class="py-2.5 px-3 w-8">
-                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllSessions(this)" class="rounded border-slate-400 theme-accent-text cursor-pointer focus:ring-0">
+                        <tr class="ms-inner-box">
+                            <th class="py-2.5 px-3 rounded-l-xl">
+                                <button type="button" onclick="const cb = document.getElementById('selectAllMasterTrigger'); cb.checked = !cb.checked; toggleSelectAllSessions(cb);" class="text-[8px] font-bold theme-accent-text hover:underline focus:outline-none flex items-center gap-1 cursor-pointer">
+                                    <input type="checkbox" id="selectAllMasterTrigger" onchange="toggleSelectAllSessions(this)" class="hidden">
+                                    Select All
+                                </button>
                             </th>
-                            <th class="py-2.5 px-3">Date &amp; Time</th>
-                            <th class="py-2.5 px-3">Character &amp; Map</th>
-                            <th class="py-2.5 px-3">KPQ Stats</th>
-                            <th class="py-2.5 px-3">Duration</th>
-                            <th class="py-2.5 px-3">EXP Gained</th>
-                            <th class="py-2.5 px-3">Net Profit</th>
-                            <th class="py-2.5 px-3 text-right">Actions</th>
+                            <th class="py-2.5 px-3 font-bold tracking-wider theme-accent-text border-l border-slate-300/20">Date &amp; Time</th>
+                            <th class="py-2.5 px-3 font-bold tracking-wider theme-accent-text border-l border-slate-300/20">Character &amp; Map</th>
+                            <th class="py-2.5 px-3 font-bold tracking-wider theme-accent-text border-l border-slate-300/20">KPQ Stats</th>
+                            <th class="py-2.5 px-3 font-bold tracking-wider theme-accent-text border-l border-slate-300/20">Duration</th>
+                            <th class="py-2.5 px-3 font-bold tracking-wider theme-accent-text border-l border-slate-300/20">EXP Gained</th>
+                            <th class="py-2.5 px-3 font-bold tracking-wider theme-accent-text border-l border-slate-300/20">Net Profit</th>
+                            <th class="py-2.5 px-3 text-right font-bold tracking-wider theme-accent-text border-l border-slate-300/20 rounded-r-xl">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="historyTableBody" class="divide-y divide-slate-300/20 font-bold"><tr class="hover:bg-slate-500/10 transition">
@@ -837,7 +840,7 @@
                         <button onclick="deleteHistoryItem('session_1791894600587')" class="theme-subtext hover:text-rose-500 transition text-sm px-1 font-bold" title="Delete Log"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 </tr><tr class="hover:bg-slate-500/10 transition">
-                    <td class="py-2.5 px-3 w-8">
+                    <td class="py-2.5 px-3 w-8 text-center">
                         <input type="checkbox" data-session-id="session_1791894293503" class="session-select-checkbox rounded border-slate-400 theme-accent-text cursor-pointer focus:ring-0">
                     </td>
                     <td class="py-2.5 px-3 theme-subtext text-[11px] font-bold">Oct 13, 2026 [ 8:24:53 AM ]</td>
