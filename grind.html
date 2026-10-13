@@ -48,6 +48,7 @@
             --break-btn-border: rgba(100, 116, 139, 0.4);
             --break-log-bg: rgba(15, 23, 42, 0.9);
             --break-log-text: #cbd5e1;
+            --history-exp-color: #34d399;
         }
 
         body.theme-maple-light {
@@ -73,6 +74,7 @@
             --break-btn-border: #c29b68;
             --break-log-bg: #faebd7;
             --break-log-text: #4a2810;
+            --history-exp-color: #b45309;
         }
 
         body.theme-maple {
@@ -98,6 +100,7 @@
             --break-btn-border: rgba(100, 116, 139, 0.4);
             --break-log-bg: rgba(30, 18, 10, 0.9);
             --break-log-text: #fef3c7;
+            --history-exp-color: #f59e0b;
         }
 
         body.theme-cyber {
@@ -123,6 +126,7 @@
             --break-btn-border: rgba(100, 116, 139, 0.4);
             --break-log-bg: rgba(15, 8, 25, 0.9);
             --break-log-text: #f0abfc;
+            --history-exp-color: #38bdf8;
         }
 
         body.theme-crimson {
@@ -148,6 +152,7 @@
             --break-btn-border: rgba(100, 116, 139, 0.4);
             --break-log-bg: rgba(25, 10, 10, 0.9);
             --break-log-text: #fecdd3;
+            --history-exp-color: #fb923c;
         }
 
         body.theme-moss {
@@ -173,6 +178,7 @@
             --break-btn-border: rgba(100, 116, 139, 0.4);
             --break-log-bg: rgba(8, 20, 12, 0.9);
             --break-log-text: #d1fae5;
+            --history-exp-color: #34d399;
         }
 
         body {
@@ -237,6 +243,13 @@
             border: 1px solid var(--inner-border);
         }
 
+        /* Highlighted Session Timer Card */
+        .session-timer-featured-card {
+            background: linear-gradient(145deg, var(--card-bg), rgba(236, 72, 153, 0.08));
+            border: 3px solid var(--accent-primary);
+            box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.25), 0 0 20px rgba(236, 72, 153, 0.2);
+        }
+
         .ms-button {
             transition: all 0.12s ease-in-out;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -275,6 +288,31 @@
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none;
             margin: 0; 
+        }
+
+        /* 3D Flip Card Animation for Entire Session Timer Card */
+        .card-flip-container {
+            perspective: 1200px;
+        }
+        .card-flipper {
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -455,136 +493,149 @@
 
         <!-- Middle Row: Main Session Controls & Trackers -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            <!-- Left Column: Session Timer / KPQ Counter Card + Break Logger Side-by-Side -->
-            <div class="lg:col-span-6 ms-card rounded-xl p-5 flex flex-col justify-between shadow-xl space-y-3 h-full">
-                <!-- Flippable Container -->
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between border-b border-slate-300/20 pb-2.5">
-                        <h2 id="cardTitle" class="text-lg font-bold font-header flex items-center gap-2">
-                            <i class="fa-solid fa-stopwatch theme-accent-text" id="cardTitleIcon"></i> <span id="cardTitleText">Session Timer</span>
-                        </h2>
-                        <div class="flex items-center gap-2">
-                            <button onclick="toggleCardFlip(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded-lg text-xs font-bold theme-accent-text interactive-btn flex items-center gap-1" title="Flip Card to KPQ Counter">
-                                <i class="fa-solid fa-rotate"></i> <span id="flipBtnText">KPQ</span>
-                            </button>
-                            <div id="timerStatusBadgeContainer" class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
-                                <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-                                <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FRONT SIDE: Session Timer -->
-                    <div id="timerCardSide" class="space-y-3">
-                        <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
-                            <div class="absolute top-2 right-2 flex items-center gap-1">
-                                <button onclick="setTimerPreset(10/60, this)" class="preset-btn ms-button px-2 py-0.5 rounded text-[10px] font-mono font-semibold opacity-70 hover:opacity-100 transition interactive-btn text-slate-600 dark:text-slate-400 bg-slate-500/10 border border-slate-500/20" title="10s test timer">10s test</button>
+            <!-- Left Column: Entire Session Timer / KPQ Card Wrapper with 3D Flip & Featured Styling -->
+            <div class="lg:col-span-6 card-flip-container relative w-full h-full">
+                <div id="cardFlipper" class="card-flipper w-full h-full">
+                    
+                    <!-- FRONT SIDE: Session Timer Card (Featured Outstanding Styling) -->
+                    <div id="timerCardSide" class="card-face session-timer-featured-card rounded-2xl p-5 flex flex-col justify-between shadow-2xl space-y-3 w-full h-full">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between border-b border-pink-400/30 pb-2.5">
+                                <h2 class="text-lg font-bold font-header flex items-center gap-2">
+                                    <i class="fa-solid fa-stopwatch text-pink-500 dark:text-pink-400"></i> <span class="theme-accent-text">Session Timer</span>
+                                </h2>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="toggleCardFlip(); animateClick(this)" class="ms-button ms-inner-box px-3 py-1 rounded-lg text-xs font-bold theme-accent-text interactive-btn flex items-center gap-1 shadow-sm" title="Flip Card to KPQ Counter">
+                                        <i class="fa-solid fa-rotate"></i> <span>KPQ</span>
+                                    </button>
+                                    <div id="timerStatusBadgeContainer" class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
+                                        <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                        <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
-                                00:00:00
+                            <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
+                                <div class="absolute top-2 right-2 flex items-center gap-1">
+                                    <button onclick="setTimerPreset(10/60, this)" class="preset-btn ms-button px-2 py-0.5 rounded text-[10px] font-mono font-semibold opacity-70 hover:opacity-100 transition interactive-btn text-slate-600 dark:text-slate-400 bg-slate-500/10 border border-slate-500/20" title="10s test timer">10s test</button>
+                                </div>
+
+                                <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
+                                    00:00:00
+                                </div>
+                                <div class="text-xs theme-subtext font-mono mt-1 flex justify-center gap-3 font-semibold">
+                                    <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
+                                    <span>|</span>
+                                    <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+                                </div>
                             </div>
-                            <div class="text-xs theme-subtext font-mono mt-1 flex justify-center gap-3 font-semibold">
-                                <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
-                                <span>|</span>
-                                <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+
+                            <div class="grid grid-cols-4 gap-1.5">
+                                <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
+                                <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
+                                <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1h</button>
+                                <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2h</button>
                             </div>
-                        </div>
 
-                        <div class="grid grid-cols-4 gap-1.5">
-                            <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
-                            <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
-                            <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1h</button>
-                            <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2h</button>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
-                                <i class="fa-solid fa-play" id="startPauseIcon"></i>
-                                <span id="startPauseLabel">Start Session</span>
-                            </button>
-                            <button onclick="promptFinishAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
-                                <i class="fa-solid fa-box-archive"></i>
-                                <span>Finish & Save</span>
-                            </button>
-                        </div>
-
-                        <div class="text-center pt-1">
-                            <button onclick="resetTimerOnly(); animateClick(this)" class="text-xs theme-subtext hover:theme-accent-text transition inline-flex items-center gap-1 font-semibold interactive-btn">
-                                <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset Timer Clock
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- BACK SIDE: KPQ Counter -->
-                    <div id="kpqCardSide" class="space-y-4 hidden">
-                        <div class="ms-inner-box rounded-xl py-4 px-3 text-center relative overflow-hidden group w-full space-y-2">
-                            <div class="text-xs uppercase font-bold theme-subtext tracking-wider">Kerning Party Quest (KPQ) Runs</div>
-                            <div id="kpqCountDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
-                                0
-                            </div>
-                            <div class="flex items-center justify-center gap-2 pt-1">
-                                <button onclick="incrementKpqCount(); animateClick(this)" class="ms-button theme-accent-bg text-white px-6 py-2 rounded-xl text-sm font-bold flex items-center gap-2 interactive-btn shadow-md">
-                                    <i class="fa-solid fa-plus text-xs"></i> +1 KPQ Finished
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                                    <i class="fa-solid fa-play" id="startPauseIcon"></i>
+                                    <span id="startPauseLabel">Start Session</span>
                                 </button>
-                                <button onclick="resetKpqCount(); animateClick(this)" class="ms-button ms-inner-box px-3 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Reset Counter">
-                                    <i class="fa-solid fa-rotate-right"></i>
+                                <button onclick="promptFinishAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                                    <i class="fa-solid fa-box-archive"></i>
+                                    <span>Finish & Save</span>
+                                </button>
+                            </div>
+
+                            <div class="text-center pt-1">
+                                <button onclick="resetTimerOnly(); animateClick(this)" class="text-xs theme-subtext hover:theme-accent-text transition inline-flex items-center gap-1 font-semibold interactive-btn">
+                                    <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset Timer Clock
                                 </button>
                             </div>
                         </div>
 
-                        <!-- KPQ Timer / Stopwatch Sub-section -->
-                        <div class="ms-inner-box rounded-xl p-3.5 space-y-2.5">
-                            <div class="flex items-center justify-between text-xs font-bold">
-                                <span class="theme-subtext flex items-center gap-1.5"><i class="fa-solid fa-stopwatch theme-accent-text"></i> KPQ Run Stopwatch</span>
-                                <span id="kpqTimerDisplay" class="font-mono text-base font-bold theme-accent-text">00:00</span>
+                        <div class="border-t border-slate-300/30 pt-2"></div>
+
+                        <!-- Session Break Logger -->
+                        <div class="space-y-2 flex flex-col justify-between">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
+                                    <i class="fa-solid fa-mug-hot theme-accent-text"></i> Break Logger
+                                </h3>
+                                <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button id="kpqTimerStartBtn" onclick="toggleKpqTimer(); animateClick(this)" class="ms-button theme-accent-gradient text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm">
-                                    <i class="fa-solid fa-play" id="kpqTimerIcon"></i> <span id="kpqTimerLabel">Start KPQ Timer</span>
+                            
+                            <div class="flex items-center gap-1.5">
+                                <input type="text" id="breakNameInput" placeholder="Break name" class="flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
+                                <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-2.5 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap interactive-btn" title="Start break">
+                                    <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Break</span>
                                 </button>
-                                <button onclick="resetKpqTimer(); animateClick(this)" class="ms-button ms-inner-box py-2 rounded-lg text-xs font-semibold theme-subtext hover:theme-accent-text transition interactive-btn" title="Reset Stopwatch & Save Session Log">
-                                    Reset Stopwatch & Save
+                                <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
+                                    <i class="fa-solid fa-trash-can"></i>
                                 </button>
+                            </div>
+
+                            <div class="ms-inner-box rounded-lg px-2 py-1 space-y-1">
+                                <div class="flex items-center justify-between text-[10px] font-semibold border-b border-slate-300/20 pb-0.5">
+                                    <span class="theme-subtext">Breaks</span>
+                                    <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">0m 0s</span>
+                                </div>
+                                <div id="breakLogsList" class="space-y-1 max-h-20 overflow-y-hidden pr-1 text-[10px] font-mono">
+                                    <div class="text-center py-1 text-slate-400 italic font-sans text-[9px]">No breaks logged.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="border-t border-slate-300/30 pt-2"></div>
-
-                <!-- Two columns side-by-side: Left = KPQ & Session Summary Stats, Right = Break Logger -->
-                <div class="grid grid-cols-1 md:grid-cols-1 gap-3 items-stretch">
-                    <!-- Section to the left of break logs for KPQ & Session Summary -->
-                    <!-- Right Column: Session Break Logger -->
-                    <div class="space-y-2 flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
-                                <i class="fa-solid fa-mug-hot theme-accent-text"></i> Break Logger
-                            </h3>
-                            <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
-                        </div>
-                        
-                        <div class="flex items-center gap-1.5">
-                            <input type="text" id="breakNameInput" placeholder="Break name" class="flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
-                            <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-2.5 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap interactive-btn" disabled title="Start session to enable breaks">
-                                <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Break</span>
-                            </button>
-                            <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-
-                        <div class="ms-inner-box rounded-lg px-2 py-1 space-y-1">
-                            <div class="flex items-center justify-between text-[10px] font-semibold border-b border-slate-300/20 pb-0.5">
-                                <span class="theme-subtext">Breaks</span>
-                                <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">0m 0s</span>
+                    <!-- BACK SIDE: KPQ Counter Card -->
+                    <div id="kpqCardSide" class="card-face card-back ms-card rounded-2xl p-5 space-y-4 w-full h-full flex flex-col justify-between shadow-2xl">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-300/20 pb-2.5">
+                                <h2 class="text-lg font-bold font-header flex items-center gap-2">
+                                    <i class="fa-solid fa-people-group theme-accent-text"></i> <span class="theme-accent-text">KPQ Counter</span>
+                                </h2>
+                                <button onclick="toggleCardFlip(); animateClick(this)" class="ms-button ms-inner-box px-3 py-1 rounded-lg text-xs font-bold theme-accent-text interactive-btn flex items-center gap-1 shadow-sm" title="Flip Card to Session Timer">
+                                    <i class="fa-solid fa-stopwatch"></i> <span>Timer</span>
+                                </button>
                             </div>
-                            <div id="breakLogsList" class="space-y-1 max-h-20 overflow-y-auto pr-1 text-[10px] font-mono">
-                                <div class="text-center py-1 text-slate-400 italic font-sans text-[9px]">No breaks logged.</div>
+
+                            <div class="ms-inner-box rounded-xl py-4 px-3 text-center relative overflow-hidden group w-full space-y-3">
+                                <div class="text-xs uppercase font-bold theme-subtext tracking-wider">Kerning Party Quest (KPQ) Runs</div>
+                                
+                                <div class="flex items-center justify-center gap-3">
+                                    <div id="kpqCountDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)]">
+                                        0
+                                    </div>
+                                    <button onclick="resetKpqCount(); animateClick(this)" class="ms-button ms-inner-box px-3 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Reset Counter">
+                                        <i class="fa-solid fa-rotate-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="pt-1">
+                                    <button onclick="incrementKpqCount(); animateClick(this)" class="w-full py-3.5 px-5 rounded-xl font-extrabold text-sm md:text-base bg-gradient-to-r from-fuchsia-600 via-pink-500 to-rose-500 hover:opacity-95 text-white transition shadow-lg flex items-center justify-center gap-2.5 interactive-btn ring-2 ring-pink-400/50">
+                                        <i class="fa-solid fa-circle-plus text-lg animate-bounce"></i> +1 KPQ Finished!
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="ms-inner-box rounded-xl p-3.5 space-y-2.5">
+                                <div class="flex items-center justify-between text-xs font-bold">
+                                    <span class="theme-subtext flex items-center gap-1.5"><i class="fa-solid fa-stopwatch theme-accent-text"></i> KPQ Run Stopwatch</span>
+                                    <span id="kpqTimerDisplay" class="font-mono text-base font-bold theme-accent-text">00:00</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="kpqTimerStartBtn" onclick="toggleKpqTimer(); animateClick(this)" class="ms-button theme-accent-gradient text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm">
+                                        <i class="fa-solid fa-play" id="kpqTimerIcon"></i> <span id="kpqTimerLabel">Start KPQ Timer</span>
+                                    </button>
+                                    <button onclick="resetKpqTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-1.5 interactive-btn" title="Reset Stopwatch & Save KPQ Session Log">
+                                        <i class="fa-solid fa-box-archive text-xs"></i> Finish KPQ & Save
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -685,7 +736,21 @@
                         </div>
                     </div>
                     <p class="text-xs theme-subtext mb-3">Active session expenses (toggle items or open drawer to load presets):</p>
-                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="consumablesList"></div>
+                    
+                    <!-- Scroll Replacement with Up/Down Buttons -->
+                    <div class="relative">
+                        <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none">
+                            <button onclick="scrollList('consumablesListContainer', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up">
+                                <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                            </button>
+                            <button onclick="scrollList('consumablesListContainer', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down">
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </button>
+                        </div>
+                        <div id="consumablesListContainer" class="space-y-2 max-h-56 overflow-y-hidden pr-8 scroll-smooth" onwheel="handleWheelScroll(event, this)">
+                            <div id="consumablesList" class="space-y-2"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="pt-3 border-t border-slate-300/30 space-y-3">
                     <div class="grid grid-cols-1 gap-2">
@@ -723,7 +788,21 @@
                         </div>
                     </div>
                     <p class="text-xs theme-subtext mb-3">Track tradeable items dropped and set market values to add to revenue (click name to edit):</p>
-                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="dropsList"></div>
+                    
+                    <!-- Scroll Replacement with Up/Down Buttons -->
+                    <div class="relative">
+                        <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none">
+                            <button onclick="scrollList('dropsListContainer', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up">
+                                <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                            </button>
+                            <button onclick="scrollList('dropsListContainer', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down">
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </button>
+                        </div>
+                        <div id="dropsListContainer" class="space-y-2 max-h-56 overflow-y-hidden pr-8 scroll-smooth" onwheel="handleWheelScroll(event, this)">
+                            <div id="dropsList" class="space-y-2"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="pt-3 border-t border-slate-300/30">
                     <div class="text-xs font-bold theme-subtext mb-2">Add Custom Drop Item:</div>
@@ -787,7 +866,7 @@
                             <th class="py-2.5 px-3 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="historyTableBody" class="divide-y divide-slate-300/20">
+                    <tbody id="historyTableBody" class="divide-y divide-slate-300/20 font-bold">
                         <tr>
                             <td colspan="8" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td>
                         </tr>
@@ -974,23 +1053,23 @@
         </div>
     </div>
 
-    <!-- Session Breakdown Details Modal -->
-    <div id="sessionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="ms-glass rounded-3xl p-6 md:p-10 max-w-5xl w-full space-y-6 shadow-2xl relative border-4 border-pink-500/50">
+    <!-- Session Breakdown Details Modal (70% Screen Width/Height, Larger Text & Standout Visuals) -->
+    <div id="sessionModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="ms-glass rounded-3xl p-6 md:p-10 w-[70vw] h-[70vh] max-w-none max-h-none space-y-6 shadow-2xl relative border-4 border-pink-500/50 flex flex-col justify-between">
             <div class="flex items-center justify-between border-b-2 border-slate-300/30 pb-4">
-                <h3 class="text-2xl md:text-3xl font-black font-header flex items-center gap-3 theme-accent-text">
-                    <i class="fa-solid fa-file-invoice text-2xl"></i> Session Breakdown Details
+                <h3 class="text-2xl md:text-4xl font-black font-header flex items-center gap-3 theme-accent-text">
+                    <i class="fa-solid fa-file-invoice text-3xl"></i> Session Breakdown Details
                 </h3>
-                <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-3 py-1 text-xl rounded-xl ms-inner-box"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-4 py-2 text-2xl rounded-xl ms-inner-box"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div id="modalContent" class="space-y-6 text-sm md:text-base font-mono max-h-[72vh] overflow-y-auto pr-3"></div>
+            <div id="modalContent" class="space-y-6 text-base md:text-lg font-mono flex-1 overflow-y-auto pr-3"></div>
 
             <div class="pt-4 border-t-2 border-slate-300/30 flex items-center justify-between">
-                <button id="modalDownloadBtn" class="ms-button ms-inner-box px-5 py-3 rounded-2xl text-sm md:text-base font-bold flex items-center gap-2.5 theme-accent-text hover:opacity-80 transition interactive-btn shadow-md">
+                <button id="modalDownloadBtn" class="ms-button ms-inner-box px-6 py-3.5 rounded-2xl text-base md:text-lg font-bold flex items-center gap-2.5 theme-accent-text hover:opacity-80 transition interactive-btn shadow-md">
                     <i class="fa-solid fa-download"></i> Download Breakdown (JSON)
                 </button>
-                <button onclick="closeSessionModal()" class="ms-button theme-accent-bg text-white px-7 py-3 rounded-2xl text-sm md:text-base font-extrabold transition interactive-btn shadow-lg">Close Window</button>
+                <button onclick="closeSessionModal()" class="ms-button theme-accent-bg text-white px-9 py-3.5 rounded-2xl text-base md:text-lg font-extrabold transition interactive-btn shadow-lg">Close Window</button>
             </div>
         </div>
     </div>
@@ -1057,7 +1136,7 @@
             { id: 'preset_orange', name: 'Orange', category: 'General Foods', unitCost: 50, qty: 1, notes: 'MP Recovery +50' },
             { id: 'preset_lemon', name: 'Lemon', category: 'General Foods', unitCost: 150, qty: 1, notes: 'MP Recovery +150' },
             { id: 'preset_salad', name: 'Salad', category: 'General Foods', unitCost: 220, qty: 1, notes: 'MP Recovery +200' },
-            { id: 'preset_salad', name: 'Cake', category: 'General Foods', unitCost: 150, qty: 1, notes: 'HP & MP Recovery +100' },
+            { id: 'preset_cake', name: 'Cake', category: 'General Foods', unitCost: 150, qty: 1, notes: 'HP & MP Recovery +100' },
             { id: 'preset_pure_water', name: 'Pure Water', category: 'General Foods', unitCost: 1200, qty: 1, notes: 'MP Recovery +800' },
 			
             { id: 'preset_red_potion', name: 'Red Potion', category: 'Standard Potions', unitCost: 50, qty: 1, notes: 'HP Recovery +100' },
@@ -1073,6 +1152,18 @@
             element.classList.remove('btn-clicked');
             void element.offsetWidth;
             element.classList.add('btn-clicked');
+        }
+
+        function scrollList(containerId, amount) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.scrollBy({ top: amount, behavior: 'smooth' });
+            }
+        }
+
+        function handleWheelScroll(event, container) {
+            event.preventDefault();
+            container.scrollBy({ top: event.deltaY, behavior: 'smooth' });
         }
 
         function formatCustomTimestamp(dateObj) {
@@ -1153,26 +1244,14 @@
 
         function toggleCardFlip(forceState) {
             state.isKpqFlipped = forceState !== undefined ? forceState : !state.isKpqFlipped;
-            const timerSide = document.getElementById('timerCardSide');
-            const kpqSide = document.getElementById('kpqCardSide');
-            const cardTitleText = document.getElementById('cardTitleText');
-            const cardTitleIcon = document.getElementById('cardTitleIcon');
-            const flipBtnText = document.getElementById('flipBtnText');
+            const flipper = document.getElementById('cardFlipper');
             const timerStatusBadgeContainer = document.getElementById('timerStatusBadgeContainer');
 
             if (state.isKpqFlipped) {
-                timerSide.classList.add('hidden');
-                kpqSide.classList.remove('hidden');
-                cardTitleText.textContent = "KPQ Counter";
-                cardTitleIcon.className = "fa-solid fa-people-group theme-accent-text";
-                flipBtnText.textContent = "Timer";
+                flipper.classList.add('card-flipped');
                 timerStatusBadgeContainer.classList.add('hidden');
             } else {
-                timerSide.classList.remove('hidden');
-                kpqSide.classList.add('hidden');
-                cardTitleText.textContent = "Session Timer";
-                cardTitleIcon.className = "fa-solid fa-stopwatch theme-accent-text";
-                flipBtnText.textContent = "KPQ";
+                flipper.classList.remove('card-flipped');
                 timerStatusBadgeContainer.classList.remove('hidden');
             }
             updateInputLockStates();
@@ -1259,11 +1338,11 @@
             if (display) display.textContent = timeStr;
 
             if (state.kpqTimerRunning) {
-                if (btn) btn.className = "ms-button bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm";
+                if (btn) btn.className = "ms-button bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm";
                 if (icon) icon.className = "fa-solid fa-pause";
                 if (label) label.textContent = "Pause KPQ Timer";
             } else {
-                if (btn) btn.className = "ms-button theme-accent-gradient text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm";
+                if (btn) btn.className = "ms-button theme-accent-gradient text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm";
                 if (icon) icon.className = "fa-solid fa-play";
                 if (label) label.textContent = state.kpqElapsedSeconds > 0 ? "Resume KPQ Timer" : "Start KPQ Timer";
             }
@@ -1867,7 +1946,8 @@
         }
 
         function toggleBreakSession() {
-            if (!state.breakActive && !state.timerRunning) {
+            const isKpqMode = state.isKpqFlipped;
+            if (!isKpqMode && !state.breakActive && !state.timerRunning) {
                 return showToast("You can only start a break while an active session is running!", "error");
             }
 
@@ -1876,11 +1956,11 @@
                 state.breakActive = true;
                 state.breakStartTime = new Date();
                 state.breakName = breakNameInput.value.trim() || 'Break';
-                if (state.timerRunning) pauseTimer();
+                if (!isKpqMode && state.timerRunning) pauseTimer();
                 breakNameInput.disabled = true;
                 breakNameInput.className = "flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs font-medium transition bg-amber-500/10 border-2 border-amber-500/50 text-amber-500 cursor-not-allowed";
                 updateBreakUI();
-                showToast("Break started! Session timer paused.", "info");
+                showToast(isKpqMode ? "Break started during KPQ." : "Break started! Session timer paused.", "info");
             } else {
                 state.breakActive = false;
                 const breakEndTime = new Date();
@@ -1903,9 +1983,11 @@
 
                 updateBreakUI();
                 renderBreakLogs();
-                showToast("Break ended! Session timer resumed.", "success");
+                showToast(isKpqMode ? "Break ended." : "Break ended! Session timer resumed.", "success");
 
-                startTimer();
+                if (!isKpqMode) {
+                    startTimer();
+                }
             }
             saveCurrentState();
         }
@@ -1924,7 +2006,7 @@
                 badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-emerald-500 border border-emerald-500/30 font-bold animate-pulse";
                 badge.textContent = "On Break";
             } else {
-                if (!state.timerRunning) {
+                if (!state.isKpqFlipped && !state.timerRunning) {
                     btn.disabled = true;
                     btn.className = "py-1.5 px-2.5 rounded-lg font-bold text-xs bg-slate-600/30 text-slate-400 border border-slate-700/50 transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap cursor-not-allowed opacity-60";
                     btn.setAttribute('title', 'Start session to enable breaks');
@@ -2180,7 +2262,7 @@
             state.consumables.forEach(item => { if (item.active) totalConsumableCost += (item.unitCost * item.qty); });
 
             let totalDropsValue = 0;
-            state.drops.forEach(item => { item => totalDropsValue += (item.unitValue * item.qty); });
+            state.drops.forEach(item => { totalDropsValue += (item.unitValue * item.qty); });
 
             const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
             const netProfitPerMinute = netProfit / durationMinutes;
@@ -2322,6 +2404,12 @@
         function renderDrops() {
             const listEl = document.getElementById('dropsList');
             listEl.innerHTML = '';
+            
+            if (!state.drops || state.drops.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-2 text-slate-400 italic text-xs">No valuable drops added. Use the form below to track drops!</div>`;
+                return;
+            }
+
             state.drops.forEach((item, index) => {
                 const row = document.createElement('div');
                 row.className = "flex items-center justify-between p-2.5 rounded-lg ms-inner-box transition";
@@ -2374,6 +2462,7 @@
             if (newName) {
                 state.drops[index].name = newName;
                 renderDrops();
+                updateCalculations();
                 showToast("Drop name updated", "success");
                 saveCurrentState();
             } else {
@@ -2381,8 +2470,19 @@
             }
         }
 
-        function updateDropQty(index, val) { state.drops[index].qty = Math.max(0, parseInt(val) || 0); renderDrops(); updateCalculations(); saveCurrentState(); }
-        function removeDrop(index) { state.drops.splice(index, 1); renderDrops(); updateCalculations(); saveCurrentState(); }
+        function updateDropQty(index, val) { 
+            state.drops[index].qty = Math.max(0, parseInt(val) || 0); 
+            renderDrops(); 
+            updateCalculations(); 
+            saveCurrentState(); 
+        }
+
+        function removeDrop(index) { 
+            state.drops.splice(index, 1); 
+            renderDrops(); 
+            updateCalculations(); 
+            saveCurrentState(); 
+        }
 
         function addCustomDrop() {
             const nameInput = document.getElementById('customDropName');
@@ -2391,9 +2491,17 @@
             const name = nameInput.value.trim();
             if (!name) return showToast("Please enter a drop item name", "error");
 
-            state.drops.push({ id: 'drop_' + Date.now(), name: name, unitValue: parseMesoInput(valInput.value), qty: parseInt(qtyInput.value) || 1 });
-            nameInput.value = ''; valInput.value = '0'; qtyInput.value = '1';
-            renderDrops(); updateCalculations(); showToast(`Added drop: ${name}`, "success"); saveCurrentState();
+            state.drops.push({ 
+                id: 'drop_' + Date.now(), 
+                name: name, 
+                unitValue: parseMesoInput(valInput.value), 
+                qty: parseInt(qtyInput.value) || 1 
+            });
+            nameInput.value = ''; valInput.value = ''; qtyInput.value = '1';
+            renderDrops(); 
+            updateCalculations(); 
+            showToast(`Added drop: ${name}`, "success"); 
+            saveCurrentState();
         }
 
         function promptFinishAndSaveSession() {
@@ -2521,7 +2629,7 @@
             countBadge.textContent = `${state.history.length} Saved Sessions`;
 
             if (state.history.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center theme-subtext italic font-sans font-semibold">No grind sessions logged yet. Start the timer and click Finish & Save!</td></tr>`;
                 avgMesoHrText.textContent = "0";
                 document.getElementById('selectAllCheckbox').checked = false;
                 return;
@@ -2541,21 +2649,21 @@
                 const kpqMins = Math.floor(kpqSecs / 60);
                 const kpqRemSecs = kpqSecs % 60;
                 const kpqTimeStr = [kpqMins, kpqRemSecs].map(v => v < 10 ? "0" + v : v).join(":");
-                const kpqStatsDisplay = kpqRuns > 0 ? `<span class="text-fuchsia-400 font-bold">${kpqRuns} Runs</span> <span class="theme-subtext text-[10px]">(${kpqTimeStr})</span>` : '<span class="theme-subtext italic">None</span>';
+                const kpqStatsDisplay = kpqRuns > 0 ? `<span class="text-fuchsia-500 font-extrabold">${kpqRuns} Runs</span> <span class="theme-subtext text-[10px]">(${kpqTimeStr})</span>` : '<span class="theme-subtext italic font-normal">None</span>';
 
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 w-8">
                         <input type="checkbox" data-session-id="${session.id}" class="session-select-checkbox rounded border-slate-400 theme-accent-text cursor-pointer focus:ring-0">
                     </td>
-                    <td class="py-2.5 px-3 theme-subtext text-[11px] font-semibold">${session.timestamp}</td>
-                    <td class="py-2.5 px-3 font-sans font-semibold">${charDisplay}${session.mapName} <span class="text-xs theme-accent-text">Lv.${session.level}</span></td>
+                    <td class="py-2.5 px-3 theme-subtext text-[11px] font-bold">${session.timestamp}</td>
+                    <td class="py-2.5 px-3 font-sans font-bold text-current">${charDisplay}${session.mapName} <span class="text-xs theme-accent-text font-extrabold">Lv.${session.level}</span></td>
                     <td class="py-2.5 px-3 font-mono">${kpqStatsDisplay}</td>
-                    <td class="py-2.5 px-3">${formatSecondsToHHMMSS(session.durationSeconds)}</td>
-                    <td class="py-2.5 px-3 theme-accent-text">+${session.expGained.toFixed(3)}%</td>
-                    <td class="py-2.5 px-3 font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfit)}</td>
+                    <td class="py-2.5 px-3 font-bold text-current">${formatSecondsToHHMMSS(session.durationSeconds)}</td>
+                    <td class="py-2.5 px-3 font-extrabold" style="color: var(--history-exp-color);">+${session.expGained.toFixed(3)}%</td>
+                    <td class="py-2.5 px-3 font-extrabold ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfit)}</td>
                     <td class="py-2.5 px-3 text-right flex items-center justify-end gap-2">
-                        <button onclick="openSessionModal('${session.id}')" class="theme-subtext hover:theme-accent-text transition text-sm px-1" title="View Breakdown Details"><i class="fa-solid fa-eye"></i></button>
-                        <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition text-sm px-1" title="Delete Log"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="openSessionModal('${session.id}')" class="theme-subtext hover:theme-accent-text transition text-sm px-1 font-bold" title="View Breakdown Details"><i class="fa-solid fa-eye"></i></button>
+                        <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition text-sm px-1 font-bold" title="Delete Log"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -2636,70 +2744,70 @@
             const downloadBtn = document.getElementById('modalDownloadBtn');
             const isPositive = session.netProfit >= 0;
 
-            let breaksHtml = '<div class="theme-subtext font-semibold italic text-sm py-4">No breaks recorded for this session.</div>';
+            let breaksHtml = '<div class="theme-subtext font-semibold italic text-base py-4">No breaks recorded for this session.</div>';
             if (session.breaksSnapshot && session.breaksSnapshot.length > 0) {
-                breaksHtml = '<div class="space-y-2 max-h-[35vh] overflow-y-auto pr-2">';
+                breaksHtml = '<div class="relative"><div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none"><button onclick="scrollList(\'modalBreaksContainer\', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up"><i class="fa-solid fa-chevron-up text-xs"></i></button><button onclick="scrollList(\'modalBreaksContainer\', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down"><i class="fa-solid fa-chevron-down text-xs"></i></button></div><div id="modalBreaksContainer" class="space-y-2.5 max-h-[38vh] overflow-y-hidden pr-9 scroll-smooth" onwheel="handleWheelScroll(event, this)">';
                 session.breaksSnapshot.forEach(b => {
                     const bMins = Math.floor(b.durationSeconds / 60);
                     const bSecs = b.durationSeconds % 60;
                     const bDur = bMins > 0 ? `${bMins}m ${bSecs}s` : `${bSecs}s`;
                     const dateDisplay = b.dateStr ? `${b.dateStr} ` : '';
                     breaksHtml += `
-                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm shadow-sm">
-                            <span class="font-semibold text-current truncate max-w-[70%]" title="${b.name || 'Break'}"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-[11px] block">${dateDisplay}(${b.startTime} - ${b.endTime})</span></span>
+                        <div class="ms-inner-box p-3.5 rounded-xl flex items-center justify-between text-sm md:text-base shadow-sm">
+                            <span class="font-semibold text-current truncate max-w-[70%]" title="${b.name || 'Break'}"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-xs block">${dateDisplay}(${b.startTime} - ${b.endTime})</span></span>
                             <span class="font-bold theme-accent-text font-mono whitespace-nowrap">(${bDur})</span>
                         </div>
                     `;
                 });
-                breaksHtml += '</div>';
+                breaksHtml += '</div></div>';
             }
 
-            let consumablesHtml = '<div class="theme-subtext font-semibold italic text-sm">No active consumables/expenses recorded.</div>';
+            let consumablesHtml = '<div class="theme-subtext font-semibold italic text-base">No active consumables/expenses recorded.</div>';
             if (session.consumablesSnapshot && session.consumablesSnapshot.length > 0) {
-                consumablesHtml = '<div class="space-y-2 max-h-40 overflow-y-auto pr-1">';
+                consumablesHtml = '<div class="relative"><div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none"><button onclick="scrollList(\'modalConsumablesContainer\', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up"><i class="fa-solid fa-chevron-up text-xs"></i></button><button onclick="scrollList(\'modalConsumablesContainer\', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down"><i class="fa-solid fa-chevron-down text-xs"></i></button></div><div id="modalConsumablesContainer" class="space-y-2.5 max-h-[38vh] overflow-y-hidden pr-9 scroll-smooth" onwheel="handleWheelScroll(event, this)">';
                 session.consumablesSnapshot.forEach(c => {
                     const unitPriceFormatted = formatNumberWithCommas(c.unitCost || 0);
                     const totalCostFormatted = formatNumberWithCommas(c.totalCost || (c.unitCost * c.qty) || 0);
                     consumablesHtml += `
-                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm">
+                        <div class="ms-inner-box p-3.5 rounded-xl flex items-center justify-between text-sm md:text-base">
                             <div class="flex flex-col truncate max-w-[65%]">
                                 <span class="font-bold text-current truncate"><i class="fa-solid fa-flask text-rose-500 mr-1.5"></i> ${c.name}</span>
-                                <span class="text-[11px] theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
+                                <span class="text-xs theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-rose-500 font-mono text-right">-${totalCostFormatted} mesos</span>
                         </div>
                     `;
                 });
-                consumablesHtml += '</div>';
+                consumablesHtml += '</div></div>';
             }
 
-            let dropsHtml = '<div class="theme-subtext font-semibold italic text-sm">No valuable drops recorded.</div>';
+            let dropsHtml = '<div class="theme-subtext font-semibold italic text-base">No valuable drops recorded.</div>';
             if (session.dropsSnapshot && session.dropsSnapshot.length > 0) {
-                dropsHtml = '<div class="space-y-2 max-h-40 overflow-y-auto pr-1">';
+                dropsHtml = '<div class="relative"><div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none"><button onclick="scrollList(\'modalDropsContainer\', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up"><i class="fa-solid fa-chevron-up text-xs"></i></button><button onclick="scrollList(\'modalDropsContainer\', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down"><i class="fa-solid fa-chevron-down text-xs"></i></button></div><div id="modalDropsContainer" class="space-y-2.5 max-h-[38vh] overflow-y-hidden pr-9 scroll-smooth" onwheel="handleWheelScroll(event, this)">';
                 session.dropsSnapshot.forEach(d => {
                     const unitValueFormatted = formatNumberWithCommas(d.unitValue || 0);
                     const totalValFormatted = formatNumberWithCommas(d.totalValue || (d.unitValue * d.qty) || 0);
                     dropsHtml += `
-                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm">
+                        <div class="ms-inner-box p-3.5 rounded-xl flex items-center justify-between text-sm md:text-base">
                             <div class="flex flex-col truncate max-w-[65%]">
                                 <span class="font-bold text-current truncate"><i class="fa-solid fa-gem text-purple-500 mr-1.5"></i> ${d.name}</span>
-                                <span class="text-[11px] theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
+                                <span class="text-xs theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-purple-500 font-mono text-right">+${totalValFormatted} mesos</span>
                         </div>
                     `;
                 });
-                dropsHtml += '</div>';
+                dropsHtml += '</div></div>';
             }
 
             let notesHtml = '';
             if (session.notes) {
                 notesHtml = `
                     <div class="ms-inner-box p-4 rounded-2xl space-y-1.5">
-                        <div class="text-xs font-extrabold theme-accent-text flex items-center gap-1.5">
+                        <div class="text-sm md:text-base font-extrabold theme-accent-text flex items-center gap-1.5">
                             <i class="fa-solid fa-note-sticky"></i> Session Notes:
                         </div>
-                        <p class="text-xs md:text-sm text-current font-sans whitespace-pre-wrap">${escapeHtml(session.notes)}</p>
+                        <p class="text-sm md:text-base text-current font-sans whitespace-pre-wrap">${escapeHtml(session.notes)}</p>
                     </div>
                 `;
             }
@@ -2713,36 +2821,40 @@
             modalContent.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     <div class="lg:col-span-7 space-y-4">
-                        <div class="ms-inner-box p-5 rounded-2xl space-y-3 text-xs md:text-sm">
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                                <span class="theme-subtext font-bold">Date & Time:</span>
-                                <span class="font-bold theme-accent-text">${session.timestamp}</span>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                        <!-- Box-y standoutish header visual change for Date & Time -->
+                        <div class="ms-card p-4 rounded-2xl border-2 border-pink-400/40 shadow-md flex items-center justify-between">
+                            <span class="text-xs md:text-sm font-extrabold uppercase theme-subtext flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-days theme-accent-text text-base"></i> Recorded Timestamp
+                            </span>
+                            <span class="text-sm md:text-base font-bold text-pink-500 dark:text-pink-400 font-mono">${session.timestamp}</span>
+                        </div>
+
+                        <div class="ms-inner-box p-6 rounded-2xl space-y-3.5 text-sm md:text-base">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
                                 <span class="theme-subtext font-bold">Character IGN:</span>
-                                <span class="font-bold theme-accent-text">${session.charName || 'Unnamed'}</span>
+                                <span class="font-extrabold text-amber-500 dark:text-amber-400 text-base md:text-lg tracking-wide">${session.charName || 'Unnamed'}</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
                                 <span class="theme-subtext font-bold">Map & Level:</span>
-                                <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
+                                <span class="font-bold text-sky-500 dark:text-sky-400 text-base md:text-lg">${session.mapName} <strong class="text-purple-500 dark:text-purple-400">(Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</strong></span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
                                 <span class="theme-subtext font-bold">KPQ Runs & Stopwatch:</span>
                                 <span class="font-bold text-fuchsia-400">${kpqRuns} Runs (${kpqTimeStr})</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
                                 <span class="theme-subtext font-bold">Duration:</span>
                                 <span class="font-bold theme-accent-text">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
                                 <span class="theme-subtext font-bold">EXP Gained:</span>
                                 <span class="font-bold text-emerald-500">+${session.expGained.toFixed(3)}%</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
                                 <span class="theme-subtext font-bold">Gross Meso Looted:</span>
                                 <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)} mesos</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
                                 <span class="theme-subtext font-bold">Net Profit:</span>
                                 <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</span>
                             </div>
@@ -2756,13 +2868,13 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="space-y-2">
-                                <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                                <div class="text-sm md:text-base font-extrabold theme-subtext flex items-center gap-1.5">
                                     <i class="fa-solid fa-flask text-rose-500"></i> Buff Expenses:
                                 </div>
                                 ${consumablesHtml}
                             </div>
                             <div class="space-y-2">
-                                <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                                <div class="text-sm md:text-base font-extrabold theme-subtext flex items-center gap-1.5">
                                     <i class="fa-solid fa-gem text-purple-500"></i> Drops Revenue:
                                 </div>
                                 ${dropsHtml}
@@ -2770,29 +2882,29 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: KPQ & Summary above Breaks Breakdown -->
-                    <div class="lg:col-span-5 lg:border-l-2 lg:border-slate-300/30 lg:pl-6 space-y-4">
-                        <!-- Saved KPQ & Summary Section -->
-                        <div class="ms-inner-box rounded-xl p-4 flex flex-col justify-between space-y-2 shadow-sm border border-fuchsia-400/30">
-                            <div class="flex items-center justify-between text-xs font-bold border-b border-slate-300/20 pb-2">
-                                <span class="theme-accent-text flex items-center gap-1.5"><i class="fa-solid fa-chart-pie"></i> KPQ & Summary</span>
-                                <span class="text-[10px] theme-subtext font-mono">Saved Log</span>
+                    <!-- Right Column: More Distinguished Box for KPQ & Summary, and Breaks -->
+                    <div class="lg:col-span-5 lg:border-l-2 lg:border-slate-300/30 lg:pl-6 space-y-5">
+                        <!-- Highly Distinguished Box for KPQ & Summary -->
+                        <div class="ms-card rounded-2xl p-5 flex flex-col justify-between space-y-3 shadow-lg border-2 border-fuchsia-400/60 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-pink-500/10">
+                            <div class="flex items-center justify-between text-sm font-extrabold border-b border-fuchsia-400/30 pb-2.5">
+                                <span class="theme-accent-text flex items-center gap-2"><i class="fa-solid fa-chart-pie text-base"></i> KPQ & Summary Highlights</span>
+                                <span class="text-xs theme-subtext font-mono px-2 py-0.5 rounded ms-inner-box">Saved Log</span>
                             </div>
-                            <div class="space-y-1.5 text-xs font-mono">
+                            <div class="space-y-2 text-sm font-mono">
                                 <div class="flex justify-between">
-                                    <span class="theme-subtext">KPQ Runs:</span>
+                                    <span class="theme-subtext font-semibold">KPQ Runs:</span>
                                     <strong class="text-fuchsia-400 font-bold">${kpqRuns}</strong>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="theme-subtext">KPQ Stopwatch:</span>
+                                    <span class="theme-subtext font-semibold">KPQ Stopwatch:</span>
                                     <strong class="text-current">${kpqTimeStr}</strong>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="theme-subtext">Total EXP:</span>
+                                    <span class="theme-subtext font-semibold">Total EXP:</span>
                                     <strong class="text-emerald-500">+${session.expGained.toFixed(3)}%</strong>
                                 </div>
-                                <div class="flex justify-between border-t border-slate-300/20 pt-1.5">
-                                    <span class="theme-subtext">Net Profit:</span>
+                                <div class="flex justify-between border-t border-slate-300/20 pt-2">
+                                    <span class="theme-subtext font-semibold">Net Profit:</span>
                                     <strong class="${isPositive ? 'text-emerald-500' : 'text-rose-500'} font-bold">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</strong>
                                 </div>
                             </div>
@@ -2800,7 +2912,7 @@
 
                         <!-- Breaks Breakdown Section -->
                         <div class="space-y-3">
-                            <div class="text-base font-extrabold theme-accent-text flex items-center gap-2 border-b border-slate-300/20 pb-2">
+                            <div class="text-base md:text-lg font-extrabold theme-accent-text flex items-center gap-2 border-b border-slate-300/20 pb-2">
                                 <i class="fa-solid fa-mug-hot"></i> Breaks Breakdown (${session.breaksSnapshot ? session.breaksSnapshot.length : 0})
                             </div>
                             ${breaksHtml}
