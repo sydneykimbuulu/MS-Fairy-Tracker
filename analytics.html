@@ -274,8 +274,8 @@
             </div>
         </header>
 
-        <!-- Top Summary Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- Top Summary Cards (Updated to include Total KPQ Runs) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
             <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
                 <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
                     <i class="fa-solid fa-folder-open theme-accent-text"></i> Total Sessions
@@ -290,6 +290,14 @@
                 </div>
                 <div id="statTotalTime" class="text-2xl font-extrabold font-mono mt-2 text-sky-600">0h 00m</div>
                 <div class="text-[11px] theme-subtext font-bold mt-1">Active time in maps</div>
+            </div>
+
+            <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
+                <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
+                    <i class="fa-solid fa-people-group text-fuchsia-500"></i> Total KPQ Runs
+                </div>
+                <div id="statTotalKpq" class="text-2xl font-extrabold font-mono mt-2 text-fuchsia-500">0</div>
+                <div class="text-[11px] theme-subtext font-bold mt-1">Total KPQ runs finished</div>
             </div>
 
             <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
@@ -354,7 +362,7 @@
             </div>
         </div>
 
-        <!-- Full Aggregated Sessions Table -->
+        <!-- Full Aggregated Sessions Table (Updated with KPQ Stats Column) -->
         <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-900/20 pb-3 gap-3">
                 <div class="flex items-center gap-2">
@@ -374,6 +382,7 @@
                         <tr>
                             <th class="py-2.5 px-3">Date & Time</th>
                             <th class="py-2.5 px-3">Character & Map</th>
+                            <th class="py-2.5 px-3">KPQ Stats</th>
                             <th class="py-2.5 px-3">Duration</th>
                             <th class="py-2.5 px-3">EXP Gained</th>
                             <th class="py-2.5 px-3">Gross Meso</th>
@@ -383,7 +392,7 @@
                     </thead>
                     <tbody id="analyticsTableBody" class="divide-y divide-amber-900/15">
                         <tr>
-                            <td colspan="7" class="py-8 text-center theme-subtext font-bold italic">No sessions loaded.</td>
+                            <td colspan="8" class="py-8 text-center theme-subtext font-bold italic">No sessions loaded.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -425,7 +434,6 @@
             localStorage.setItem('maple_analytics_theme', themeName);
         }
 
-        // Load static saved analytics storage instead of auto-overwriting from grind tracker on every load
         function loadPersistedAnalytics() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY_ANALYTICS);
@@ -563,6 +571,7 @@
 
             let totalSessions = sessions.length;
             let totalSeconds = 0;
+            let totalKpqCount = 0;
             let totalExp = 0;
             let totalLevelUps = 0;
             let totalNetProfit = 0;
@@ -570,6 +579,7 @@
 
             sessions.forEach(s => {
                 totalSeconds += (s.durationSeconds || 0);
+                totalKpqCount += (s.kpqCount || 0);
                 totalExp += (s.expGained || 0);
                 totalLevelUps += (s.levelUps || 0);
                 totalNetProfit += (s.netProfit || 0);
@@ -583,6 +593,7 @@
 
             document.getElementById('statTotalSessions').textContent = totalSessions;
             document.getElementById('statTotalTime').textContent = `${totalHours}h ${totalMins < 10 ? '0' : ''}${totalMins}m`;
+            document.getElementById('statTotalKpq').textContent = totalKpqCount;
             document.getElementById('statTotalExp').textContent = `+${totalExp.toFixed(3)}%`;
             document.getElementById('statLevelUpsSub').textContent = `${totalLevelUps} Level Ups`;
             document.getElementById('statTotalNetProfit').textContent = formatShortMeso(totalNetProfit) + ' mesos';
@@ -592,10 +603,11 @@
             sessions.forEach(s => {
                 const mapName = s.mapName || 'Unknown Map';
                 if (!mapStats[mapName]) {
-                    mapStats[mapName] = { count: 0, timeSec: 0, exp: 0, netProfit: 0 };
+                    mapStats[mapName] = { count: 0, timeSec: 0, kpq: 0, exp: 0, netProfit: 0 };
                 }
                 mapStats[mapName].count += 1;
                 mapStats[mapName].timeSec += (s.durationSeconds || 0);
+                mapStats[mapName].kpq += (s.kpqCount || 0);
                 mapStats[mapName].exp += (s.expGained || 0);
                 mapStats[mapName].netProfit += (s.netProfit || 0);
             });
@@ -616,7 +628,7 @@
                     row.innerHTML = `
                         <div class="flex flex-col max-w-[55%]">
                             <span class="font-extrabold font-sans text-slate-900 truncate"><i class="fa-solid fa-map text-xs mr-1 theme-accent-text"></i>${mapName}</span>
-                            <span class="text-[10px] theme-subtext font-bold">${data.count} run(s) • ${mTimeHrs} hrs logged</span>
+                            <span class="text-[10px] theme-subtext font-bold">${data.count} run(s) • ${data.kpq} KPQ • ${mTimeHrs} hrs</span>
                         </div>
                         <div class="flex flex-col items-end">
                             <span class="font-bold font-mono ${data.netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${data.netProfit >= 0 ? '+' : ''}${formatShortMeso(data.netProfit)} mesos</span>
@@ -633,7 +645,7 @@
             } else {
                 const bestProfitSession = [...sessions].sort((a, b) => b.netProfit - a.netProfit)[0];
                 const bestExpSession = [...sessions].sort((a, b) => b.expGained - a.expGained)[0];
-                const longestSession = [...sessions].sort((a, b) => b.durationSeconds - a.durationSeconds)[0];
+                const bestKpqSession = [...sessions].sort((a, b) => (b.kpqCount || 0) - (a.kpqCount || 0))[0];
 
                 highlightsEl.innerHTML = `
                     <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
@@ -649,6 +661,17 @@
 
                     <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
                         <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-fuchsia-500/10 text-fuchsia-600 flex items-center justify-center font-bold"><i class="fa-solid fa-people-group"></i></div>
+                            <div>
+                                <div class="font-extrabold text-slate-900">Most KPQ Runs Session</div>
+                                <div class="text-[10px] theme-subtext font-bold">${bestKpqSession.mapName} (${bestKpqSession.timestamp})</div>
+                            </div>
+                        </div>
+                        <div class="font-extrabold font-mono text-fuchsia-500">${bestKpqSession.kpqCount || 0} Runs</div>
+                    </div>
+
+                    <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
+                        <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold"><i class="fa-solid fa-bolt"></i></div>
                             <div>
                                 <div class="font-extrabold text-slate-900">Most EXP Gained Session</div>
@@ -656,17 +679,6 @@
                             </div>
                         </div>
                         <div class="font-extrabold font-mono text-emerald-600">+${bestExpSession.expGained.toFixed(3)}%</div>
-                    </div>
-
-                    <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center font-bold"><i class="fa-solid fa-hourglass-half"></i></div>
-                            <div>
-                                <div class="font-extrabold text-slate-900">Longest Grinding Session</div>
-                                <div class="text-[10px] theme-subtext font-bold">${longestSession.mapName} (${longestSession.timestamp})</div>
-                            </div>
-                        </div>
-                        <div class="font-extrabold font-mono theme-accent-text">${formatSecondsToHHMMSS(longestSession.durationSeconds)}</div>
                     </div>
                 `;
             }
@@ -681,7 +693,7 @@
             document.getElementById('tableCountBadge').textContent = `${filteredSessions.length} Sessions`;
 
             if (filteredSessions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center theme-subtext font-bold italic">No matching sessions found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center theme-subtext font-bold italic">No matching sessions found.</td></tr>`;
                 return;
             }
 
@@ -691,9 +703,18 @@
                 tr.className = "hover:bg-slate-500/10 transition font-bold";
                 const isPositive = (s.netProfit || 0) >= 0;
                 const charDisplay = s.charName && s.charName !== 'Unnamed' ? `[${s.charName}] ` : '';
+                
+                const kpqRuns = s.kpqCount || 0;
+                const kpqSecs = s.kpqSeconds || 0;
+                const kpqMins = Math.floor(kpqSecs / 60);
+                const kpqRemSecs = kpqSecs % 60;
+                const kpqTimeStr = [kpqMins, kpqRemSecs].map(v => v < 10 ? "0" + v : v).join(":");
+                const kpqStatsDisplay = kpqRuns > 0 ? `<span class="text-fuchsia-500 font-bold">${kpqRuns} Runs</span> <span class="theme-subtext text-[10px]">(${kpqTimeStr})</span>` : '<span class="theme-subtext italic">None</span>';
+
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 theme-subtext text-[11px] font-bold">${s.timestamp}</td>
                     <td class="py-2.5 px-3 font-sans font-bold">${charDisplay}${s.mapName} <span class="text-xs theme-accent-text">Lv.${s.level || 1}</span></td>
+                    <td class="py-2.5 px-3 font-mono">${kpqStatsDisplay}</td>
                     <td class="py-2.5 px-3">${formatSecondsToHHMMSS(s.durationSeconds || 0)}</td>
                     <td class="py-2.5 px-3 theme-accent-text">+${(s.expGained || 0).toFixed(3)}%</td>
                     <td class="py-2.5 px-3 text-amber-600 font-extrabold">${formatShortMeso(s.grossMeso || 0)}</td>
