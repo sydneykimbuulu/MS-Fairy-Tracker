@@ -145,7 +145,6 @@
             --header-title-color: #facc15;
         }
 
-        /* Specialized contrast fix for Default Maple Light */
         body.theme-maple-light input,
         body.theme-maple-light select,
         body.theme-maple-light textarea {
@@ -220,34 +219,34 @@
             <div class="absolute -right-10 -top-10 w-40 h-40 bg-pink-400/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
                 <div class="flex items-center gap-3">
-                    <a href="grind.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition hover:scale-105" title="Back to Grind Tracker">
+                    <a href="grind.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition hover:scale-105 shrink-0" title="Back to Grind Tracker">
                         <i class="fa-solid fa-chevron-left text-xs"></i>
                         <i class="fa-solid fa-stopwatch"></i>
                     </a>
 
-                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl theme-accent-gradient flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl theme-accent-gradient flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shrink-0">
                         <i class="fa-solid font-bold fa-chart-pie"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <h1 class="header-main-title font-header text-2xl md:text-3xl font-bold tracking-wide drop-shadow-sm">
-                                Grind Session Analytics & Summary
+                                Analytics & Summary
                             </h1>
                             <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-pink-100/30 border border-pink-400/40 theme-accent-text">
                                 Dashboard
                             </span>
                         </div>
                         <p class="text-xs md:text-sm theme-subtext mt-0.5 font-bold">
-                            Aggregate history logs, track lifetime stats, and review deep dive insights
+                            Aggregate history logs, track lifetime stats, and review
                         </p>
                     </div>
                 </div>
 
-                <!-- Controls -->
-                <div class="flex items-center gap-2 flex-wrap">
-                    <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold">
+                <!-- Strictly Single-Row Layout with Uniform Heights -->
+                <div class="flex items-center gap-2 flex-nowrap overflow-x-auto py-1 shrink-0">
+                    <div class="flex items-center gap-1.5 ms-inner-box px-3 h-10 rounded-xl text-xs md:text-sm font-bold shrink-0">
                         <i class="fa-solid fa-palette theme-accent-text"></i>
                         <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
                             <option value="maple-light" class="bg-amber-50 text-pink-600">Default Maple Light</option>
@@ -259,11 +258,14 @@
                         </select>
                     </div>
 
-                    <label class="ms-button ms-inner-box px-3.5 py-2 rounded-lg text-xs md:text-sm font-bold cursor-pointer flex items-center gap-2">
+                    <button onclick="refreshFromGrind()" class="ms-button ms-inner-box px-3.5 h-10 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition whitespace-nowrap shrink-0" title="Refresh/Sync from Grind Tracker Storage">
+                        <i class="fa-solid fa-rotate"></i> Refresh from Grind
+                    </button>
+
+                    <label class="ms-button ms-inner-box px-3.5 h-10 rounded-xl text-xs md:text-sm font-bold cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0">
                         <i class="fa-solid fa-upload theme-accent-text"></i> Upload History JSON
                         <input type="file" id="bulkUploadInput" onchange="handleBulkUpload(event)" class="hidden" accept=".json" multiple>
                     </label>
-
                 </div>
             </div>
         </header>
@@ -432,9 +434,51 @@
                     }
                 }
                 renderAnalytics();
-                showToast("Successfully synced sessions from tracker!", "success");
             } catch(e) {
                 showToast("Could not load local session history", "error");
+            }
+        }
+
+        function refreshFromGrind() {
+            try {
+                const mainTrackerSaved = localStorage.getItem('maple_grind_tracker_state_v2');
+                if (!mainTrackerSaved) {
+                    return showToast("No grind tracker data found in local storage", "error");
+                }
+                const parsed = JSON.parse(mainTrackerSaved);
+                if (!parsed.history || !Array.isArray(parsed.history)) {
+                    return showToast("No session history found in grind tracker", "error");
+                }
+
+                let addedCount = 0;
+                let alreadyLoggedCount = 0;
+
+                parsed.history.forEach(item => {
+                    if (item && item.id) {
+                        const existingIndex = analyticsState.sessions.findIndex(s => s.id === item.id);
+                        if (existingIndex !== -1) {
+                            const existing = analyticsState.sessions[existingIndex];
+                            if (JSON.stringify(existing) === JSON.stringify(item)) {
+                                alreadyLoggedCount++;
+                            } else {
+                                analyticsState.sessions[existingIndex] = item;
+                                addedCount++;
+                            }
+                        } else {
+                            analyticsState.sessions.push(item);
+                            addedCount++;
+                        }
+                    }
+                });
+
+                renderAnalytics();
+                if (addedCount === 0 && alreadyLoggedCount > 0) {
+                    showToast("Sessions already logged / already added!", "info");
+                } else {
+                    showToast(`Synced ${addedCount} new/updated session(s) from grind tracker!`, "success");
+                }
+            } catch(e) {
+                showToast("Error syncing from grind tracker storage", "error");
             }
         }
 
@@ -442,27 +486,54 @@
             const files = event.target.files;
             if (!files || files.length === 0) return;
 
-            let loadedCount = 0;
+            let addedCount = 0;
+            let updatedCount = 0;
+            let alreadyLoggedCount = 0;
+
             Array.from(files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
                         const data = JSON.parse(e.target.result);
+                        
+                        let sessionsList = [];
                         if (Array.isArray(data)) {
-                            data.forEach(item => {
-                                if (item.id && !analyticsState.sessions.some(s => s.id === item.id)) {
-                                    analyticsState.sessions.push(item);
-                                    loadedCount++;
-                                }
-                            });
+                            sessionsList = data;
+                        } else if (data && Array.isArray(data.history)) {
+                            sessionsList = data.history;
                         } else if (data && data.id) {
-                            if (!analyticsState.sessions.some(s => s.id === data.id)) {
-                                analyticsState.sessions.push(data);
-                                loadedCount++;
-                            }
+                            sessionsList = [data];
                         }
+
+                        sessionsList.forEach(item => {
+                            if (item && item.id) {
+                                const index = analyticsState.sessions.findIndex(s => s.id === item.id);
+                                if (index !== -1) {
+                                    const existing = analyticsState.sessions[index];
+                                    if (JSON.stringify(existing) === JSON.stringify(item)) {
+                                        alreadyLoggedCount++;
+                                    } else {
+                                        analyticsState.sessions[index] = item;
+                                        updatedCount++;
+                                    }
+                                } else {
+                                    analyticsState.sessions.push(item);
+                                    addedCount++;
+                                }
+                            }
+                        });
+
                         renderAnalytics();
-                        showToast(`Successfully imported ${loadedCount} session(s)!`, "success");
+                        
+                        if (addedCount === 0 && updatedCount === 0 && alreadyLoggedCount > 0) {
+                            showToast("Sessions already logged / already added!", "info");
+                        } else {
+                            let msg = `Successfully imported ${addedCount} new session(s)!`;
+                            if (alreadyLoggedCount > 0) {
+                                msg += ` (${alreadyLoggedCount} entries were already logged)`;
+                            }
+                            showToast(msg, "success");
+                        }
                     } catch(err) {
                         showToast("Error parsing JSON file", "error");
                     }
@@ -612,7 +683,7 @@
                     <td class="py-2.5 px-3">${formatSecondsToHHMMSS(s.durationSeconds || 0)}</td>
                     <td class="py-2.5 px-3 theme-accent-text">+${(s.expGained || 0).toFixed(3)}%</td>
                     <td class="py-2.5 px-3 text-amber-600 font-extrabold">${formatShortMeso(s.grossMeso || 0)}</td>
-                    <td class="py-2.5 px-3 font-extrabold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}">${isPositive ? '+' : ''}${formatShortMesso ? formatShortMesso(s.netProfit || 0) : formatShortMeso(s.netProfit || 0)}</td>
+                    <td class="py-2.5 px-3 font-extrabold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}">${isPositive ? '+' : ''}${formatShortMeso(s.netProfit || 0)}</td>
                     <td class="py-2.5 px-3 font-extrabold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}">${isPositive ? '+' : ''}${formatShortMeso(s.netProfitPerMinute || 0)}/min</td>
                 `;
                 tbody.appendChild(tr);
