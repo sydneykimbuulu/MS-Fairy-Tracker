@@ -244,7 +244,7 @@
                     </div>
                 </div>
 
-                <!-- Strictly Single-Row Layout with Uniform Heights -->
+                <!-- Action Controls -->
                 <div class="flex items-center gap-2 flex-nowrap overflow-x-auto py-1 shrink-0">
                     <div class="flex items-center gap-1.5 ms-inner-box px-3 h-10 rounded-xl text-xs md:text-sm font-bold shrink-0">
                         <i class="fa-solid fa-palette theme-accent-text"></i>
@@ -262,8 +262,12 @@
                         <i class="fa-solid fa-rotate"></i> Refresh from Grind
                     </button>
 
-                    <label class="ms-button ms-inner-box px-3.5 h-10 rounded-xl text-xs md:text-sm font-bold cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0">
-                        <i class="fa-solid fa-upload theme-accent-text"></i> Upload History JSON
+                    <button onclick="exportAnalyticsJson()" class="ms-button ms-inner-box px-3.5 h-10 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition whitespace-nowrap shrink-0" title="Export Analytics to JSON File">
+                        <i class="fa-solid fa-download"></i> Export JSON
+                    </button>
+
+                    <label class="ms-button ms-inner-box px-3.5 h-10 rounded-xl text-xs md:text-sm font-bold cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0" title="Upload History JSON">
+                        <i class="fa-solid fa-upload theme-accent-text"></i> Upload JSON
                         <input type="file" id="bulkUploadInput" onchange="handleBulkUpload(event)" class="hidden" accept=".json" multiple>
                     </label>
                 </div>
@@ -342,7 +346,7 @@
                     </div>
                 </div>
                 <div class="pt-3 border-t border-amber-900/20 flex items-center justify-between text-xs theme-subtext font-bold">
-                    <span>Tip: Export history logs from your main tracker and upload here.</span>
+                    <span>Tip: Refresh from grind tracker or upload json logs.</span>
                     <button onclick="clearAllAnalytics();" class="text-rose-600 hover:underline font-bold flex items-center gap-1">
                         <i class="fa-solid fa-trash-can"></i> Clear Analytics Data
                     </button>
@@ -405,8 +409,10 @@
             currentTheme: 'maple-light'
         };
 
+        const STORAGE_KEY_ANALYTICS = 'maple_analytics_persisted_sessions_v1';
+
         window.onload = function() {
-            loadLocalHistory();
+            loadPersistedAnalytics();
             const savedTheme = localStorage.getItem('maple_analytics_theme') || 'maple-light';
             changeTheme(savedTheme);
         };
@@ -419,23 +425,27 @@
             localStorage.setItem('maple_analytics_theme', themeName);
         }
 
-        function loadLocalHistory() {
+        // Load static saved analytics storage instead of auto-overwriting from grind tracker on every load
+        function loadPersistedAnalytics() {
             try {
-                const mainTrackerSaved = localStorage.getItem('maple_grind_tracker_state_v2');
-                if (mainTrackerSaved) {
-                    const parsed = JSON.parse(mainTrackerSaved);
-                    if (parsed.history && Array.isArray(parsed.history)) {
-                        const existingIds = new Set(analyticsState.sessions.map(s => s.id));
-                        parsed.history.forEach(item => {
-                            if (!existingIds.has(item.id)) {
-                                analyticsState.sessions.push(item);
-                            }
-                        });
+                const saved = localStorage.getItem(STORAGE_KEY_ANALYTICS);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        analyticsState.sessions = parsed;
                     }
                 }
-                renderAnalytics();
             } catch(e) {
-                showToast("Could not load local session history", "error");
+                console.error(e);
+            }
+            renderAnalytics();
+        }
+
+        function savePersistedAnalytics() {
+            try {
+                localStorage.setItem(STORAGE_KEY_ANALYTICS, JSON.stringify(analyticsState.sessions));
+            } catch(e) {
+                showToast("Error saving analytics storage", "error");
             }
         }
 
@@ -451,18 +461,16 @@
                 }
 
                 let addedCount = 0;
-                let alreadyLoggedCount = 0;
+                let updatedCount = 0;
 
                 parsed.history.forEach(item => {
                     if (item && item.id) {
                         const existingIndex = analyticsState.sessions.findIndex(s => s.id === item.id);
                         if (existingIndex !== -1) {
                             const existing = analyticsState.sessions[existingIndex];
-                            if (JSON.stringify(existing) === JSON.stringify(item)) {
-                                alreadyLoggedCount++;
-                            } else {
+                            if (JSON.stringify(existing) !== JSON.stringify(item)) {
                                 analyticsState.sessions[existingIndex] = item;
-                                addedCount++;
+                                updatedCount++;
                             }
                         } else {
                             analyticsState.sessions.push(item);
@@ -471,14 +479,31 @@
                     }
                 });
 
+                savePersistedAnalytics();
                 renderAnalytics();
-                if (addedCount === 0 && alreadyLoggedCount > 0) {
-                    showToast("Sessions already logged / already added!", "info");
+
+                if (addedCount === 0 && updatedCount === 0) {
+                    showToast("Analytics are already up to date with grind tracker!", "info");
                 } else {
-                    showToast(`Synced ${addedCount} new/updated session(s) from grind tracker!`, "success");
+                    showToast(`Synced ${addedCount} new and ${updatedCount} updated session(s) from grind tracker!`, "success");
                 }
             } catch(e) {
                 showToast("Error syncing from grind tracker storage", "error");
+            }
+        }
+
+        function exportAnalyticsJson() {
+            try {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(analyticsState.sessions, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `maplestory_analytics_export_${new Date().toISOString().slice(0,10)}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                showToast("Analytics successfully exported to JSON!", "success");
+            } catch(e) {
+                showToast("Failed to export analytics", "error");
             }
         }
 
@@ -488,7 +513,6 @@
 
             let addedCount = 0;
             let updatedCount = 0;
-            let alreadyLoggedCount = 0;
 
             Array.from(files).forEach(file => {
                 const reader = new FileReader();
@@ -510,9 +534,7 @@
                                 const index = analyticsState.sessions.findIndex(s => s.id === item.id);
                                 if (index !== -1) {
                                     const existing = analyticsState.sessions[index];
-                                    if (JSON.stringify(existing) === JSON.stringify(item)) {
-                                        alreadyLoggedCount++;
-                                    } else {
+                                    if (JSON.stringify(existing) !== JSON.stringify(item)) {
                                         analyticsState.sessions[index] = item;
                                         updatedCount++;
                                     }
@@ -523,17 +545,9 @@
                             }
                         });
 
+                        savePersistedAnalytics();
                         renderAnalytics();
-                        
-                        if (addedCount === 0 && updatedCount === 0 && alreadyLoggedCount > 0) {
-                            showToast("Sessions already logged / already added!", "info");
-                        } else {
-                            let msg = `Successfully imported ${addedCount} new session(s)!`;
-                            if (alreadyLoggedCount > 0) {
-                                msg += ` (${alreadyLoggedCount} entries were already logged)`;
-                            }
-                            showToast(msg, "success");
-                        }
+                        showToast(`Successfully imported ${addedCount} new session(s) (${updatedCount} updated)!`, "success");
                     } catch(err) {
                         showToast("Error parsing JSON file", "error");
                     }
@@ -691,8 +705,9 @@
         }
 
         function clearAllAnalytics() {
-            if (confirm("Clear all loaded sessions in analytics dashboard?")) {
+            if (confirm("Clear all analytics data? This will reset your saved dashboard history.")) {
                 analyticsState.sessions = [];
+                localStorage.removeItem(STORAGE_KEY_ANALYTICS);
                 renderAnalytics();
                 showToast("Analytics data cleared", "info");
             }
