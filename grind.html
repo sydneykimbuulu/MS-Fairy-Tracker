@@ -466,6 +466,11 @@
                     </div>
 
                     <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
+                        <!-- 10s Test Button with slightly darker readable grey text -->
+                        <div class="absolute top-2 right-2 flex items-center gap-1">
+                            <button onclick="setTimerPreset(10/60, this)" class="preset-btn ms-button px-2 py-0.5 rounded text-[10px] font-mono font-semibold opacity-70 hover:opacity-100 transition interactive-btn text-slate-600 dark:text-slate-400 bg-slate-500/10 border border-slate-500/20" title="10s test timer">10s test</button>
+                        </div>
+
                         <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
                             00:00:00
                         </div>
@@ -476,11 +481,11 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-4 gap-2">
+                    <div class="grid grid-cols-4 gap-1.5">
                         <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
                         <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
-                        <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1 Hour</button>
-                        <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2 Hours</button>
+                        <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1h</button>
+                        <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2h</button>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2.5">
@@ -578,7 +583,7 @@
                             <label class="text-xs theme-subtext">Quick Input Mode:</label>
                             <select id="mesoInputMode" onchange="toggleMesoInputMode()" class="ms-inner-box rounded px-2 py-0.5 text-xs theme-accent-text font-bold">
                                 <option value="diff">Start & End Balance</option>
-                                <option value="direct">Direct Total Picked Up</option>
+                                <!-- <option value="direct">Direct Total Picked Up</option> -->
                             </select>
                         </div>
                     </div>
@@ -625,7 +630,7 @@
                             Total Cost: 0 Meso
                         </span>
                     </div>
-                    <p class="text-xs theme-subtext mb-3">Check active buffs/items or add custom costs used during session:</p>
+                    <p class="text-xs theme-subtext mb-3">Check active buffs/items or add custom costs used during session (click name to edit):</p>
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="consumablesList"></div>
                 </div>
                 <div class="pt-3 border-t border-slate-300/30">
@@ -651,7 +656,7 @@
                             Drops Value: 0 Meso
                         </span>
                     </div>
-                    <p class="text-xs theme-subtext mb-3">Track tradeable items dropped and set market values to add to revenue:</p>
+                    <p class="text-xs theme-subtext mb-3">Track tradeable items dropped and set market values to add to revenue (click name to edit):</p>
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="dropsList"></div>
                 </div>
                 <div class="pt-3 border-t border-slate-300/30">
@@ -680,9 +685,8 @@
                 <div class="flex items-center gap-3 text-xs flex-wrap">
                     <span class="theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="theme-accent-text font-mono">0</strong></span>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <!-- Vibrant Pop-out Analytics Button -->
-                        <a href="analytics.html" class="ms-button theme-accent-gradient text-white px-3.5 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-2 shadow-md hover:scale-105 transition interactive-btn" title="View Analytics Dashboard">
-                            <i class="fa-solid fa-chart-pie text-sm"></i> Analytics Dashboard
+                        <a href="analytics.html" class="ms-button theme-accent-gradient text-white px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-lg ring-2 ring-pink-400/40 hover:scale-110 transition interactive-btn" title="View Analytics Dashboard">
+                            <i class="fa-solid fa-chart-pie text-sm animate-pulse"></i> Analytics Dashboard
                         </a>
 
                         <button onclick="exportSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 theme-accent-text interactive-btn" title="Export Selected Sessions">
@@ -730,6 +734,25 @@
     </div>
 
     <!-- Modals & Footer -->
+    <div id="timerAlertModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden animate-fadeIn">
+        <div class="ms-glass rounded-3xl p-6 md:p-8 max-w-md w-full space-y-6 shadow-2xl relative border-4 border-sky-400 text-center overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-sky-500/30 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-indigo-500/30 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="space-y-2 relative z-10">
+                <div class="text-4xl animate-bounce">⏱️✨</div>
+                <h3 class="text-3xl font-black font-header theme-accent-text tracking-wide drop-shadow-sm">TARGET REACHED!</h3>
+                <p id="timerAlertMessage" class="text-xs md:text-sm theme-subtext font-semibold">Your set session target time has been completed. Timer has been paused.</p>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 relative z-10 pt-2">
+                <button onclick="document.getElementById('timerAlertModal').classList.add('hidden')" class="ms-button theme-accent-gradient text-white px-7 py-2.5 rounded-xl text-sm font-extrabold shadow-lg hover:scale-105 transition flex items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Got it! 👍
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="levelUpModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden animate-fadeIn">
         <div class="ms-glass rounded-3xl p-6 md:p-8 max-w-md w-full space-y-6 shadow-2xl relative border-4 border-pink-400 text-center overflow-hidden">
             <div class="absolute -top-12 -right-12 w-32 h-32 bg-pink-500/30 rounded-full blur-2xl pointer-events-none"></div>
@@ -773,7 +796,7 @@
                 </div>
                 <label class="ms-inner-box p-3 rounded-xl flex items-center justify-between cursor-pointer select-none">
                     <div class="flex items-center gap-2 text-xs font-semibold theme-subtext">
-                        <i class="fa-solid fa-arrow-up text-amber-400"></i> Did you level up during this session?
+                        <i class="fa-solid fa-arrow-up text-amber-400"></i> Did you level up during this session?<br>(adds 1 lvl to your sheet)
                     </div>
                     <input type="checkbox" id="finishModalLevelUpCheck" class="rounded border-slate-400 theme-accent-text w-4 h-4 cursor-pointer focus:ring-0">
                 </label>
@@ -788,22 +811,23 @@
         </div>
     </div>
 
-    <div id="sessionModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="ms-glass rounded-2xl p-6 md:p-8 max-w-2xl w-full space-y-5 shadow-2xl relative border-2 border-pink-500/50">
-            <div class="flex items-center justify-between border-b border-slate-300/30 pb-4">
-                <h3 class="text-xl font-bold font-header flex items-center gap-2.5 theme-accent-text">
-                    <i class="fa-solid fa-file-invoice text-xl"></i> Session Breakdown Details
+    <!-- Session Breakdown Details Modal -->
+    <div id="sessionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="ms-glass rounded-3xl p-6 md:p-10 max-w-3xl w-full space-y-6 shadow-2xl relative border-4 border-pink-500/50">
+            <div class="flex items-center justify-between border-b-2 border-slate-300/30 pb-4">
+                <h3 class="text-2xl md:text-3xl font-black font-header flex items-center gap-3 theme-accent-text">
+                    <i class="fa-solid fa-file-invoice text-2xl"></i> Session Breakdown Details
                 </h3>
-                <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-2.5 py-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-3 py-1 text-xl rounded-xl ms-inner-box"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div id="modalContent" class="space-y-4 text-sm font-mono max-h-[65vh] overflow-y-auto pr-2"></div>
+            <div id="modalContent" class="space-y-5 text-sm md:text-base font-mono max-h-[70vh] overflow-y-auto pr-3"></div>
 
-            <div class="pt-3 border-t border-slate-300/30 flex items-center justify-between">
-                <button id="modalDownloadBtn" class="ms-button ms-inner-box px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 theme-accent-text hover:opacity-80 transition interactive-btn">
+            <div class="pt-4 border-t-2 border-slate-300/30 flex items-center justify-between">
+                <button id="modalDownloadBtn" class="ms-button ms-inner-box px-5 py-3 rounded-2xl text-sm md:text-base font-bold flex items-center gap-2.5 theme-accent-text hover:opacity-80 transition interactive-btn shadow-md">
                     <i class="fa-solid fa-download"></i> Download Breakdown (JSON)
                 </button>
-                <button onclick="closeSessionModal()" class="ms-button theme-accent-bg text-white px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition interactive-btn">Close</button>
+                <button onclick="closeSessionModal()" class="ms-button theme-accent-bg text-white px-7 py-3 rounded-2xl text-sm md:text-base font-extrabold transition interactive-btn shadow-lg">Close Window</button>
             </div>
         </div>
     </div>
@@ -813,9 +837,10 @@
         <div>Happy Grinding! ♥</div>
     </footer>
 
-    <div id="toast" class="fixed bottom-5 right-5 ms-glass text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none flex items-center gap-2 z-50">
-        <i class="fa-solid fa-circle-info theme-accent-text" id="toastIcon"></i>
-        <span id="toastMessage">Notification message</span>
+    <!-- Toast Notifications -->
+    <div id="toast" class="fixed bottom-6 right-6 ms-glass text-sm md:text-base font-bold px-6 py-4 rounded-2xl shadow-2xl border-2 border-pink-500/50 transition-all duration-300 transform translate-y-28 opacity-0 pointer-events-none flex items-center gap-3 z-50">
+        <i class="fa-solid fa-circle-info text-lg theme-accent-text" id="toastIcon"></i>
+        <span id="toastMessage" class="tracking-wide">Notification message</span>
     </div>
 
     <script>
@@ -909,7 +934,7 @@
             if (state.targetSeconds > 0) {
                 const presetMins = state.targetSeconds / 60;
                 document.querySelectorAll('.preset-btn').forEach(btn => {
-                    if (btn.textContent.includes(presetMins + 'm') || (presetMins === 60 && btn.textContent.includes('1 Hour')) || (presetMins === 120 && btn.textContent.includes('2 Hours'))) {
+                    if (btn.textContent.includes(presetMins + 'm') || (presetMins === 60 && btn.textContent.includes('1h')) || (presetMins === 120 && btn.textContent.includes('2h'))) {
                         highlightPresetButton(btn);
                     }
                 });
@@ -1150,10 +1175,35 @@
             saveCurrentState();
         }
 
+        function playAlertChime() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.6);
+            } catch(e) {}
+        }
+
         function startTimerLoop() {
             clearInterval(state.timerInterval);
             state.timerInterval = setInterval(() => {
                 state.elapsedSeconds = Math.floor((Date.now() - state.startTime) / 1000);
+                
+                if (state.targetSeconds > 0 && state.elapsedSeconds >= state.targetSeconds && state.timerRunning) {
+                    pauseTimer();
+                    playAlertChime();
+                    showToast("⏰ Target Time Reached!", "success");
+                    document.getElementById('timerAlertModal').classList.remove('hidden');
+                }
+
                 updateTimerUI();
                 updateCalculations();
             }, 1000);
@@ -1165,8 +1215,10 @@
             state.targetSeconds = 0;
             document.getElementById('timerTargetText').textContent = "Open-ended";
             document.querySelectorAll('.preset-btn').forEach(b => {
-                b.classList.remove('theme-accent-bg', 'text-white');
-                b.classList.add('ms-inner-box');
+                if (!b.textContent.includes('test')) {
+                    b.classList.remove('theme-accent-bg', 'text-white');
+                    b.classList.add('ms-inner-box');
+                }
             });
             updateTimerUI();
             updateCalculations();
@@ -1177,20 +1229,25 @@
 
         function highlightPresetButton(btnEl) {
             document.querySelectorAll('.preset-btn').forEach(b => {
-                b.classList.remove('theme-accent-bg', 'text-white');
-                b.classList.add('ms-inner-box');
+                if (!b.textContent.includes('test')) {
+                    b.classList.remove('theme-accent-bg', 'text-white');
+                    b.classList.add('ms-inner-box');
+                }
             });
-            btnEl.classList.remove('ms-inner-box');
-            btnEl.classList.add('theme-accent-bg', 'text-white');
+            if (!btnEl.textContent.includes('test')) {
+                btnEl.classList.remove('ms-inner-box');
+                btnEl.classList.add('theme-accent-bg', 'text-white');
+            }
         }
 
         function setTimerPreset(minutes, btnEl) {
-            state.targetSeconds = minutes * 60;
-            document.getElementById('timerTargetText').textContent = minutes >= 60 ? (minutes / 60) + "h" : minutes + "m";
+            state.targetSeconds = Math.round(minutes * 60);
+            const displayLabel = minutes < 1 ? Math.round(minutes * 60) + "s" : (minutes >= 60 ? (minutes / 60) + "h" : minutes + "m");
+            document.getElementById('timerTargetText').textContent = displayLabel;
             highlightPresetButton(btnEl);
             animateClick(btnEl);
             updateTimerUI();
-            showToast(`Timer target set to ${minutes >= 60 ? (minutes/60) + ' Hour(s)' : minutes + ' mins'}`, "info");
+            showToast(`Timer target set to ${displayLabel}`, "info");
             saveCurrentState();
         }
 
@@ -1557,11 +1614,12 @@
             listEl.innerHTML = '';
             state.consumables.forEach((item, index) => {
                 const row = document.createElement('div');
-                row.className = `flex items-center justify-between p-2 rounded-lg border transition ${item.active ? 'ms-inner-box' : 'opacity-60 ms-card'}`;
+                row.className = `flex items-center justify-between p-2.5 rounded-lg border transition ${item.active ? 'ms-inner-box' : 'opacity-60 ms-card'}`;
                 row.innerHTML = `
-                    <div class="flex items-center gap-2 max-w-[60%]">
+                    <div class="flex items-center gap-2 max-w-[55%]">
                         <input type="checkbox" ${item.active ? 'checked' : ''} onchange="toggleConsumable(${index})" class="rounded border-slate-300 theme-accent-text focus:ring-0 cursor-pointer">
-                        <span class="text-xs font-medium truncate" title="${item.name}">${item.name}</span>
+                        <span id="consumableNameText_${index}" class="text-xs font-semibold truncate cursor-pointer hover:theme-accent-text" onclick="toggleConsumableInlineEdit(${index})" title="Click to edit name">${item.name}</span>
+                        <input type="text" id="consumableNameInput_${index}" value="${item.name}" class="hidden w-full ms-inner-box rounded px-1.5 py-0.5 text-xs font-bold theme-accent-text focus:outline-none" onkeydown="handleConsumableEditKey(event, ${index})" onblur="saveConsumableInlineEdit(${index})">
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="flex items-center gap-1 ms-inner-box px-1.5 py-0.5 rounded">
@@ -1574,6 +1632,43 @@
                 `;
                 listEl.appendChild(row);
             });
+        }
+
+        function toggleConsumableInlineEdit(index) {
+            const textSpan = document.getElementById(`consumableNameText_${index}`);
+            const inputField = document.getElementById(`consumableNameInput_${index}`);
+            if (inputField.classList.contains('hidden')) {
+                textSpan.classList.add('hidden');
+                inputField.classList.remove('hidden');
+                inputField.focus();
+                inputField.select();
+            } else {
+                saveConsumableInlineEdit(index);
+            }
+        }
+
+        function handleConsumableEditKey(event, index) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveConsumableInlineEdit(index);
+            } else if (event.key === 'Escape') {
+                document.getElementById(`consumableNameInput_${index}`).value = state.consumables[index].name;
+                renderConsumables();
+            }
+        }
+
+        function saveConsumableInlineEdit(index) {
+            const inputField = document.getElementById(`consumableNameInput_${index}`);
+            if (!inputField || inputField.classList.contains('hidden')) return;
+            const newName = inputField.value.trim();
+            if (newName) {
+                state.consumables[index].name = newName;
+                renderConsumables();
+                showToast("Consumable name updated", "success");
+                saveCurrentState();
+            } else {
+                renderConsumables();
+            }
         }
 
         function toggleConsumable(index) { state.consumables[index].active = !state.consumables[index].active; renderConsumables(); updateCalculations(); saveCurrentState(); }
@@ -1597,11 +1692,12 @@
             listEl.innerHTML = '';
             state.drops.forEach((item, index) => {
                 const row = document.createElement('div');
-                row.className = "flex items-center justify-between p-2 rounded-lg ms-inner-box transition";
+                row.className = "flex items-center justify-between p-2.5 rounded-lg ms-inner-box transition";
                 row.innerHTML = `
-                    <div class="flex items-center gap-2 max-w-[55%]">
+                    <div class="flex items-center gap-2 max-w-[50%]">
                         <i class="fa-solid fa-angles-right text-[10px] theme-accent-text"></i>
-                        <span class="text-xs font-medium truncate" title="${item.name}">${item.name}</span>
+                        <span id="dropNameText_${index}" class="text-xs font-semibold truncate cursor-pointer hover:theme-accent-text" onclick="toggleDropInlineEdit(${index})" title="Click to edit name">${item.name}</span>
+                        <input type="text" id="dropNameInput_${index}" value="${item.name}" class="hidden w-full ms-inner-box rounded px-1.5 py-0.5 text-xs font-bold theme-accent-text focus:outline-none" onkeydown="handleDropEditKey(event, ${index})" onblur="saveDropInlineEdit(${index})">
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="flex items-center gap-1 ms-card px-1.5 py-0.5 rounded">
@@ -1614,6 +1710,43 @@
                 `;
                 listEl.appendChild(row);
             });
+        }
+
+        function toggleDropInlineEdit(index) {
+            const textSpan = document.getElementById(`dropNameText_${index}`);
+            const inputField = document.getElementById(`dropNameInput_${index}`);
+            if (inputField.classList.contains('hidden')) {
+                textSpan.classList.add('hidden');
+                inputField.classList.remove('hidden');
+                inputField.focus();
+                inputField.select();
+            } else {
+                saveDropInlineEdit(index);
+            }
+        }
+
+        function handleDropEditKey(event, index) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveDropInlineEdit(index);
+            } else if (event.key === 'Escape') {
+                document.getElementById(`dropNameInput_${index}`).value = state.drops[index].name;
+                renderDrops();
+            }
+        }
+
+        function saveDropInlineEdit(index) {
+            const inputField = document.getElementById(`dropNameInput_${index}`);
+            if (!inputField || inputField.classList.contains('hidden')) return;
+            const newName = inputField.value.trim();
+            if (newName) {
+                state.drops[index].name = newName;
+                renderDrops();
+                showToast("Drop name updated", "success");
+                saveCurrentState();
+            } else {
+                renderDrops();
+            }
         }
 
         function updateDropQty(index, val) { state.drops[index].qty = Math.max(0, parseInt(val) || 0); renderDrops(); updateCalculations(); saveCurrentState(); }
@@ -1840,17 +1973,17 @@
             const downloadBtn = document.getElementById('modalDownloadBtn');
             const isPositive = session.netProfit >= 0;
 
-            let breaksHtml = '<div class="theme-subtext font-semibold italic text-xs">No breaks recorded for this session.</div>';
+            let breaksHtml = '<div class="theme-subtext font-semibold italic text-sm">No breaks recorded for this session.</div>';
             if (session.breaksSnapshot && session.breaksSnapshot.length > 0) {
-                breaksHtml = '<div class="space-y-1.5 max-h-28 overflow-y-auto pr-1">';
+                breaksHtml = '<div class="space-y-2 max-h-36 overflow-y-auto pr-1">';
                 session.breaksSnapshot.forEach(b => {
                     const bMins = Math.floor(b.durationSeconds / 60);
                     const bSecs = b.durationSeconds % 60;
                     const bDur = bMins > 0 ? `${bMins}m ${bSecs}s` : `${bSecs}s`;
                     const dateDisplay = b.dateStr ? `${b.dateStr} ` : '';
                     breaksHtml += `
-                        <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
-                            <span class="font-semibold text-slate-800 dark:text-slate-100"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-[11px]">(${dateDisplay}(${b.startTime} - ${b.endTime}))</span></span>
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-sm md:text-base">
+                            <span class="font-semibold text-current"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-xs">(${dateDisplay}(${b.startTime} - ${b.endTime}))</span></span>
                             <span class="font-bold theme-accent-text font-mono">(${bDur})</span>
                         </div>
                     `;
@@ -1858,17 +1991,17 @@
                 breaksHtml += '</div>';
             }
 
-            let consumablesHtml = '<div class="theme-subtext font-semibold italic text-xs">No active consumables/expenses recorded.</div>';
+            let consumablesHtml = '<div class="theme-subtext font-semibold italic text-sm">No active consumables/expenses recorded.</div>';
             if (session.consumablesSnapshot && session.consumablesSnapshot.length > 0) {
-                consumablesHtml = '<div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">';
+                consumablesHtml = '<div class="space-y-2 max-h-40 overflow-y-auto pr-1">';
                 session.consumablesSnapshot.forEach(c => {
                     const unitPriceFormatted = formatNumberWithCommas(c.unitCost || 0);
                     const totalCostFormatted = formatNumberWithCommas(c.totalCost || (c.unitCost * c.qty) || 0);
                     consumablesHtml += `
-                        <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-sm md:text-base">
                             <div class="flex flex-col truncate max-w-[65%]">
-                                <span class="font-bold text-slate-800 dark:text-slate-100 truncate"><i class="fa-solid fa-flask text-rose-500 text-xs mr-1"></i> ${c.name}</span>
-                                <span class="text-[10px] theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
+                                <span class="font-bold text-current truncate"><i class="fa-solid fa-flask text-rose-500 mr-1.5"></i> ${c.name}</span>
+                                <span class="text-xs theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-rose-500 font-mono text-right">-${totalCostFormatted} mesos</span>
                         </div>
@@ -1877,17 +2010,17 @@
                 consumablesHtml += '</div>';
             }
 
-            let dropsHtml = '<div class="theme-subtext font-semibold italic text-xs">No valuable drops recorded.</div>';
+            let dropsHtml = '<div class="theme-subtext font-semibold italic text-sm">No valuable drops recorded.</div>';
             if (session.dropsSnapshot && session.dropsSnapshot.length > 0) {
-                dropsHtml = '<div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">';
+                dropsHtml = '<div class="space-y-2 max-h-40 overflow-y-auto pr-1">';
                 session.dropsSnapshot.forEach(d => {
                     const unitValueFormatted = formatNumberWithCommas(d.unitValue || 0);
                     const totalValFormatted = formatNumberWithCommas(d.totalValue || (d.unitValue * d.qty) || 0);
                     dropsHtml += `
-                        <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-sm md:text-base">
                             <div class="flex flex-col truncate max-w-[65%]">
-                                <span class="font-bold text-slate-800 dark:text-slate-100 truncate"><i class="fa-solid fa-gem text-purple-500 text-xs mr-1"></i> ${d.name}</span>
-                                <span class="text-[10px] theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
+                                <span class="font-bold text-current truncate"><i class="fa-solid fa-gem text-purple-500 mr-1.5"></i> ${d.name}</span>
+                                <span class="text-xs theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-purple-500 font-mono text-right">+${totalValFormatted} mesos</span>
                         </div>
@@ -1897,32 +2030,32 @@
             }
 
             modalContent.innerHTML = `
-                <div class="ms-inner-box p-4 rounded-xl space-y-2.5 text-xs md:text-sm">
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                <div class="ms-inner-box p-5 rounded-2xl space-y-3 text-sm md:text-base">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                         <span class="theme-subtext font-bold">Date & Time:</span>
                         <span class="font-bold theme-accent-text">${session.timestamp}</span>
                     </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                         <span class="theme-subtext font-bold">Character IGN:</span>
                         <span class="font-bold theme-accent-text">${session.charName || 'Unnamed'}</span>
                     </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                         <span class="theme-subtext font-bold">Map & Level:</span>
                         <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
                     </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                         <span class="theme-subtext font-bold">Duration:</span>
                         <span class="font-bold theme-accent-text">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
                     </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                         <span class="theme-subtext font-bold">EXP Gained:</span>
                         <span class="font-bold text-emerald-500">+${session.expGained.toFixed(3)}%</span>
                     </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                         <span class="theme-subtext font-bold">Gross Meso Looted:</span>
                         <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)} mesos</span>
                     </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2">
+                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                         <span class="theme-subtext font-bold">Net Profit:</span>
                         <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</span>
                     </div>
@@ -1932,23 +2065,23 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                    <div class="space-y-1.5">
-                        <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                    <div class="space-y-2">
+                        <div class="text-base font-extrabold theme-subtext flex items-center gap-2">
                             <i class="fa-solid fa-flask text-rose-500"></i> Buff Expenses Breakdown:
                         </div>
                         ${consumablesHtml}
                     </div>
-                    <div class="space-y-1.5">
-                        <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                    <div class="space-y-2">
+                        <div class="text-base font-extrabold theme-subtext flex items-center gap-2">
                             <i class="fa-solid fa-gem text-purple-500"></i> Valuable Drops Revenue:
                         </div>
                         ${dropsHtml}
                     </div>
                 </div>
 
-                <div class="space-y-1.5 pt-1">
-                    <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                <div class="space-y-2 pt-2">
+                    <div class="text-base font-extrabold theme-subtext flex items-center gap-2">
                         <i class="fa-solid fa-mug-hot theme-accent-text"></i> Breaks Breakdown:
                     </div>
                     ${breaksHtml}
@@ -2100,9 +2233,9 @@
         function showToast(msg, type = "info") {
             const toast = document.getElementById('toast');
             document.getElementById('toastMessage').textContent = msg;
-            document.getElementById('toastIcon').className = type === "success" ? "fa-solid fa-circle-check text-emerald-500" : (type === "error" ? "fa-solid fa-triangle-exclamation text-rose-500" : "fa-solid fa-circle-info theme-accent-text");
-            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'); }, 3000);
+            document.getElementById('toastIcon').className = type === "success" ? "fa-solid fa-circle-check text-lg text-emerald-500" : (type === "error" ? "fa-solid fa-triangle-exclamation text-lg text-rose-500" : "fa-solid fa-circle-info text-lg theme-accent-text");
+            toast.classList.remove('translate-y-28', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => { toast.classList.add('translate-y-28', 'opacity-0', 'pointer-events-none'); }, 3500);
         }
     </script>
 </body>
