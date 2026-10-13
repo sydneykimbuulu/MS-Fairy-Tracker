@@ -150,13 +150,11 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Dynamic Theme Accent Mapping for Dark Theme */
         body.theme-dark .theme-accent-text { color: var(--accent-primary) !important; }
         body.theme-dark .theme-accent-bg { background-color: var(--accent-primary) !important; }
         body.theme-dark .theme-accent-border { border-color: var(--accent-primary) !important; }
         body.theme-dark .theme-accent-gradient { background-image: linear-gradient(to bottom right, var(--accent-primary), var(--accent-secondary)) !important; }
 
-        /* Fallbacks for non-dark themes to retain pink */
         body:not(.theme-dark) .theme-accent-text { color: #ec4899 !important; }
         body:not(.theme-dark) .theme-accent-bg { background-color: #ec4899 !important; }
         body:not(.theme-dark) .theme-accent-border { border-color: #ec4899 !important; }
@@ -185,12 +183,26 @@
         }
 
         .ms-button {
-            transition: all 0.15s ease-in-out;
+            transition: all 0.12s ease-in-out;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
-        .ms-button:active {
-            transform: translateY(1px);
+        .ms-button:active, .interactive-btn:active {
+            transform: scale(0.95);
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+            filter: brightness(0.9);
+        }
+        
+        .interactive-btn {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes btnClickPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.94); filter: brightness(1.2); }
+            100% { transform: scale(1); }
+        }
+        .btn-clicked {
+            animation: btnClickPulse 0.2s ease-in-out;
         }
         
         .theme-subtext { color: var(--subtext); }
@@ -213,7 +225,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
                 <!-- Left Side: Back Button + Title -->
                 <div class="flex items-center gap-3">
-                    <a href="index.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition hover:scale-105" title="Back to Main Hub">
+                    <a href="index.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition hover:scale-105 interactive-btn" onclick="animateClick(this)" title="Back to Main Hub">
                         <i class="fa-solid fa-chevron-left text-xs"></i>
                         <i class="fa-solid fa-house"></i>
                     </a>
@@ -250,14 +262,14 @@
                         </select>
                     </div>
 
-                    <button onclick="exportData()" class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1.5">
+                    <button onclick="exportData(); animateClick(this)" class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1.5 interactive-btn">
                         <i class="fa-solid fa-download theme-accent-text"></i> Export
                     </button>
-                    <label class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold cursor-pointer flex items-center gap-1.5">
+                    <label class="ms-button ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold cursor-pointer flex items-center gap-1.5 interactive-btn">
                         <i class="fa-solid fa-upload theme-accent-text"></i> Import
                         <input type="file" id="importFileInput" onchange="importData(event)" class="hidden" accept=".json">
                     </label>
-                    <button onclick="resetCurrentSessionData()" class="ms-button ms-inner-box px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 text-rose-500 hover:text-rose-600">
+                    <button onclick="resetCurrentSessionData(); animateClick(this)" class="ms-button ms-inner-box px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-2 text-rose-500 hover:text-rose-600 interactive-btn">
                         <i class="fa-solid fa-rotate-left"></i> Reset Session
                     </button>
                 </div>
@@ -266,12 +278,15 @@
 
         <!-- Banner Alert / Quick Info Row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="ms-card rounded-xl p-4 flex flex-col justify-between shadow-md">
-                <div class="flex items-center justify-between mb-2">
+            <div class="ms-card rounded-xl p-4 flex flex-col justify-start space-y-3 shadow-md">
+                <div class="flex items-center justify-between">
                     <label class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
                         <i class="fa-solid fa-map-location-dot theme-accent-text"></i> Grind Location
                     </label>
-                    <span id="levelDisplayTag" class="text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">Lv. 1</span>
+                    <div class="flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">
+                        <span class="theme-subtext">Lv.</span>
+                        <input type="number" id="charLevelInput" placeholder="1" min="1" max="100" class="w-10 bg-transparent text-center focus:outline-none theme-accent-text font-bold" oninput="updateCalculations(); saveCurrentState();">
+                    </div>
                 </div>
                 <div class="space-y-2">
                     <select id="mapLocationSelect" onchange="handleLocationSelectChange(this)" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none theme-accent-border font-medium transition cursor-pointer">
@@ -286,12 +301,11 @@
                         </optgroup>
                     </select>
 
-                    <input type="text" id="mapNameInput" placeholder="e.g. Sleepy Wood : Evil Eyes" class="hidden w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none theme-accent-border font-medium transition mt-1" oninput="saveCurrentState()">
-                    <div class="flex gap-2">
-                        <div class="w-1/2">
-                            <label class="text-[10px] theme-subtext font-semibold block mb-0.5">CHARACTER LEVEL (MAX 100)</label>
-                            <input type="number" id="charLevelInput" value="1" min="1" max="100" class="w-full ms-inner-box rounded-lg px-2.5 py-1 text-xs font-mono focus:outline-none theme-accent-border" oninput="updateCalculations(); saveCurrentState();">
-                        </div>
+                    <div id="customMapContainer" class="hidden flex items-center gap-2">
+                        <input type="text" id="mapNameInput" placeholder="e.g. Sleepy Wood : Evil Eyes" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none theme-accent-border font-medium transition" oninput="saveCurrentState()">
+                        <button id="mapLockBtn" onclick="toggleMapLock(); animateClick(this)" class="ms-button theme-accent-bg text-white px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1">
+                            <i class="fa-solid fa-lock" id="mapLockIcon"></i> <span id="mapLockLabel">Set</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -342,55 +356,57 @@
 
         <!-- Middle Row: Main Session Controls & Trackers -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-5 ms-card rounded-xl p-6 flex flex-col justify-between space-y-6 shadow-xl">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold font-header flex items-center gap-2">
-                            <i class="fa-solid fa-stopwatch theme-accent-text"></i> Session Timer
-                        </h2>
-                        <div class="flex items-center gap-2">
-                            <span id="timerStatusDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-                            <span id="timerStatusText" class="text-xs font-mono uppercase theme-subtext font-bold">Stopped</span>
-                        </div>
-                    </div>
-
-                    <div class="ms-inner-box rounded-2xl p-6 text-center relative overflow-hidden group">
-                        <div class="absolute -right-10 -bottom-10 opacity-5 text-9xl font-black select-none pointer-events-none">
-                            <i class="fa-solid fa-clock"></i>
-                        </div>
-                        <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-wider theme-accent-text drop-shadow-sm">
-                            00:00:00
-                        </div>
-                        <div class="text-xs theme-subtext font-mono mt-2 flex justify-center gap-4">
-                            <span>Target: <strong class="text-current">Open-ended</strong></span>
-                            <span>|</span>
-                            <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
-                        </div>
-                    </div>
-
-                    <div class="mt-4">
-                        <label class="text-[10px] font-bold uppercase tracking-wider theme-subtext block mb-2">Timer Presets</label>
-                        <div class="grid grid-cols-4 gap-2">
-                            <button onclick="setTimerPreset(15)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition">15m</button>
-                            <button onclick="setTimerPreset(30)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition">30m</button>
-                            <button onclick="setTimerPreset(60)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition">1 Hour</button>
-                            <button onclick="setTimerPreset(120)" class="ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition">2 Hours</button>
-                        </div>
+            <div class="lg:col-span-5 ms-card rounded-xl p-5 flex flex-col justify-start items-center text-center space-y-3.5 shadow-xl">
+                <!-- Top Header Bar -->
+                <div class="flex items-center justify-between w-full border-b border-slate-300/20 pb-2.5">
+                    <h2 class="text-lg font-bold font-header flex items-center gap-2">
+                        <i class="fa-solid fa-stopwatch theme-accent-text"></i> Session Timer
+                    </h2>
+                    <div class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
+                        <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                        <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
                     </div>
                 </div>
 
-                <div class="space-y-3">
-                    <div class="grid grid-cols-2 gap-3">
-                        <button id="startPauseBtn" onclick="toggleTimer()" class="w-full py-3 px-4 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-90 text-white transition shadow-lg flex items-center justify-center gap-2">
+                <!-- Clock Display Container -->
+                <div class="ms-inner-box rounded-xl py-4 px-3 text-center relative overflow-hidden group w-full">
+                    <div class="absolute -right-8 -bottom-8 opacity-5 text-8xl font-black select-none pointer-events-none">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div id="timerDisplay" class="text-5xl sm:text-6xl md:text-7xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
+                        00:00:00
+                    </div>
+                    <div class="text-xs theme-subtext font-mono mt-0.5 flex justify-center gap-3 font-semibold">
+                        <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
+                        <span>|</span>
+                        <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+                    </div>
+                </div>
+
+                <!-- Timer Presets Row -->
+                <div class="w-full">
+                    <label class="text-[10px] font-bold uppercase tracking-wider theme-subtext block mb-1 text-left">Timer Presets</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
+                        <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
+                        <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1 Hour</button>
+                        <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-1.5 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2 Hours</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Row -->
+                <div class="space-y-2 w-full pt-0.5">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-90 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
                             <i class="fa-solid fa-play" id="startPauseIcon"></i>
                             <span id="startPauseLabel">Start Session</span>
                         </button>
-                        <button onclick="stopAndSaveSession()" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-lg flex items-center justify-center gap-2">
+                        <button onclick="stopAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
                             <i class="fa-solid fa-box-archive"></i>
                             <span>Finish & Save</span>
                         </button>
                     </div>
-                    <button onclick="resetTimerOnly()" class="w-full py-2 px-3 rounded-lg text-xs font-semibold theme-subtext hover:opacity-80 transition flex items-center justify-center gap-1">
+                    <button onclick="resetTimerOnly(); animateClick(this)" class="w-full py-1 px-2 rounded-lg text-xs font-semibold theme-subtext hover:opacity-80 transition flex items-center justify-center gap-1 interactive-btn">
                         <i class="fa-solid fa-arrows-rotate"></i> Reset Timer Clock
                     </button>
                 </div>
@@ -400,7 +416,7 @@
                 <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
                         <h3 class="text-lg font-bold font-header flex items-center gap-2">
-                            <i class="fa-solid fa-bolt theme-accent-text"></i> Experience (EXP) Tracker
+                            <i class="fa-solid fa-bolt theme-accent-text"></i> Experience (EXP) Tracker (Max 100%)
                         </h3>
                         <span id="expInputModeHint" class="text-xs theme-subtext font-semibold text-amber-500">Ready to enter starting EXP</span>
                     </div>
@@ -491,7 +507,7 @@
                         <input type="text" id="customConsumableName" placeholder="e.g. Exp Coupon 3x" class="col-span-5 ms-inner-box rounded px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border">
                         <input type="number" id="customConsumableQty" placeholder="Qty" min="1" class="col-span-2 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border">
                         <input type="text" id="customConsumableCost" placeholder="Unit Cost" class="col-span-3 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border" oninput="formatMesoInput(this)">
-                        <button onclick="addCustomConsumable()" class="col-span-2 ms-button theme-accent-bg text-white rounded text-xs font-bold hover:opacity-80 transition flex items-center justify-center">
+                        <button onclick="addCustomConsumable(); animateClick(this)" class="col-span-2 ms-button theme-accent-bg text-white rounded text-xs font-bold hover:opacity-80 transition flex items-center justify-center interactive-btn">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
@@ -517,7 +533,7 @@
                         <input type="text" id="customDropName" placeholder="e.g. Familiar Card" class="col-span-5 ms-inner-box rounded px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border">
                         <input type="number" id="customDropQty" placeholder="Qty" min="1" class="col-span-2 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border">
                         <input type="text" id="customDropValue" placeholder="Vendor Price" class="col-span-3 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border" oninput="formatMesoInput(this)">
-                        <button onclick="addCustomDrop()" class="col-span-2 ms-button theme-accent-bg text-white rounded text-xs font-bold hover:opacity-80 transition flex items-center justify-center">
+                        <button onclick="addCustomDrop(); animateClick(this)" class="col-span-2 ms-button theme-accent-bg text-white rounded text-xs font-bold hover:opacity-80 transition flex items-center justify-center interactive-btn">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
@@ -536,7 +552,7 @@
                 </div>
                 <div class="flex items-center gap-3 text-xs">
                     <span class="theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="theme-accent-text font-mono">0</strong></span>
-                    <button onclick="clearAllHistory()" class="text-rose-500 hover:underline text-xs flex items-center gap-1 font-semibold">
+                    <button onclick="clearAllHistory(); animateClick(this)" class="text-rose-500 hover:underline text-xs flex items-center gap-1 font-semibold interactive-btn">
                         <i class="fa-solid fa-trash-can"></i> Clear History
                     </button>
                 </div>
@@ -585,7 +601,8 @@
             targetSeconds: 0,
             timerInterval: null,
             mapName: 'Victoria Road',
-            charLevel: 1,
+            mapLocked: false,
+            charLevel: '',
             dropRate: 200,
             mesoRate: 100,
             startExp: 0.000,
@@ -600,6 +617,12 @@
             currentTheme: 'dark'
         };
 
+        function animateClick(element) {
+            element.classList.remove('btn-clicked');
+            void element.offsetWidth;
+            element.classList.add('btn-clicked');
+        }
+
         window.onload = function() {
             loadSavedState();
             renderConsumables();
@@ -609,19 +632,21 @@
             
             const mapSelect = document.getElementById('mapLocationSelect');
             const mapInput = document.getElementById('mapNameInput');
+            const customContainer = document.getElementById('customMapContainer');
+            
             let matchedOption = Array.from(mapSelect.options).find(opt => opt.value === state.mapName);
             if (matchedOption) {
                 mapSelect.value = state.mapName;
-                mapInput.classList.add('hidden');
+                customContainer.classList.add('hidden');
                 mapInput.value = state.mapName;
             } else {
                 mapSelect.value = 'CUSTOM';
-                mapInput.classList.remove('hidden');
+                customContainer.classList.remove('hidden');
                 const isDefault = Array.from(mapSelect.options).some(opt => opt.value === state.mapName);
                 mapInput.value = (state.mapName && !isDefault) ? state.mapName : '';
             }
 
-            document.getElementById('charLevelInput').value = state.charLevel;
+            document.getElementById('charLevelInput').value = state.charLevel !== '' ? state.charLevel : '';
             document.getElementById('startExpInput').value = state.startExp;
             document.getElementById('endExpInput').value = state.endExp;
             document.getElementById('mesoInputMode').value = state.mesoInputMode;
@@ -630,25 +655,79 @@
             document.getElementById('directMesoInput').value = formatNumberWithCommas(state.directMeso);
             changeTheme(state.currentTheme || 'dark');
 
+            updateMapLockUI();
             toggleMesoInputMode();
             updateInputLockStates();
             
+            if (state.targetSeconds > 0) {
+                const presetMins = state.targetSeconds / 60;
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    if (btn.textContent.includes(presetMins + 'm') || (presetMins === 60 && btn.textContent.includes('1 Hour')) || (presetMins === 120 && btn.textContent.includes('2 Hours'))) {
+                        highlightPresetButton(btn);
+                    }
+                });
+            }
+
             if (state.timerRunning) startTimerLoop();
         };
 
         function handleLocationSelectChange(selectEl) {
-            const customInput = document.getElementById('mapNameInput');
+            const customContainer = document.getElementById('customMapContainer');
+            const mapInput = document.getElementById('mapNameInput');
             if (selectEl.value === 'CUSTOM') {
-                customInput.classList.remove('hidden');
-                customInput.value = '';
-                customInput.focus();
+                customContainer.classList.remove('hidden');
+                mapInput.value = '';
+                mapInput.focus();
                 state.mapName = '';
+                state.mapLocked = false;
             } else {
-                customInput.classList.add('hidden');
-                customInput.value = selectEl.value;
+                customContainer.classList.add('hidden');
+                mapInput.value = selectEl.value;
                 state.mapName = selectEl.value;
+                state.mapLocked = true;
             }
+            updateMapLockUI();
             saveCurrentState();
+        }
+
+        function toggleMapLock() {
+            const mapInput = document.getElementById('mapNameInput');
+            if (!state.mapLocked) {
+                const val = mapInput.value.trim();
+                if (!val) return showToast("Please enter a custom map name first", "error");
+                state.mapName = val;
+                state.mapLocked = true;
+                showToast("Map name locked in!", "success");
+            } else {
+                state.mapLocked = false;
+                showToast("Map name unlocked for editing", "info");
+            }
+            updateMapLockUI();
+            saveCurrentState();
+        }
+
+        function updateMapLockUI() {
+            const mapInput = document.getElementById('mapNameInput');
+            const lockBtn = document.getElementById('mapLockBtn');
+            const lockIcon = document.getElementById('mapLockIcon');
+            const lockLabel = document.getElementById('mapLockLabel');
+            const mapSelect = document.getElementById('mapLocationSelect');
+
+            if (mapSelect.value !== 'CUSTOM') return;
+
+            if (state.mapLocked) {
+                mapInput.disabled = true;
+                mapInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-medium transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
+                lockBtn.className = "ms-button bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1";
+                lockIcon.className = "fa-solid fa-lock-open";
+                lockLabel.textContent = "Unlock Map";
+            } else {
+                mapInput.disabled = false;
+                mapInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm focus:outline-none theme-accent-border font-medium transition";
+                lockBtn.className = "ms-button theme-accent-bg text-white px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1";
+                lockIcon.className = "fa-solid fa-lock";
+                lockLabel.textContent = "Set Map";
+            }
         }
 
         function changeTheme(themeName) {
@@ -696,16 +775,34 @@
             pauseTimer();
             state.elapsedSeconds = 0;
             state.targetSeconds = 0;
+            document.getElementById('timerTargetText').textContent = "Open-ended";
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.remove('theme-accent-bg', 'text-white');
+                b.classList.add('ms-inner-box');
+            });
             updateTimerUI();
             updateCalculations();
             showToast("Timer reset to 00:00:00", "info");
             saveCurrentState();
         }
 
-        function setTimerPreset(minutes) {
+        function highlightPresetButton(btnEl) {
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.remove('theme-accent-bg', 'text-white');
+                b.classList.add('ms-inner-box');
+            });
+            btnEl.classList.remove('ms-inner-box');
+            btnEl.classList.add('theme-accent-bg', 'text-white');
+        }
+
+        function setTimerPreset(minutes, btnEl) {
             state.targetSeconds = minutes * 60;
+            document.getElementById('timerTargetText').textContent = minutes >= 60 ? (minutes / 60) + "h" : minutes + "m";
+            highlightPresetButton(btnEl);
+            animateClick(btnEl);
             updateTimerUI();
-            showToast(`Timer target set to ${minutes} mins`, "info");
+            showToast(`Timer target set to ${minutes >= 60 ? (minutes/60) + ' Hour(s)' : minutes + ' mins'}`, "info");
+            saveCurrentState();
         }
 
         function updateTimerUI() {
@@ -721,13 +818,13 @@
             if (state.timerRunning) {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
                 statusText.textContent = "Active";
-                startPauseBtn.className = "w-full py-3 px-4 rounded-xl font-bold text-sm bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg flex items-center justify-center gap-2";
+                startPauseBtn.className = "w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn";
                 startPauseIcon.className = "fa-solid fa-pause";
                 startPauseLabel.textContent = "Pause Session";
             } else {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
                 statusText.textContent = "Paused";
-                startPauseBtn.className = "w-full py-3 px-4 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-lg flex items-center justify-center gap-2";
+                startPauseBtn.className = "w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn";
                 startPauseIcon.className = "fa-solid fa-play";
                 startPauseLabel.textContent = state.elapsedSeconds > 0 ? "Resume Session" : "Start Session";
             }
@@ -768,16 +865,21 @@
         }
 
         function updateCalculations() {
-            state.charLevel = Math.max(1, Math.min(100, parseInt(document.getElementById('charLevelInput').value) || 1));
-            document.getElementById('charLevelInput').value = state.charLevel;
+            const rawLevel = document.getElementById('charLevelInput').value;
+            if (rawLevel === '' || isNaN(rawLevel)) {
+                state.charLevel = '';
+            } else {
+                state.charLevel = Math.max(1, Math.min(100, parseInt(rawLevel, 10) || 1));
+                if (parseInt(rawLevel, 10) > 100) {
+                    document.getElementById('charLevelInput').value = state.charLevel;
+                }
+            }
 
             state.startExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('startExpInput').value) || 0));
             document.getElementById('startExpInput').value = state.startExp;
 
             state.endExp = Math.max(0, Math.min(100, parseFloat(document.getElementById('endExpInput').value) || 0));
             document.getElementById('endExpInput').value = state.endExp;
-
-            document.getElementById('levelDisplayTag').textContent = `Lv. ${state.charLevel}`;
 
             let expGained = Math.max(0, state.endExp - state.startExp);
             const durationMinutes = Math.max(state.elapsedSeconds, 10) / 60;
@@ -940,7 +1042,7 @@
                 id: 'session_' + Date.now(),
                 timestamp: new Date().toLocaleString(),
                 mapName: mapName,
-                level: parseInt(document.getElementById('charLevelInput').value) || 1,
+                level: document.getElementById('charLevelInput').value !== '' ? parseInt(document.getElementById('charLevelInput').value, 10) : 1,
                 durationSeconds: state.elapsedSeconds,
                 expGained: expGained,
                 netProfit: netProfit,
@@ -1049,11 +1151,12 @@
             const mapSelect = document.getElementById('mapLocationSelect');
             const mapInput = document.getElementById('mapNameInput');
             state.mapName = mapSelect.value === 'CUSTOM' ? mapInput.value : mapSelect.value;
-            state.charLevel = parseInt(document.getElementById('charLevelInput').value) || 1;
+            const rawLevel = document.getElementById('charLevelInput').value;
+            state.charLevel = rawLevel === '' ? '' : parseInt(rawLevel, 10);
             state.startExp = parseFloat(document.getElementById('startExpInput').value) || 0;
             state.endExp = parseFloat(document.getElementById('endExpInput').value) || 0;
             state.startMeso = parseMesoInput(document.getElementById('startMesoInput').value);
-            state.endMeso = parseMesoInput(document.getElementById('endMesoInput').value);
+            state.endMeso = parseMesoInput(document.encodeURIComponent || document.getElementById('endMesoInput').value);
             state.directMeso = parseMesoInput(document.getElementById('directMesoInput').value);
             localStorage.setItem('maple_grind_tracker_state_v2', JSON.stringify(state));
         }
