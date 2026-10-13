@@ -307,23 +307,12 @@
                                 v1.0
                             </span>
                         </div>
-                        <div class="relative">
-                            <p id="headerSubtitle" class="text-xs md:text-sm theme-subtext mt-0.5 font-medium transition-all">
-                                Session Tracker & Meso Profit Analyzer | By Sunshine ♥
-                            </p>
-                            
-                            <!-- Set Character & Level Badge -->
-                            <div id="activeCharDisplayBadge" class="hidden items-center gap-2 absolute top-0 left-0 flex-wrap">
-                                <div class="flex items-center gap-1.5 ms-inner-box px-2.5 py-1 rounded-lg text-xs font-bold">
-                                    <i class="fa-solid fa-user theme-accent-text"></i>
-                                    <span id="badgeCharNameText" class="theme-accent-text">Sunshine</span>
-                                    <span class="opacity-40">|</span>
-                                    <span class="theme-subtext">Lv.</span>
-                                    <span id="badgeCharLevelText" class="font-mono">1</span>
-                                </div>
-                                <button onclick="editCharacterDetails(); animateClick(this)" class="ms-button ms-inner-box px-2 py-1 rounded-lg text-[11px] font-bold theme-subtext hover:theme-accent-text transition flex items-center gap-1 interactive-btn" title="Edit Character IGN & Level">
-                                    <i class="fa-solid fa-pen"></i> Edit
-                                </button>
+                        <div>
+                            <!-- Character Badge Container -->
+                            <div id="headerSubtitleContainer" class="mt-0.5 transition-all">
+                                <p id="headerSubtitle" class="text-xs md:text-sm theme-subtext font-medium">
+                                    Session Tracker & Meso Profit Analyzer | By Sunshine ♥
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -367,7 +356,7 @@
                         <i class="fa-solid fa-id-card theme-accent-text"></i> Character & Level
                     </span>
                     <div class="flex items-center gap-1.5">
-                        <button onclick="setAndHideCharacterCard(); animateClick(this)" class="ms-button theme-accent-bg text-white px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1">
+                        <button id="charSetUpdateBtn" onclick="saveCharacterCard(); animateClick(this)" class="ms-button theme-accent-bg text-white px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1">
                             <i class="fa-solid fa-check"></i> Set
                         </button>
                     </div>
@@ -691,9 +680,9 @@
                 <div class="flex items-center gap-3 text-xs flex-wrap">
                     <span class="theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="theme-accent-text font-mono">0</strong></span>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <!-- Analytics Button Moved Here -->
-                        <a href="analytics.html" class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 theme-accent-text hover:opacity-85 transition interactive-btn" title="View Analytics Dashboard">
-                            <i class="fa-solid fa-chart-pie"></i> Analytics
+                        <!-- Vibrant Pop-out Analytics Button -->
+                        <a href="analytics.html" class="ms-button theme-accent-gradient text-white px-3.5 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-2 shadow-md hover:scale-105 transition interactive-btn" title="View Analytics Dashboard">
+                            <i class="fa-solid fa-chart-pie text-sm"></i> Analytics Dashboard
                         </a>
 
                         <button onclick="exportSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 theme-accent-text interactive-btn" title="Export Selected Sessions">
@@ -837,7 +826,6 @@
             targetSeconds: 0,
             timerInterval: null,
             charName: '',
-            charNameLocked: false,
             mapName: 'Victoria Road : Henesys',
             mapLocked: false,
             charLevel: '',
@@ -900,7 +888,7 @@
             }
 
             document.getElementById('charNameInput').value = state.charName || '';
-            document.getElementById('charLevelInput').value = state.charLevel !== '' ? state.charLevel : '';
+            document.getElementById('charLevelInput').value = (state.charLevel !== '' && state.charLevel !== null && !isNaN(state.charLevel)) ? state.charLevel : '';
             document.getElementById('startExpInput').value = state.startExp !== '' ? state.startExp : '';
             document.getElementById('endExpInput').value = state.endExp;
             document.getElementById('mesoInputMode').value = state.mesoInputMode;
@@ -913,10 +901,10 @@
             changeTheme(state.currentTheme || 'maple-light');
 
             updateMapLockUI();
-            updateCharacterDisplayUI();
             toggleMesoInputMode();
             updateInputLockStates();
             updateBreakUI();
+            updateHeaderCharacterBadge();
             
             if (state.targetSeconds > 0) {
                 const presetMins = state.targetSeconds / 60;
@@ -930,7 +918,7 @@
             if (state.timerRunning) startTimerLoop();
         };
 
-        function setAndHideCharacterCard() {
+        function saveCharacterCard() {
             const nameVal = document.getElementById('charNameInput').value.trim();
             const levelVal = document.getElementById('charLevelInput').value.trim();
 
@@ -948,52 +936,48 @@
 
             state.charName = nameVal;
             state.charLevel = Math.max(1, Math.min(100, parseInt(levelVal, 10) || 1));
-            state.charNameLocked = true;
 
-            updateCharacterDisplayUI();
             saveCurrentState();
-            showToast("Character & level set and saved!", "success");
+            updateHeaderCharacterBadge();
+            
+            const btn = document.getElementById('charSetUpdateBtn');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Update';
+            
+            showToast("Character & level saved successfully!", "success");
+        }
+
+        function updateHeaderCharacterBadge() {
+            const container = document.getElementById('headerSubtitleContainer');
+            if (!container) return;
+
+            if (state.charName && state.charLevel) {
+                container.innerHTML = `
+                    <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-lg ms-inner-box text-xs md:text-sm font-bold theme-accent-text border border-pink-400/30 shadow-sm mt-0.5">
+                        <i class="fa-solid fa-id-badge"></i>
+                        <span>IGN: ${escapeHtml(state.charName)}</span>
+                        <span class="opacity-40">|</span>
+                        <span>Lv. ${state.charLevel}</span>
+                    </div>
+                `;
+                const setBtn = document.getElementById('charSetUpdateBtn');
+                if (setBtn) setBtn.innerHTML = '<i class="fa-solid fa-check"></i> Update';
+            } else {
+                container.innerHTML = `
+                    <p id="headerSubtitle" class="text-xs md:text-sm theme-subtext font-medium transition-all">
+                        Session Tracker & Meso Profit Analyzer | By Sunshine ♥
+                    </p>
+                `;
+                const setBtn = document.getElementById('charSetUpdateBtn');
+                if (setBtn) setBtn.innerHTML = '<i class="fa-solid fa-check"></i> Set';
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
         function removeInputError(el) {
             if (el) el.classList.remove('input-error-pulse');
-        }
-
-        function editCharacterDetails() {
-            state.charNameLocked = false;
-            updateCharacterDisplayUI();
-            showToast("Character details unlocked for editing", "info");
-        }
-
-        function updateCharacterDisplayUI() {
-            const cardEl = document.getElementById('charInputCard');
-            const gridEl = document.getElementById('topCardsGrid');
-            const badgeEl = document.getElementById('activeCharDisplayBadge');
-            const subtitleEl = document.getElementById('headerSubtitle');
-            const nameText = document.getElementById('badgeCharNameText');
-            const levelText = document.getElementById('badgeCharLevelText');
-
-            if (state.charNameLocked && state.charName) {
-                cardEl.classList.add('hidden');
-                if (gridEl) {
-                    gridEl.className = "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4";
-                }
-                subtitleEl.style.opacity = '0';
-                badgeEl.classList.remove('hidden');
-                badgeEl.classList.add('flex');
-                nameText.textContent = state.charName;
-                levelText.textContent = state.charLevel || 1;
-            } else {
-                cardEl.classList.remove('hidden');
-                if (gridEl) {
-                    gridEl.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4";
-                }
-                badgeEl.classList.remove('flex');
-                badgeEl.classList.add('hidden');
-                subtitleEl.style.opacity = '1';
-                if (state.charName) document.getElementById('charNameInput').value = state.charName;
-                if (state.charLevel !== '') document.getElementById('charLevelInput').value = state.charLevel;
-            }
         }
 
         function handleLocationSelectChange(selectEl) {
@@ -1096,11 +1080,11 @@
                 state.levelUpsCount = (state.levelUpsCount || 0) + 1;
                 state.charLevel = (state.charLevel || 1) + 1;
                 document.getElementById('charLevelInput').value = state.charLevel;
-                document.getElementById('badgeCharLevelText').textContent = state.charLevel;
 
                 state.endExp = newExp;
                 document.getElementById('endExpInput').value = state.endExp;
                 updateCalculations();
+                updateHeaderCharacterBadge();
                 showToast(`🎉 Level Up! Now Level ${state.charLevel}! (+${state.levelUpsCount} level ups)`, "success");
                 saveCurrentState();
             }
@@ -1125,8 +1109,8 @@
             const hasValidMeso = state.mesoInputMode === 'diff' ? startMesoInput.value.trim() !== '' : directMesoInput.value.trim() !== '';
 
             let isValid = true;
-            if (!state.charNameLocked && !nameVal) { nameInput.classList.add('input-error-pulse'); isValid = false; }
-            if (!state.charNameLocked && !levelVal) { levelInput.classList.add('input-error-pulse'); isValid = false; }
+            if (!nameVal) { nameInput.classList.add('input-error-pulse'); isValid = false; }
+            if (!levelVal) { levelInput.classList.add('input-error-pulse'); isValid = false; }
             if (!hasValidMap) { mapInput.classList.add('input-error-pulse'); isValid = false; }
             if (!startExpVal) { startExpInput.classList.add('input-error-pulse'); isValid = false; }
             if (!hasValidMeso) {
@@ -1668,8 +1652,7 @@
                 state.levelUpsCount = (state.levelUpsCount || 0) + 1;
                 state.charLevel = (state.charLevel || 1) + 1;
                 document.getElementById('charLevelInput').value = state.charLevel;
-                const badgeLevel = document.getElementById('badgeCharLevelText');
-                if (badgeLevel) badgeLevel.textContent = state.charLevel;
+                updateHeaderCharacterBadge();
             }
 
             document.getElementById('finishModal').classList.add('hidden');
@@ -1917,7 +1900,7 @@
                 <div class="ms-inner-box p-4 rounded-xl space-y-2.5 text-xs md:text-sm">
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
                         <span class="theme-subtext font-bold">Date & Time:</span>
-                        <span class="font-bold text-slate-800 dark:text-slate-100">${session.timestamp}</span>
+                        <span class="font-bold theme-accent-text">${session.timestamp}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
                         <span class="theme-subtext font-bold">Character IGN:</span>
@@ -1929,7 +1912,7 @@
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
                         <span class="theme-subtext font-bold">Duration:</span>
-                        <span class="font-bold text-slate-800 dark:text-slate-100">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
+                        <span class="font-bold theme-accent-text">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
                         <span class="theme-subtext font-bold">EXP Gained:</span>
@@ -2044,8 +2027,10 @@
             state.mapName = mapSelect.value === 'CUSTOM' ? mapInput.value : mapSelect.value;
             
             state.charName = document.getElementById('charNameInput').value.trim();
-            const rawLevel = document.getElementById('charLevelInput').value;
-            state.charLevel = rawLevel === '' ? '' : parseInt(rawLevel, 10);
+            const rawLevelInput = document.getElementById('charLevelInput');
+            if (rawLevelInput && rawLevelInput.value.trim() !== '') {
+                state.charLevel = Math.max(1, Math.min(100, parseInt(rawLevelInput.value, 10) || 1));
+            }
 
             const startExpVal = document.getElementById('startExpInput').value;
             state.startExp = startExpVal === '' ? '' : parseExpInput(startExpVal);
@@ -2063,7 +2048,15 @@
 
         function loadSavedState() {
             const saved = localStorage.getItem('maple_grind_tracker_state_v2');
-            if (saved) { try { state = { ...state, ...JSON.parse(saved) }; } catch(e) {} }
+            if (saved) { 
+                try { 
+                    const parsed = JSON.parse(saved);
+                    state = { ...state, ...parsed }; 
+                    if (state.charLevel === undefined || state.charLevel === null || state.charLevel === '' || isNaN(state.charLevel)) {
+                        state.charLevel = '';
+                    }
+                } catch(e) {} 
+            }
         }
 
         function resetCurrentSessionData() {
