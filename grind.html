@@ -46,6 +46,8 @@
             --break-btn-bg: rgba(100, 116, 139, 0.25);
             --break-btn-text: #cbd5e1;
             --break-btn-border: rgba(100, 116, 139, 0.4);
+            --break-log-bg: rgba(15, 23, 42, 0.9);
+            --break-log-text: #cbd5e1;
         }
 
         body.theme-maple-light {
@@ -64,11 +66,13 @@
             --scrollbar-thumb-hover: #5c3a19;
             --inner-bg: #fff2d6;
             --inner-border: #e6cb9e;
-            --subtext: #8c5a3c;
+            --subtext: #7c441b;
             --header-title-color: #ec4899;
             --break-btn-bg: #f4e8c1;
             --break-btn-text: #5c3a19;
             --break-btn-border: #c29b68;
+            --break-log-bg: #faebd7;
+            --break-log-text: #4a2810;
         }
 
         body.theme-maple {
@@ -87,11 +91,13 @@
             --scrollbar-thumb-hover: #78441a;
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #573216;
-            --subtext: #d97706;
+            --subtext: #f59e0b;
             --header-title-color: #facc15;
             --break-btn-bg: rgba(100, 116, 139, 0.25);
             --break-btn-text: #cbd5e1;
             --break-btn-border: rgba(100, 116, 139, 0.4);
+            --break-log-bg: rgba(30, 18, 10, 0.9);
+            --break-log-text: #fef3c7;
         }
 
         body.theme-cyber {
@@ -115,6 +121,8 @@
             --break-btn-bg: rgba(100, 116, 139, 0.25);
             --break-btn-text: #cbd5e1;
             --break-btn-border: rgba(100, 116, 139, 0.4);
+            --break-log-bg: rgba(15, 8, 25, 0.9);
+            --break-log-text: #f0abfc;
         }
 
         body.theme-crimson {
@@ -138,6 +146,8 @@
             --break-btn-bg: rgba(100, 116, 139, 0.25);
             --break-btn-text: #cbd5e1;
             --break-btn-border: rgba(100, 116, 139, 0.4);
+            --break-log-bg: rgba(25, 10, 10, 0.9);
+            --break-log-text: #fecdd3;
         }
 
         body.theme-moss {
@@ -161,6 +171,8 @@
             --break-btn-bg: rgba(100, 116, 139, 0.25);
             --break-btn-text: #cbd5e1;
             --break-btn-border: rgba(100, 116, 139, 0.4);
+            --break-log-bg: rgba(8, 20, 12, 0.9);
+            --break-log-text: #d1fae5;
         }
 
         body {
@@ -185,6 +197,12 @@
         }
         .break-idle-btn:hover {
             filter: brightness(0.95);
+        }
+
+        .break-log-row {
+            background-color: var(--break-log-bg);
+            color: var(--break-log-text);
+            border: 1px solid var(--inner-border);
         }
 
         body.theme-dark .theme-accent-text { color: var(--accent-primary) !important; }
@@ -441,11 +459,11 @@
             </div>
         </div>
 
-        <!-- Middle Row: Main Session Controls & Trackers -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Left Column: Combined Master Card (Timer ~75%, Break Logger ~20%) -->
-            <div class="lg:col-span-6 ms-card rounded-xl p-5 flex flex-col justify-between shadow-xl space-y-3">
-                <!-- Section 1: Session Timer (~75% space) -->
+        <!-- Middle Row: Main Session Controls & Trackers (Height Synced) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <!-- Left Column: Combined Master Card (Session Timer + Break Logger) -->
+            <div class="lg:col-span-6 ms-card rounded-xl p-5 flex flex-col justify-between shadow-xl space-y-3 h-full">
+                <!-- Section 1: Session Timer -->
                 <div class="space-y-3">
                     <div class="flex items-center justify-between border-b border-slate-300/20 pb-2.5">
                         <h2 class="text-lg font-bold font-header flex items-center gap-2">
@@ -497,7 +515,7 @@
                 <!-- Divider -->
                 <div class="border-t border-slate-300/30 pt-2"></div>
 
-                <!-- Section 2: Session Break Logger (~20% compact space) -->
+                <!-- Section 2: Session Break Logger -->
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
@@ -506,8 +524,10 @@
                         <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
                     </div>
                     
+                    <!-- Break Input & Button on the same line -->
                     <div class="flex items-center gap-2">
-                        <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="flex-1 py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 interactive-btn">
+                        <input type="text" id="breakNameInput" placeholder="Break name (e.g. Lunch, Stretch)" class="flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
+                        <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn">
                             <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Start Break</span>
                         </button>
                         <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
@@ -520,16 +540,16 @@
                             <span class="theme-subtext">Logged Breaks</span>
                             <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">Total: 0m 0s</span>
                         </div>
-                        <div id="breakLogsList" class="space-y-1 max-h-20 overflow-y-auto pr-1 text-[11px] font-mono">
+                        <div id="breakLogsList" class="space-y-1 max-h-28 overflow-y-auto pr-1 text-[11px] font-mono">
                             <div class="text-center py-1 text-slate-400 italic font-sans text-[10px]">No breaks logged yet.</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: EXP Tracker & Raw Meso Loot Tracker -->
-            <div class="lg:col-span-6 space-y-6">
-                <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
+            <!-- Right Column: EXP Tracker & Raw Meso Loot Tracker (Flex equal height) -->
+            <div class="lg:col-span-6 flex flex-col justify-between space-y-6 h-full">
+                <div class="ms-card rounded-xl p-5 space-y-4 shadow-md flex-1 flex flex-col justify-between">
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
                         <h3 class="text-lg font-bold font-header flex items-center gap-2">
                             <i class="fa-solid fa-bolt theme-accent-text"></i> Experience (EXP) Tracker
@@ -563,7 +583,7 @@
                     </div>
                 </div>
 
-                <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
+                <div class="ms-card rounded-xl p-5 space-y-4 shadow-md flex-1 flex flex-col justify-between">
                     <div class="flex items-center justify-between border-b border-slate-300/30 pb-3">
                         <h3 class="text-lg font-bold font-header flex items-center gap-2">
                             <i class="fa-solid fa-coins theme-accent-text"></i> Raw Meso Loot Tracker
@@ -673,7 +693,15 @@
                 </div>
                 <div class="flex items-center gap-3 text-xs flex-wrap">
                     <span class="theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="theme-accent-text font-mono">0</strong></span>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <!-- Batch Action Buttons -->
+                        <button onclick="exportSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 theme-accent-text interactive-btn" title="Export Selected Sessions">
+                            <i class="fa-solid fa-download"></i> Export Selected
+                        </button>
+                        <button onclick="deleteSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 text-rose-500 hover:text-rose-600 interactive-btn" title="Delete Selected Sessions">
+                            <i class="fa-solid fa-trash-can"></i> Delete Selected
+                        </button>
+
                         <label class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold cursor-pointer flex items-center gap-1.5 interactive-btn">
                             <i class="fa-solid fa-upload theme-accent-text"></i> Upload Log
                             <input type="file" id="importHistoryInput" onchange="importHistoryLogFile(event)" class="hidden" accept=".json">
@@ -689,6 +717,9 @@
                 <table class="w-full text-left text-xs font-mono">
                     <thead class="theme-subtext uppercase text-[11px] border-b border-slate-300/30">
                         <tr>
+                            <th class="py-2.5 px-3 w-8">
+                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllSessions(this)" class="rounded border-slate-400 theme-accent-text cursor-pointer focus:ring-0">
+                            </th>
                             <th class="py-2.5 px-3">Date & Time</th>
                             <th class="py-2.5 px-3">Character & Map</th>
                             <th class="py-2.5 px-3">Duration</th>
@@ -700,7 +731,7 @@
                     </thead>
                     <tbody id="historyTableBody" class="divide-y divide-slate-300/20">
                         <tr>
-                            <td colspan="7" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td>
+                            <td colspan="8" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td>
                         </tr>
                     </tbody>
                 </table>
@@ -758,10 +789,18 @@
                 </p>
             </div>
 
-            <div class="relative z-10 space-y-2">
+            <div class="relative z-10 space-y-4">
                 <div class="ms-inner-box p-3 rounded-2xl border-2 border-amber-400/50">
                     <input type="text" id="modalFinishExpInput" placeholder="0.000" class="w-full bg-transparent text-center text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
                 </div>
+
+                <!-- Level Up Option Checkbox (Fixed Click Event) -->
+                <label class="ms-inner-box p-3 rounded-xl flex items-center justify-between cursor-pointer select-none">
+                    <div class="flex items-center gap-2 text-xs font-semibold theme-subtext">
+                        <i class="fa-solid fa-arrow-up text-amber-400"></i> Did you level up during this session?
+                    </div>
+                    <input type="checkbox" id="finishModalLevelUpCheck" class="rounded border-slate-400 theme-accent-text w-4 h-4 cursor-pointer focus:ring-0">
+                </label>
             </div>
 
             <div class="flex items-center justify-center gap-3 relative z-10 pt-2">
@@ -775,7 +814,7 @@
         </div>
     </div>
 
-    <!-- Session Detail Modal Popup -->
+    <!-- Session Detail Modal Popup (Improved Text Contrast & Detailed Consumables Breakdown) -->
     <div id="sessionModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="ms-glass rounded-2xl p-6 md:p-8 max-w-2xl w-full space-y-5 shadow-2xl relative border-2 border-pink-500/50">
             <div class="flex items-center justify-between border-b border-slate-300/30 pb-4">
@@ -839,6 +878,7 @@
             currentTheme: 'maple-light',
             breakActive: false,
             breakStartTime: null,
+            breakName: '',
             breakLogs: []
         };
 
@@ -1224,15 +1264,18 @@
         }
 
         function toggleBreakSession() {
+            const breakNameInput = document.getElementById('breakNameInput');
             if (!state.breakActive) {
                 state.breakActive = true;
                 state.breakStartTime = new Date();
+                state.breakName = breakNameInput.value.trim() || 'Break';
                 
-                // Clicking start break also pauses the session timer
                 if (state.timerRunning) {
                     pauseTimer();
                 }
 
+                breakNameInput.disabled = true;
+                breakNameInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs font-medium transition bg-amber-500/10 border-2 border-amber-500/50 text-amber-500 cursor-not-allowed";
                 updateBreakUI();
                 showToast("Break started! Session timer paused.", "info");
             } else {
@@ -1242,12 +1285,19 @@
                 
                 state.breakLogs.unshift({
                     id: 'break_' + Date.now(),
+                    name: state.breakName || 'Break',
+                    dateStr: state.breakStartTime.toLocaleDateString(),
                     startTime: state.breakStartTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                     endTime: breakEndTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                     durationSeconds: durationSeconds
                 });
 
                 state.breakStartTime = null;
+                state.breakName = '';
+                breakNameInput.value = '';
+                breakNameInput.disabled = false;
+                breakNameInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
+
                 updateBreakUI();
                 renderBreakLogs();
                 showToast("Break ended and logged successfully!", "success");
@@ -1262,13 +1312,13 @@
             const badge = document.getElementById('breakStatusBadge');
 
             if (state.breakActive) {
-                btn.className = "flex-1 py-1.5 px-3 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1.5 interactive-btn";
+                btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn";
                 icon.className = "fa-solid fa-stop";
                 label.textContent = "End Break";
                 badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/30 font-bold animate-pulse";
                 badge.textContent = "On Break";
             } else {
-                btn.className = "flex-1 py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 interactive-btn";
+                btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn";
                 icon.className = "fa-solid fa-play";
                 label.textContent = "Start Break";
                 badge.className = "text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400";
@@ -1281,7 +1331,7 @@
             const totalDisplay = document.getElementById('totalBreakTimeDisplay');
 
             if (!state.breakLogs || state.breakLogs.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-1 text-slate-400 italic font-sans text-[10px]">No breaks logged yet.</div>`;
+                listEl.innerHTML = `<div class="text-center py-1 theme-subtext italic font-sans text-[10px]">No breaks logged yet.</div>`;
                 totalDisplay.textContent = "Total: 0m 0s";
                 return;
             }
@@ -1291,20 +1341,24 @@
             state.breakLogs.forEach((item) => {
                 totalSecsSum += item.durationSeconds;
                 const row = document.createElement('div');
-                row.className = "flex items-center justify-between p-1 rounded ms-inner-box text-[11px]";
+                row.className = "flex items-center justify-between p-1.5 rounded break-log-row text-[11px]";
+                row.id = `breakRow_${item.id}`;
                 
                 const mins = Math.floor(item.durationSeconds / 60);
                 const secs = item.durationSeconds % 60;
                 const durStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                const dateDisplay = item.dateStr ? `${item.dateStr} ` : '';
 
                 row.innerHTML = `
-                    <div class="flex items-center gap-1 text-slate-300">
-                        <i class="fa-solid fa-clock text-[9px] theme-accent-text"></i>
-                        <span>${item.startTime} - ${item.endTime}</span>
+                    <div class="flex flex-col max-w-[65%]">
+                        <span id="breakNameText_${item.id}" class="font-bold theme-accent-text truncate"><i class="fa-solid fa-mug-hot text-[9px] mr-1"></i>${item.name || 'Break'}</span>
+                        <input type="text" id="breakNameInput_${item.id}" value="${item.name || 'Break'}" class="hidden w-full ms-inner-box rounded px-1.5 py-0.5 text-xs font-bold theme-accent-text focus:outline-none" onkeydown="handleBreakEditKey(event, '${item.id}')" onblur="saveBreakInlineEdit('${item.id}')">
+                        <span class="text-[10px] theme-subtext font-semibold">${dateDisplay}${item.startTime} - ${item.endTime}</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="font-bold theme-accent-text">(${durStr})</span>
-                        <button onclick="removeBreakLog('${item.id}')" class="text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="toggleBreakInlineEdit('${item.id}')" class="opacity-80 hover:opacity-100 theme-accent-text transition px-0.5" title="Edit Break Name"><i class="fa-solid fa-pen" id="breakEditIcon_${item.id}"></i></button>
+                        <button onclick="removeBreakLog('${item.id}')" class="opacity-80 hover:opacity-100 hover:text-rose-500 transition px-0.5" title="Delete Break"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 `;
                 listEl.appendChild(row);
@@ -1313,6 +1367,47 @@
             const totalMins = Math.floor(totalSecsSum / 60);
             const totalSecs = totalSecsSum % 60;
             totalDisplay.textContent = `Total: ${totalMins}m ${totalSecs}s`;
+        }
+
+        function toggleBreakInlineEdit(id) {
+            const textSpan = document.getElementById(`breakNameText_${id}`);
+            const inputField = document.getElementById(`breakNameInput_${id}`);
+            const editIcon = document.getElementById(`breakEditIcon_${id}`);
+
+            if (inputField.classList.contains('hidden')) {
+                textSpan.classList.add('hidden');
+                inputField.classList.remove('hidden');
+                inputField.focus();
+                inputField.select();
+                editIcon.className = "fa-solid fa-check text-emerald-500";
+            } else {
+                saveBreakInlineEdit(id);
+            }
+        }
+
+        function handleBreakEditKey(event, id) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveBreakInlineEdit(id);
+            } else if (event.key === 'Escape') {
+                const breakItem = state.breakLogs.find(b => b.id === id);
+                if (breakItem) document.getElementById(`breakNameInput_${id}`).value = breakItem.name || 'Break';
+                renderBreakLogs();
+            }
+        }
+
+        function saveBreakInlineEdit(id) {
+            const inputField = document.getElementById(`breakNameInput_${id}`);
+            if (!inputField || inputField.classList.contains('hidden')) return;
+
+            const breakItem = state.breakLogs.find(b => b.id === id);
+            if (breakItem) {
+                const newName = inputField.value.trim();
+                breakItem.name = newName || 'Break';
+                renderBreakLogs();
+                showToast("Break name updated", "success");
+                saveCurrentState();
+            }
         }
 
         function removeBreakLog(id) {
@@ -1328,6 +1423,10 @@
                 state.breakLogs = [];
                 state.breakActive = false;
                 state.breakStartTime = null;
+                state.breakName = '';
+                const breakInput = document.getElementById('breakNameInput');
+                breakInput.disabled = false;
+                breakInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
                 updateBreakUI();
                 renderBreakLogs();
                 showToast("Break logs cleared", "info");
@@ -1381,7 +1480,6 @@
 
         function parseExpInput(valStr) {
             if (!valStr) return '';
-            // Strip out '%' if typed by the user, then parse float
             let clean = valStr.toString().replace(/%/g, '').trim();
             let num = parseFloat(clean);
             if (isNaN(num)) return '';
@@ -1499,7 +1597,7 @@
                             <span class="text-[10px] theme-subtext">x</span>
                             <input type="number" value="${item.qty}" min="1" onchange="updateConsumableQty(${index}, this.value)" class="w-10 bg-transparent text-xs font-mono text-center focus:outline-none">
                         </div>
-                        <div class="text-xs font-mono theme-subtext w-20 text-right truncate">${formatShortMeso(item.unitCost * item.qty)}</div>
+                        <div class="text-xs font-mono theme-subtext font-semibold w-20 text-right truncate">${formatShortMeso(item.unitCost * item.qty)}</div>
                         <button onclick="removeConsumable(${index})" class="theme-subtext hover:text-rose-500 transition text-xs px-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 `;
@@ -1565,6 +1663,7 @@
         function promptFinishAndSaveSession() {
             if (state.elapsedSeconds < 1) return showToast("Session duration is too short to save (min 1s)", "error");
             document.getElementById('modalFinishExpInput').value = document.getElementById('endExpInput').value || '0.000';
+            document.getElementById('finishModalLevelUpCheck').checked = false;
             document.getElementById('finishModal').classList.remove('hidden');
             setTimeout(() => { document.getElementById('modalFinishExpInput').focus(); }, 100);
         }
@@ -1576,6 +1675,16 @@
             }
             state.endExp = expVal;
             document.getElementById('endExpInput').value = state.endExp;
+
+            const didLevelUp = document.getElementById('finishModalLevelUpCheck').checked;
+            if (didLevelUp) {
+                state.levelUpsCount = (state.levelUpsCount || 0) + 1;
+                state.charLevel = (state.charLevel || 1) + 1;
+                document.getElementById('charLevelInput').value = state.charLevel;
+                const badgeLevel = document.getElementById('badgeCharLevelText');
+                if (badgeLevel) badgeLevel.textContent = state.charLevel;
+            }
+
             document.getElementById('finishModal').classList.add('hidden');
             stopAndSaveSession();
         }
@@ -1588,14 +1697,24 @@
             const startExpVal = state.startExp !== '' ? state.startExp : 0;
             const expGained = ((state.levelUpsCount || 0) * 100) + Math.max(0, state.endExp - startExpVal);
             const durationMinutes = state.elapsedSeconds / 60;
+            
+            const endingMesoParsed = parseMesoInput(document.getElementById('endMesoInput').value);
+            const startingMesoParsed = parseMesoInput(document.getElementById('startMesoInput').value);
             const grossMeso = state.mesoInputMode === 'diff' 
-                ? Math.max(0, parseMesoInput(document.getElementById('endMesoInput').value) - parseMesoInput(document.getElementById('startMesoInput').value))
+                ? Math.max(0, endingMesoParsed - startingMesoParsed)
                 : parseMesoInput(document.getElementById('directMesoInput').value);
 
             let totalConsumableCost = 0;
-            state.consumables.forEach(item => { if (item.active) totalConsumableCost += (item.unitCost * item.qty); });
+            const activeConsumablesSnapshot = state.consumables
+                .filter(item => item.active)
+                .map(item => ({ ...item, totalCost: item.unitCost * item.qty }));
+            activeConsumablesSnapshot.forEach(item => { totalConsumableCost += item.totalCost; });
+
             let totalDropsValue = 0;
-            state.drops.forEach(item => { totalDropsValue += (item.unitValue * item.qty); });
+            const dropsSnapshot = state.drops
+                .filter(item => item.qty > 0)
+                .map(item => ({ ...item, totalValue: item.unitValue * item.qty }));
+            dropsSnapshot.forEach(item => { totalDropsValue += item.totalValue; });
 
             const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
 
@@ -1611,6 +1730,8 @@
                 netProfit: netProfit,
                 netProfitPerMinute: netProfit / durationMinutes,
                 breaksSnapshot: [...state.breakLogs],
+                consumablesSnapshot: activeConsumablesSnapshot,
+                dropsSnapshot: dropsSnapshot,
                 grossMeso: grossMeso,
                 consumableCost: totalConsumableCost,
                 dropsValue: totalDropsValue
@@ -1620,13 +1741,14 @@
             showToast("Session successfully saved to history!", "success");
 
             state.startExp = state.endExp;
-            state.levelUpsCount = 0;
-            if (state.mesoInputMode === 'diff') {
-                state.startMeso = parseMesoInput(document.getElementById('endMesoInput').value);
-                document.getElementById('startMesoInput').value = formatNumberWithCommas(state.startMeso);
-            }
             document.getElementById('startExpInput').value = state.startExp;
 
+            if (state.mesoInputMode === 'diff') {
+                state.startMeso = endingMesoParsed;
+                document.getElementById('startMesoInput').value = formatNumberWithCommas(state.startMeso);
+            }
+
+            state.levelUpsCount = 0;
             state.elapsedSeconds = 0;
             updateTimerUI();
             updateCalculations();
@@ -1641,8 +1763,9 @@
             countBadge.textContent = `${state.history.length} Saved Sessions`;
 
             if (state.history.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center theme-subtext italic font-sans">No grind sessions logged yet. Start the timer and click Finish & Save!</td></tr>`;
                 avgMesoHrText.textContent = "0";
+                document.getElementById('selectAllCheckbox').checked = false;
                 return;
             }
 
@@ -1655,7 +1778,10 @@
                 const isPositive = session.netProfit >= 0;
                 const charDisplay = session.charName && session.charName !== 'Unnamed' ? `[${session.charName}] ` : '';
                 tr.innerHTML = `
-                    <td class="py-2.5 px-3 theme-subtext text-[11px]">${session.timestamp}</td>
+                    <td class="py-2.5 px-3 w-8">
+                        <input type="checkbox" data-session-id="${session.id}" class="session-select-checkbox rounded border-slate-400 theme-accent-text cursor-pointer focus:ring-0">
+                    </td>
+                    <td class="py-2.5 px-3 theme-subtext text-[11px] font-semibold">${session.timestamp}</td>
                     <td class="py-2.5 px-3 font-sans font-semibold">${charDisplay}${session.mapName} <span class="text-xs theme-accent-text">Lv.${session.level}</span></td>
                     <td class="py-2.5 px-3">${formatSecondsToHHMMSS(session.durationSeconds)}</td>
                     <td class="py-2.5 px-3 theme-accent-text">+${session.expGained.toFixed(3)}%</td>
@@ -1669,6 +1795,46 @@
                 tbody.appendChild(tr);
             });
             avgMesoHrText.textContent = `${formatShortMeso(totalMesoMinSum / state.history.length)} / min`;
+        }
+
+        function toggleSelectAllSessions(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.session-select-checkbox');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+
+        function getSelectedSessionIds() {
+            const selected = [];
+            document.querySelectorAll('.session-select-checkbox:checked').forEach(cb => {
+                selected.push(cb.getAttribute('data-session-id'));
+            });
+            return selected;
+        }
+
+        function deleteSelectedSessions() {
+            const selectedIds = getSelectedSessionIds();
+            if (selectedIds.length === 0) return showToast("No sessions selected", "error");
+            if (confirm(`Delete ${selectedIds.length} selected session(s)?`)) {
+                state.history = state.history.filter(item => !selectedIds.includes(item.id));
+                document.getElementById('selectAllCheckbox').checked = false;
+                renderHistory();
+                showToast("Selected sessions deleted", "info");
+                saveCurrentState();
+            }
+        }
+
+        function exportSelectedSessions() {
+            const selectedIds = getSelectedSessionIds();
+            if (selectedIds.length === 0) return showToast("No sessions selected for export", "error");
+            const sessionsToExport = state.history.filter(item => selectedIds.includes(item.id));
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sessionsToExport, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `maple_selected_sessions_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast(`Exported ${sessionsToExport.length} session(s)!`, "success");
         }
 
         function importHistoryLogFile(event) {
@@ -1704,61 +1870,117 @@
             const downloadBtn = document.getElementById('modalDownloadBtn');
             const isPositive = session.netProfit >= 0;
 
-            let breaksHtml = '<div class="text-slate-400 italic">No breaks recorded for this session.</div>';
+            let breaksHtml = '<div class="theme-subtext font-semibold italic text-xs">No breaks recorded for this session.</div>';
             if (session.breaksSnapshot && session.breaksSnapshot.length > 0) {
-                breaksHtml = '<div class="space-y-2 max-h-36 overflow-y-auto pr-1">';
+                breaksHtml = '<div class="space-y-1.5 max-h-28 overflow-y-auto pr-1">';
                 session.breaksSnapshot.forEach(b => {
                     const bMins = Math.floor(b.durationSeconds / 60);
                     const bSecs = b.durationSeconds % 60;
                     const bDur = bMins > 0 ? `${bMins}m ${bSecs}s` : `${bSecs}s`;
+                    const dateDisplay = b.dateStr ? `${b.dateStr} ` : '';
                     breaksHtml += `
                         <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
-                            <span class="text-slate-300"><i class="fa-solid fa-clock theme-accent-text text-xs mr-1"></i> ${b.startTime} - ${b.endTime}</span>
-                            <span class="font-bold theme-accent-text">(${bDur})</span>
+                            <span class="font-semibold text-slate-700 dark:text-slate-200"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-[11px]">(${dateDisplay}${b.startTime} - ${b.endTime})</span></span>
+                            <span class="font-bold theme-accent-text font-mono">(${bDur})</span>
                         </div>
                     `;
                 });
                 breaksHtml += '</div>';
             }
 
+            let consumablesHtml = '<div class="theme-subtext font-semibold italic text-xs">No active consumables/expenses recorded.</div>';
+            if (session.consumablesSnapshot && session.consumablesSnapshot.length > 0) {
+                consumablesHtml = '<div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">';
+                session.consumablesSnapshot.forEach(c => {
+                    const unitPriceFormatted = formatNumberWithCommas(c.unitCost || 0);
+                    const totalCostFormatted = formatNumberWithCommas(c.totalCost || (c.unitCost * c.qty) || 0);
+                    consumablesHtml += `
+                        <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
+                            <div class="flex flex-col truncate max-w-[65%]">
+                                <span class="font-bold text-slate-800 dark:text-slate-100 truncate"><i class="fa-solid fa-flask text-rose-500 text-xs mr-1"></i> ${c.name}</span>
+                                <span class="text-[10px] theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
+                            </div>
+                            <span class="font-bold text-rose-500 font-mono text-right">-${totalCostFormatted} mesos</span>
+                        </div>
+                    `;
+                });
+                consumablesHtml += '</div>';
+            }
+
+            let dropsHtml = '<div class="theme-subtext font-semibold italic text-xs">No valuable drops recorded.</div>';
+            if (session.dropsSnapshot && session.dropsSnapshot.length > 0) {
+                dropsHtml = '<div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">';
+                session.dropsSnapshot.forEach(d => {
+                    const unitValueFormatted = formatNumberWithCommas(d.unitValue || 0);
+                    const totalValFormatted = formatNumberWithCommas(d.totalValue || (d.unitValue * d.qty) || 0);
+                    dropsHtml += `
+                        <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
+                            <div class="flex flex-col truncate max-w-[65%]">
+                                <span class="font-bold text-slate-800 dark:text-slate-100 truncate"><i class="fa-solid fa-gem text-purple-500 text-xs mr-1"></i> ${d.name}</span>
+                                <span class="text-[10px] theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
+                            </div>
+                            <span class="font-bold text-purple-500 font-mono text-right">+${totalValFormatted} mesos</span>
+                        </div>
+                    `;
+                });
+                dropsHtml += '</div>';
+            }
+
             modalContent.innerHTML = `
-                <div class="ms-inner-box p-4 rounded-xl space-y-3 text-xs md:text-sm">
+                <div class="ms-inner-box p-4 rounded-xl space-y-2.5 text-xs md:text-sm">
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
-                        <span class="theme-subtext font-semibold">Date & Time:</span>
-                        <span class="font-bold">${session.timestamp}</span>
+                        <span class="theme-subtext font-bold">Date & Time:</span>
+                        <span class="font-bold text-slate-800 dark:text-slate-100">${session.timestamp}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
-                        <span class="theme-subtext font-semibold">Character IGN:</span>
+                        <span class="theme-subtext font-bold">Character IGN:</span>
                         <span class="font-bold theme-accent-text">${session.charName || 'Unnamed'}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
-                        <span class="theme-subtext font-semibold">Map & Level:</span>
+                        <span class="theme-subtext font-bold">Map & Level:</span>
                         <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
-                        <span class="theme-subtext font-semibold">Duration:</span>
-                        <span class="font-bold">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
+                        <span class="theme-subtext font-bold">Duration:</span>
+                        <span class="font-bold text-slate-800 dark:text-slate-100">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
-                        <span class="theme-subtext font-semibold">EXP Gained:</span>
+                        <span class="theme-subtext font-bold">EXP Gained:</span>
                         <span class="font-bold text-emerald-500">+${session.expGained.toFixed(3)}%</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
-                        <span class="theme-subtext font-semibold">Gross Meso Looted:</span>
-                        <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)}</span>
+                        <span class="theme-subtext font-bold">Gross Meso Looted:</span>
+                        <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)} mesos</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-300/20 pb-2">
-                        <span class="theme-subtext font-semibold">Net Profit:</span>
+                        <span class="theme-subtext font-bold">Net Profit:</span>
                         <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</span>
                     </div>
                     <div class="flex justify-between pb-1">
-                        <span class="theme-subtext font-semibold">Net Rate / Min:</span>
+                        <span class="theme-subtext font-bold">Net Rate / Min:</span>
                         <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfitPerMinute)} / min</span>
                     </div>
                 </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                    <div class="space-y-1.5">
+                        <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                            <i class="fa-solid fa-flask text-rose-500"></i> Buff Expenses Breakdown:
+                        </div>
+                        ${consumablesHtml}
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                            <i class="fa-solid fa-gem text-purple-500"></i> Valuable Drops Revenue:
+                        </div>
+                        ${dropsHtml}
+                    </div>
+                </div>
+
                 <div class="space-y-1.5 pt-1">
-                    <div class="text-xs md:text-sm font-bold theme-subtext">Breaks Breakdown:</div>
+                    <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                        <i class="fa-solid fa-mug-hot theme-accent-text"></i> Breaks Breakdown:
+                    </div>
                     ${breaksHtml}
                 </div>
             `;
@@ -1812,7 +2034,6 @@
         }
 
         function formatMesoInput(inputEl) { 
-            // Allow only numbers (strip out commas or letters for safety before formatting)
             let raw = (inputEl.value || '').toString().replace(/[^0-9]/g, '');
             inputEl.value = raw ? formatNumberWithCommas(raw) : ''; 
         }
@@ -1850,7 +2071,7 @@
             
             const startMesoVal = document.getElementById('startMesoInput').value;
             state.startMeso = startMesoVal === '' ? '' : parseMesoInput(startMesoVal);
-            state.endMeso = parseMsesInputHelper = parseMesoInput(document.getElementById('endMesoInput').value);
+            state.endMeso = parseMesoInput(document.getElementById('endMesoInput').value);
             
             const directMesoVal = document.getElementById('directMesoInput').value;
             state.directMeso = directMesoVal === '' ? '' : parseMesoInput(directMesoVal);
