@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapleStory Grind Analytics & Summary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                        header: ['"Fredoka"', 'sans-serif'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body.theme-dark {
+            --bg-body-from: rgba(15, 20, 28, 0.8);
+            --bg-body-to: rgba(13, 17, 23, 0.95);
+            --bg-body-color: #0d1117;
+            --text-main: #e2e8f0;
+            --glass-bg: rgba(24, 32, 44, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --card-border: #1e293b;
+            --accent-primary: #c084fc;
+            --accent-secondary: #e879f9;
+            --scrollbar-bg: #0f141c;
+            --scrollbar-thumb: #2a3649;
+            --scrollbar-thumb-hover: #3b4c66;
+            --inner-bg: rgba(2, 6, 23, 0.8);
+            --inner-border: rgba(30, 41, 59, 0.8);
+            --subtext: #94a3b8;
+            --header-title-color: var(--accent-primary);
+        }
+
+        body.theme-maple-light {
+            --bg-body-from: #a2d2ff;
+            --bg-body-to: #bde0fe;
+            --bg-body-color: #bde0fe;
+            --text-main: #361b07;
+            --glass-bg: #fffbf0;
+            --glass-border: #8b5a2b;
+            --card-bg: #fff8e7;
+            --card-border: #734222;
+            --accent-primary: #e11d48;
+            --accent-secondary: #ec4899;
+            --scrollbar-bg: #bde0fe;
+            --scrollbar-thumb: #8b5a2b;
+            --scrollbar-thumb-hover: #5c3a19;
+            --inner-bg: #fff2d6;
+            --inner-border: #e6cb9e;
+            --subtext: #5c3a19;
+            --header-title-color: #db2777;
+        }
+
+        body.theme-maple {
+            --bg-body-from: rgba(40, 25, 15, 0.85);
+            --bg-body-to: rgba(25, 15, 8, 0.95);
+            --bg-body-color: #1a0f08;
+            --text-main: #fef3c7;
+            --glass-bg: rgba(54, 34, 20, 0.85);
+            --glass-border: rgba(251, 191, 36, 0.2);
+            --card-bg: rgba(43, 24, 12, 0.7);
+            --card-border: #573216;
+            --accent-primary: #f59e0b;
+            --accent-secondary: #ea580c;
+            --scrollbar-bg: #1a0f08;
+            --scrollbar-thumb: #573216;
+            --scrollbar-thumb-hover: #78441a;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #573216;
+            --subtext: #f59e0b;
+            --header-title-color: #facc15;
+        }
+
+        body.theme-cyber {
+            --bg-body-from: rgba(10, 5, 25, 0.9);
+            --bg-body-to: rgba(5, 2, 15, 0.98);
+            --bg-body-color: #05020f;
+            --text-main: #f0abfc;
+            --glass-bg: rgba(30, 10, 50, 0.85);
+            --glass-border: rgba(217, 70, 239, 0.3);
+            --card-bg: rgba(20, 8, 35, 0.8);
+            --card-border: #4a1d70;
+            --accent-primary: #d946ef;
+            --accent-secondary: #38bdf8;
+            --scrollbar-bg: #05020f;
+            --scrollbar-thumb: #4a1d70;
+            --scrollbar-thumb-hover: #701a75;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #4a1d70;
+            --subtext: #c084fc;
+            --header-title-color: #fef08a;
+        }
+
+        body.theme-crimson {
+            --bg-body-from: rgba(25, 8, 8, 0.9);
+            --bg-body-to: rgba(10, 3, 3, 0.98);
+            --bg-body-color: #0a0303;
+            --text-main: #fecdd3;
+            --glass-bg: rgba(45, 12, 12, 0.85);
+            --glass-border: rgba(244, 63, 94, 0.3);
+            --card-bg: rgba(30, 8, 8, 0.8);
+            --card-border: #5c1824;
+            --accent-primary: #f43f5e;
+            --accent-secondary: #fb923c;
+            --scrollbar-bg: #0a0303;
+            --scrollbar-thumb: #5c1824;
+            --scrollbar-thumb-hover: #881337;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #5c1824;
+            --subtext: #f87171;
+            --header-title-color: #fbbf24;
+        }
+
+        body.theme-moss {
+            --bg-body-from: rgba(10, 22, 15, 0.9);
+            --bg-body-to: rgba(5, 12, 8, 0.98);
+            --bg-body-color: #050c08;
+            --text-main: #d1fae5;
+            --glass-bg: rgba(12, 35, 22, 0.85);
+            --glass-border: rgba(52, 211, 153, 0.3);
+            --card-bg: rgba(8, 25, 15, 0.8);
+            --card-border: #14532d;
+            --accent-primary: #34d399;
+            --accent-secondary: #a3e635;
+            --scrollbar-bg: #050c08;
+            --scrollbar-thumb: #14532d;
+            --scrollbar-thumb-hover: #166534;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #14532d;
+            --subtext: #34d399;
+            --header-title-color: #facc15;
+        }
+
+        /* Specialized contrast fix for Default Maple Light */
+        body.theme-maple-light input,
+        body.theme-maple-light select,
+        body.theme-maple-light textarea {
+            color: #361b07 !important;
+        }
+        body.theme-maple-light input::placeholder {
+            color: #8c6239 !important;
+            opacity: 0.8;
+        }
+
+        body {
+            background-color: var(--bg-body-color);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+                linear-gradient(to bottom, var(--bg-body-from), var(--bg-body-to));
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .header-main-title { color: var(--header-title-color); }
+
+        body.theme-dark .theme-accent-text { color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-bg { background-color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-border { border-color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-gradient { background-image: linear-gradient(to bottom right, var(--accent-primary), var(--accent-secondary)) !important; }
+
+        body:not(.theme-dark) .theme-accent-text { color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-bg { background-color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-border { border-color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-gradient { background-image: linear-gradient(to bottom right, var(--accent-primary), var(--accent-secondary)) !important; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+        .ms-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .ms-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+        }
+
+        .ms-inner-box {
+            background: var(--inner-bg);
+            border: 1px solid var(--inner-border);
+        }
+
+        .ms-button {
+            transition: all 0.12s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        .ms-button:active {
+            transform: scale(0.95);
+        }
+
+        .theme-subtext { color: var(--subtext); }
+    </style>
+</head>
+<body id="app-body" class="theme-maple-light min-h-screen flex flex-col justify-between p-3 md:p-6 select-none">
+
+    <div class="max-w-7xl mx-auto w-full space-y-6">
+        <!-- Header -->
+        <header class="ms-glass rounded-2xl p-4 md:p-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-pink-400/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                <div class="flex items-center gap-3">
+                    <a href="grind.html" class="ms-button ms-inner-box px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 theme-accent-text hover:opacity-80 transition hover:scale-105" title="Back to Grind Tracker">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </a>
+
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl theme-accent-gradient flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg">
+                        <i class="fa-solid font-bold fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="header-main-title font-header text-2xl md:text-3xl font-bold tracking-wide drop-shadow-sm">
+                                Grind Session Analytics & Summary
+                            </h1>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-pink-100/30 border border-pink-400/40 theme-accent-text">
+                                Dashboard
+                            </span>
+                        </div>
+                        <p class="text-xs md:text-sm theme-subtext mt-0.5 font-bold">
+                            Aggregate history logs, track lifetime stats, and review deep dive insights
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold">
+                        <i class="fa-solid fa-palette theme-accent-text"></i>
+                        <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
+                            <option value="maple-light" class="bg-amber-50 text-pink-600">Default Maple Light</option>
+                            <option value="dark" class="bg-slate-900 text-slate-200">Default Dark</option>
+                            <option value="maple" class="bg-amber-950 text-amber-200">Maple Classic</option>
+                            <option value="moss" class="bg-emerald-950 text-emerald-300">Maple Forest</option>
+                            <option value="cyber" class="bg-purple-950 text-fuchsia-300">Maple Cyber</option>
+                            <option value="crimson" class="bg-rose-950 text-rose-300">Maple Crimson</option>
+                        </select>
+                    </div>
+
+                    <label class="ms-button ms-inner-box px-3.5 py-2 rounded-lg text-xs md:text-sm font-bold cursor-pointer flex items-center gap-2">
+                        <i class="fa-solid fa-upload theme-accent-text"></i> Upload History JSON
+                        <input type="file" id="bulkUploadInput" onchange="handleBulkUpload(event)" class="hidden" accept=".json" multiple>
+                    </label>
+
+                </div>
+            </div>
+        </header>
+
+        <!-- Top Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
+                <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
+                    <i class="fa-solid fa-folder-open theme-accent-text"></i> Total Sessions
+                </div>
+                <div id="statTotalSessions" class="text-2xl font-extrabold font-mono mt-2 theme-accent-text">0</div>
+                <div class="text-[11px] theme-subtext font-bold mt-1">Logged grind sessions</div>
+            </div>
+
+            <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
+                <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
+                    <i class="fa-solid fa-clock theme-accent-text"></i> Total Grinding Time
+                </div>
+                <div id="statTotalTime" class="text-2xl font-extrabold font-mono mt-2 text-sky-600">0h 00m</div>
+                <div class="text-[11px] theme-subtext font-bold mt-1">Active time in maps</div>
+            </div>
+
+            <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
+                <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt theme-accent-text"></i> Total EXP Gained
+                </div>
+                <div id="statTotalExp" class="text-2xl font-extrabold font-mono mt-2 text-emerald-600">+0.000%</div>
+                <div class="text-[11px] theme-subtext font-bold mt-1" id="statLevelUpsSub">0 Level Ups</div>
+            </div>
+
+            <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
+                <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
+                    <i class="fa-solid fa-coins text-amber-500"></i> Net Profit Gained
+                </div>
+                <div id="statTotalNetProfit" class="text-2xl font-extrabold font-mono mt-2 text-amber-600">0 mesos</div>
+                <div class="text-[11px] theme-subtext font-bold mt-1">Gross + Drops - Expenses</div>
+            </div>
+
+            <div class="ms-card rounded-xl p-4 shadow-md flex flex-col justify-between">
+                <div class="text-xs font-extrabold uppercase theme-subtext flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-line theme-accent-text"></i> Avg Net Rate
+                </div>
+                <div id="statAvgNetRate" class="text-2xl font-extrabold font-mono mt-2 theme-accent-text">0 / min</div>
+                <div class="text-[11px] theme-subtext font-bold mt-1">Lifetime average efficiency</div>
+            </div>
+        </div>
+
+        <!-- Middle Section: Map Breakdown & Best Performances -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Map Breakdown Analytics -->
+            <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
+                <div class="flex items-center justify-between border-b border-amber-900/20 pb-3">
+                    <h3 class="text-base font-bold font-header flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot theme-accent-text"></i> Map Breakdown & Profitability
+                    </h3>
+                    <span class="text-xs font-mono font-bold theme-subtext" id="mapCountBadge">0 Maps</span>
+                </div>
+                <div id="mapBreakdownList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                    <div class="text-center py-6 theme-subtext font-bold italic text-xs">No session data uploaded or found yet.</div>
+                </div>
+            </div>
+
+            <!-- Top Highlights & Character Stats -->
+            <div class="ms-card rounded-xl p-5 space-y-4 shadow-md flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between border-b border-amber-900/20 pb-3 mb-4">
+                        <h3 class="text-base font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-trophy text-amber-500"></i> Top Session Highlights
+                        </h3>
+                        <span class="text-xs font-mono font-bold theme-subtext">Best Runs</span>
+                    </div>
+                    <div id="highlightsList" class="space-y-3">
+                        <div class="text-center py-6 theme-subtext font-bold italic text-xs">Upload or sync sessions to view highlights.</div>
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-amber-900/20 flex items-center justify-between text-xs theme-subtext font-bold">
+                    <span>Tip: Export history logs from your main tracker and upload here.</span>
+                    <button onclick="clearAllAnalytics();" class="text-rose-600 hover:underline font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-trash-can"></i> Clear Analytics Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Aggregated Sessions Table -->
+        <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-900/20 pb-3 gap-3">
+                <div class="flex items-center gap-2">
+                    <h3 class="text-base font-bold font-header flex items-center gap-2">
+                        <i class="fa-solid fa-table-list theme-accent-text"></i> All Aggregated Sessions
+                    </h3>
+                    <span id="tableCountBadge" class="text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold theme-subtext">0 Sessions</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="searchFilterInput" placeholder="Filter by map or IGN..." oninput="renderAnalytics()" class="ms-inner-box rounded-lg px-3 py-1.5 text-xs focus:outline-none theme-accent-border font-bold w-64">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono font-bold">
+                    <thead class="theme-subtext uppercase text-[11px] border-b border-amber-900/20">
+                        <tr>
+                            <th class="py-2.5 px-3">Date & Time</th>
+                            <th class="py-2.5 px-3">Character & Map</th>
+                            <th class="py-2.5 px-3">Duration</th>
+                            <th class="py-2.5 px-3">EXP Gained</th>
+                            <th class="py-2.5 px-3">Gross Meso</th>
+                            <th class="py-2.5 px-3">Net Profit</th>
+                            <th class="py-2.5 px-3">Net Rate / Min</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analyticsTableBody" class="divide-y divide-amber-900/15">
+                        <tr>
+                            <td colspan="7" class="py-8 text-center theme-subtext font-bold italic">No sessions loaded.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto w-full mt-8 pt-4 border-t border-amber-900/20 flex flex-col md:flex-row items-center justify-between text-xs theme-subtext gap-2 font-bold">
+        <div><span>MapleStory Grind Session Analytics Dashboard • By Sunshine ♥ </span></div>
+        <div>♥ Happy Grinding! ♥</div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 ms-glass text-xs font-bold px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none flex items-center gap-2 z-50">
+        <i class="fa-solid fa-circle-info theme-accent-text" id="toastIcon"></i>
+        <span id="toastMessage">Notification message</span>
+    </div>
+
+    <script>
+        let analyticsState = {
+            sessions: [],
+            currentTheme: 'maple-light'
+        };
+
+        window.onload = function() {
+            loadLocalHistory();
+            const savedTheme = localStorage.getItem('maple_analytics_theme') || 'maple-light';
+            changeTheme(savedTheme);
+        };
+
+        function changeTheme(themeName) {
+            analyticsState.currentTheme = themeName;
+            document.getElementById('app-body').className = `theme-${themeName} min-h-screen flex flex-col justify-between p-3 md:p-6 select-none`;
+            const selector = document.getElementById('theme-selector');
+            if (selector) selector.value = themeName;
+            localStorage.setItem('maple_analytics_theme', themeName);
+        }
+
+        function loadLocalHistory() {
+            try {
+                const mainTrackerSaved = localStorage.getItem('maple_grind_tracker_state_v2');
+                if (mainTrackerSaved) {
+                    const parsed = JSON.parse(mainTrackerSaved);
+                    if (parsed.history && Array.isArray(parsed.history)) {
+                        const existingIds = new Set(analyticsState.sessions.map(s => s.id));
+                        parsed.history.forEach(item => {
+                            if (!existingIds.has(item.id)) {
+                                analyticsState.sessions.push(item);
+                            }
+                        });
+                    }
+                }
+                renderAnalytics();
+                showToast("Successfully synced sessions from tracker!", "success");
+            } catch(e) {
+                showToast("Could not load local session history", "error");
+            }
+        }
+
+        function handleBulkUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            let loadedCount = 0;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (Array.isArray(data)) {
+                            data.forEach(item => {
+                                if (item.id && !analyticsState.sessions.some(s => s.id === item.id)) {
+                                    analyticsState.sessions.push(item);
+                                    loadedCount++;
+                                }
+                            });
+                        } else if (data && data.id) {
+                            if (!analyticsState.sessions.some(s => s.id === data.id)) {
+                                analyticsState.sessions.push(data);
+                                loadedCount++;
+                            }
+                        }
+                        renderAnalytics();
+                        showToast(`Successfully imported ${loadedCount} session(s)!`, "success");
+                    } catch(err) {
+                        showToast("Error parsing JSON file", "error");
+                    }
+                };
+                reader.readAsText(file);
+            });
+            event.target.value = '';
+        }
+
+        function renderAnalytics() {
+            const sessions = analyticsState.sessions;
+            const filterText = (document.getElementById('searchFilterInput').value || '').toLowerCase();
+
+            let totalSessions = sessions.length;
+            let totalSeconds = 0;
+            let totalExp = 0;
+            let totalLevelUps = 0;
+            let totalNetProfit = 0;
+            let totalGrossMeso = 0;
+
+            sessions.forEach(s => {
+                totalSeconds += (s.durationSeconds || 0);
+                totalExp += (s.expGained || 0);
+                totalLevelUps += (s.levelUps || 0);
+                totalNetProfit += (s.netProfit || 0);
+                totalGrossMeso += (s.grossMeso || 0);
+            });
+
+            const totalHours = Math.floor(totalSeconds / 3600);
+            const totalMins = Math.floor((totalSeconds % 3600) / 60);
+            const totalMinutesFloat = Math.max(totalSeconds, 10) / 60;
+            const lifetimeAvgRate = totalNetProfit / totalMinutesFloat;
+
+            document.getElementById('statTotalSessions').textContent = totalSessions;
+            document.getElementById('statTotalTime').textContent = `${totalHours}h ${totalMins < 10 ? '0' : ''}${totalMins}m`;
+            document.getElementById('statTotalExp').textContent = `+${totalExp.toFixed(3)}%`;
+            document.getElementById('statLevelUpsSub').textContent = `${totalLevelUps} Level Ups`;
+            document.getElementById('statTotalNetProfit').textContent = formatShortMeso(totalNetProfit) + ' mesos';
+            document.getElementById('statAvgNetRate').textContent = `${formatShortMeso(lifetimeAvgRate)} / min`;
+
+            const mapStats = {};
+            sessions.forEach(s => {
+                const mapName = s.mapName || 'Unknown Map';
+                if (!mapStats[mapName]) {
+                    mapStats[mapName] = { count: 0, timeSec: 0, exp: 0, netProfit: 0 };
+                }
+                mapStats[mapName].count += 1;
+                mapStats[mapName].timeSec += (s.durationSeconds || 0);
+                mapStats[mapName].exp += (s.expGained || 0);
+                mapStats[mapName].netProfit += (s.netProfit || 0);
+            });
+
+            const mapListEl = document.getElementById('mapBreakdownList');
+            const sortedMaps = Object.keys(mapStats).sort((a, b) => mapStats[b].netProfit - mapStats[a].netProfit);
+            document.getElementById('mapCountBadge').textContent = `${sortedMaps.length} Maps`;
+
+            if (sortedMaps.length === 0) {
+                mapListEl.innerHTML = `<div class="text-center py-6 theme-subtext font-bold italic text-xs">No session data uploaded or found yet.</div>`;
+            } else {
+                mapListEl.innerHTML = '';
+                sortedMaps.forEach(mapName => {
+                    const data = mapStats[mapName];
+                    const mTimeHrs = (data.timeSec / 3600).toFixed(1);
+                    const row = document.createElement('div');
+                    row.className = "ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs";
+                    row.innerHTML = `
+                        <div class="flex flex-col max-w-[55%]">
+                            <span class="font-extrabold font-sans text-slate-900 truncate"><i class="fa-solid fa-map text-xs mr-1 theme-accent-text"></i>${mapName}</span>
+                            <span class="text-[10px] theme-subtext font-bold">${data.count} run(s) • ${mTimeHrs} hrs logged</span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="font-bold font-mono ${data.netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${data.netProfit >= 0 ? '+' : ''}${formatShortMeso(data.netProfit)} mesos</span>
+                            <span class="text-[10px] theme-accent-text font-mono font-bold">+${data.exp.toFixed(2)}% EXP</span>
+                        </div>
+                    `;
+                    mapListEl.appendChild(row);
+                });
+            }
+
+            const highlightsEl = document.getElementById('highlightsList');
+            if (sessions.length === 0) {
+                highlightsEl.innerHTML = `<div class="text-center py-6 theme-subtext font-bold italic text-xs">Upload or sync sessions to view highlights.</div>`;
+            } else {
+                const bestProfitSession = [...sessions].sort((a, b) => b.netProfit - a.netProfit)[0];
+                const bestExpSession = [...sessions].sort((a, b) => b.expGained - a.expGained)[0];
+                const longestSession = [...sessions].sort((a, b) => b.durationSeconds - a.durationSeconds)[0];
+
+                highlightsEl.innerHTML = `
+                    <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold"><i class="fa-solid fa-crown"></i></div>
+                            <div>
+                                <div class="font-extrabold text-slate-900">Highest Net Profit Session</div>
+                                <div class="text-[10px] theme-subtext font-bold">${bestProfitSession.mapName} (${bestProfitSession.timestamp})</div>
+                            </div>
+                        </div>
+                        <div class="font-extrabold font-mono text-emerald-600">+${formatShortMeso(bestProfitSession.netProfit)}</div>
+                    </div>
+
+                    <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold"><i class="fa-solid fa-bolt"></i></div>
+                            <div>
+                                <div class="font-extrabold text-slate-900">Most EXP Gained Session</div>
+                                <div class="text-[10px] theme-subtext font-bold">${bestExpSession.mapName} (${bestExpSession.timestamp})</div>
+                            </div>
+                        </div>
+                        <div class="font-extrabold font-mono text-emerald-600">+${bestExpSession.expGained.toFixed(3)}%</div>
+                    </div>
+
+                    <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs font-bold">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center font-bold"><i class="fa-solid fa-hourglass-half"></i></div>
+                            <div>
+                                <div class="font-extrabold text-slate-900">Longest Grinding Session</div>
+                                <div class="text-[10px] theme-subtext font-bold">${longestSession.mapName} (${longestSession.timestamp})</div>
+                            </div>
+                        </div>
+                        <div class="font-extrabold font-mono theme-accent-text">${formatSecondsToHHMMSS(longestSession.durationSeconds)}</div>
+                    </div>
+                `;
+            }
+
+            const tbody = document.getElementById('analyticsTableBody');
+            const filteredSessions = sessions.filter(s => {
+                const matchMap = (s.mapName || '').toLowerCase().includes(filterText);
+                const matchIGN = (s.charName || '').toLowerCase().includes(filterText);
+                return matchMap || matchIGN;
+            });
+
+            document.getElementById('tableCountBadge').textContent = `${filteredSessions.length} Sessions`;
+
+            if (filteredSessions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center theme-subtext font-bold italic">No matching sessions found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            filteredSessions.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-500/10 transition font-bold";
+                const isPositive = (s.netProfit || 0) >= 0;
+                const charDisplay = s.charName && s.charName !== 'Unnamed' ? `[${s.charName}] ` : '';
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 theme-subtext text-[11px] font-bold">${s.timestamp}</td>
+                    <td class="py-2.5 px-3 font-sans font-bold">${charDisplay}${s.mapName} <span class="text-xs theme-accent-text">Lv.${s.level || 1}</span></td>
+                    <td class="py-2.5 px-3">${formatSecondsToHHMMSS(s.durationSeconds || 0)}</td>
+                    <td class="py-2.5 px-3 theme-accent-text">+${(s.expGained || 0).toFixed(3)}%</td>
+                    <td class="py-2.5 px-3 text-amber-600 font-extrabold">${formatShortMeso(s.grossMeso || 0)}</td>
+                    <td class="py-2.5 px-3 font-extrabold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}">${isPositive ? '+' : ''}${formatShortMesso ? formatShortMesso(s.netProfit || 0) : formatShortMeso(s.netProfit || 0)}</td>
+                    <td class="py-2.5 px-3 font-extrabold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}">${isPositive ? '+' : ''}${formatShortMeso(s.netProfitPerMinute || 0)}/min</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearAllAnalytics() {
+            if (confirm("Clear all loaded sessions in analytics dashboard?")) {
+                analyticsState.sessions = [];
+                renderAnalytics();
+                showToast("Analytics data cleared", "info");
+            }
+        }
+
+        function formatShortMeso(num) {
+            const abs = Math.abs(num);
+            const sign = num < 0 ? '-' : '';
+            if (abs >= 1000000000) return sign + (abs / 1000000000).toFixed(2) + 'B';
+            if (abs >= 1000000) return sign + (abs / 1000000).toFixed(2) + 'M';
+            if (abs >= 1000) return sign + (abs / 1000).toFixed(1) + 'K';
+            return sign + Math.round(abs).toLocaleString('en-US');
+        }
+
+        function formatSecondsToHHMMSS(totalSeconds) {
+            const hrs = Math.floor(totalSeconds / 3600);
+            const mins = Math.floor((totalSeconds % 3600) / 60);
+            const secs = totalSeconds % 60;
+            return [hrs, mins, secs].map(v => v < 10 ? "0" + v : v).join(":");
+        }
+
+        function showToast(msg, type = "info") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = msg;
+            document.getElementById('toastIcon').className = type === "success" ? "fa-solid fa-circle-check text-emerald-600" : (type === "error" ? "fa-solid fa-triangle-exclamation text-rose-600" : "fa-solid fa-circle-info theme-accent-text");
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'); }, 3000);
+        }
+    </script>
+</body>
+</html>
