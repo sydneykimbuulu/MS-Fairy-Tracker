@@ -36,10 +36,12 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --card-bg: rgba(15, 23, 42, 0.6);
             --card-border: #1e293b;
-            --accent-primary: #10b981;
+            --accent-primary: #c084fc;
+            --accent-secondary: #e879f9;
             --subtext: #94a3b8;
             --inner-bg: rgba(2, 6, 23, 0.8);
             --inner-border: rgba(30, 41, 59, 0.8);
+            --header-title-color: var(--accent-primary);
         }
 
         body.theme-maple-light {
@@ -52,9 +54,11 @@
             --card-bg: #fff8e7;
             --card-border: #734222;
             --accent-primary: #f43f5e;
+            --accent-secondary: #f472b6;
             --subtext: #8c5a3c;
             --inner-bg: #fff2d6;
             --inner-border: #e6cb9e;
+            --header-title-color: #ec4899;
         }
 
         body.theme-maple {
@@ -67,9 +71,11 @@
             --card-bg: rgba(43, 24, 12, 0.7);
             --card-border: #573216;
             --accent-primary: #f59e0b;
+            --accent-secondary: #ea580c;
             --subtext: #d97706;
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #573216;
+            --header-title-color: #facc15;
         }
 
         body.theme-cyber {
@@ -82,9 +88,45 @@
             --card-bg: rgba(20, 8, 35, 0.8);
             --card-border: #4a1d70;
             --accent-primary: #d946ef;
+            --accent-secondary: #38bdf8;
             --subtext: #c084fc;
             --inner-bg: rgba(15, 23, 42, 0.6);
             --inner-border: #4a1d70;
+            --header-title-color: #fef08a;
+        }
+
+        body.theme-crimson {
+            --bg-body-from: rgba(25, 8, 8, 0.9);
+            --bg-body-to: rgba(10, 3, 3, 0.98);
+            --bg-body-color: #0a0303;
+            --text-main: #fecdd3;
+            --glass-bg: rgba(45, 12, 12, 0.85);
+            --glass-border: rgba(244, 63, 94, 0.3);
+            --card-bg: rgba(30, 8, 8, 0.8);
+            --card-border: #5c1824;
+            --accent-primary: #f43f5e;
+            --accent-secondary: #fb923c;
+            --subtext: #f87171;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #5c1824;
+            --header-title-color: #fbbf24;
+        }
+
+        body.theme-moss {
+            --bg-body-from: rgba(10, 22, 15, 0.9);
+            --bg-body-to: rgba(5, 12, 8, 0.98);
+            --bg-body-color: #050c08;
+            --text-main: #d1fae5;
+            --glass-bg: rgba(12, 35, 22, 0.85);
+            --glass-border: rgba(52, 211, 153, 0.3);
+            --card-bg: rgba(8, 25, 15, 0.8);
+            --card-border: #14532d;
+            --accent-primary: #34d399;
+            --accent-secondary: #a3e635;
+            --subtext: #34d399;
+            --inner-bg: rgba(15, 23, 42, 0.6);
+            --inner-border: #14532d;
+            --header-title-color: #facc15;
         }
 
         body {
@@ -97,6 +139,20 @@
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
         }
+
+        .header-main-title {
+            color: var(--header-title-color);
+        }
+
+        body.theme-dark .theme-accent-text { color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-bg { background-color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-border { border-color: var(--accent-primary) !important; }
+        body.theme-dark .theme-accent-gradient { background-image: linear-gradient(to bottom right, var(--accent-primary), var(--accent-secondary)) !important; }
+
+        body:not(.theme-dark) .theme-accent-text { color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-bg { background-color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-border { border-color: var(--accent-primary) !important; }
+        body:not(.theme-dark) .theme-accent-gradient { background-image: linear-gradient(to bottom right, var(--accent-primary), var(--accent-secondary)) !important; }
 
         .ms-glass {
             background: var(--glass-bg);
@@ -138,29 +194,31 @@
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg shadow-pink-500/30">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl theme-accent-gradient flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg">
                         <i class="fa-solid font-bold fa-maple-leaf"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="font-header text-2xl md:text-3xl font-bold tracking-wide text-pink-500 drop-shadow-sm">
+                            <h1 class="header-main-title font-header text-2xl md:text-3xl font-bold tracking-wide drop-shadow-sm">
                                 MapleStory Tool Hub
                             </h1>
                         </div>
                         <p class="text-xs md:text-sm theme-subtext mt-0.5 font-medium">
-                            Select a tracker below to get started!
+                            Select a tool below to get started!
                         </p>
                     </div>
                 </div>
 
                 <!-- Theme Selector -->
                 <div class="flex items-center gap-1.5 ms-inner-box px-3 py-1.5 rounded-lg text-xs md:text-sm">
-                    <i class="fa-solid fa-palette text-pink-500"></i>
+                    <i class="fa-solid fa-palette theme-accent-text"></i>
                     <select id="theme-selector" onchange="changeTheme(this.value)" class="bg-transparent font-bold focus:outline-none cursor-pointer">
                         <option value="maple-light" class="bg-amber-50 text-pink-600">Default Maple Light</option>
                         <option value="dark" class="bg-slate-900 text-slate-200">Default Dark</option>
                         <option value="maple" class="bg-amber-950 text-amber-200">Maple Classic</option>
+                        <option value="moss" class="bg-emerald-950 text-emerald-300">Maple Forest</option>
                         <option value="cyber" class="bg-purple-950 text-fuchsia-300">Maple Cyber</option>
+                        <option value="crimson" class="bg-rose-950 text-rose-300">Maple Crimson</option>
                     </select>
                 </div>
             </div>
@@ -172,7 +230,7 @@
             <!-- Grind Session Tracker Card -->
             <div class="ms-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition hover:scale-[1.01]">
                 <div class="space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-500 text-xl">
+                    <div class="w-12 h-12 rounded-xl ms-inner-box flex items-center justify-center theme-accent-text text-xl">
                         <i class="fa-solid fa-stopwatch"></i>
                     </div>
                     <h2 class="font-header text-xl font-bold">Grind Session Tracker</h2>
@@ -180,9 +238,12 @@
                         Track your live experience gains, meso loot rates, consumables, and expenses with real-time timers and session history logs.
                     </p>
                 </div>
-                <div class="mt-6 pt-4 border-t border-slate-300/30">
-                    <a href="grind.html" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white transition shadow-lg flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-arrow-right"></i> Open Grind Tracker
+                <div class="mt-6 pt-4 border-t border-slate-300/30 flex gap-3">
+                    <a href="grind_3.html" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-90 text-white transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> Open Tracker
+                    </a>
+                    <a href="analytics.html" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm ms-inner-box theme-accent-text hover:opacity-80 transition shadow-lg flex items-center justify-center gap-2" title="View Analytics & Summary Dashboard">
+                        <i class="fa-solid fa-chart-pie"></i> Analytics
                     </a>
                 </div>
             </div>
@@ -190,7 +251,7 @@
             <!-- Fairy Respawn Tracker Card -->
             <div class="ms-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition hover:scale-[1.01]">
                 <div class="space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-500 text-xl">
+                    <div class="w-12 h-12 rounded-xl ms-inner-box flex items-center justify-center theme-accent-text text-xl">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                     </div>
                     <h2 class="font-header text-xl font-bold">Fairy Respawn Tracker</h2>
@@ -199,7 +260,7 @@
                     </p>
                 </div>
                 <div class="mt-6 pt-4 border-t border-slate-300/30">
-                    <a href="fairy.html" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white transition shadow-lg flex items-center justify-center gap-2">
+                    <a href="fairy.html" class="w-full py-3 px-4 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-90 text-white transition shadow-lg flex items-center justify-center gap-2">
                         <i class="fa-solid fa-arrow-right"></i> Open Fairy Tracker
                     </a>
                 </div>
@@ -222,6 +283,8 @@
         function changeTheme(themeName) {
             const bodyEl = document.getElementById('app-body');
             bodyEl.className = `theme-${themeName} min-h-screen flex flex-col justify-between p-4 md:p-8 select-none`;
+            const selector = document.getElementById('theme-selector');
+            if (selector) selector.value = themeName;
             localStorage.setItem('hub_theme', themeName);
         }
 
