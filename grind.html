@@ -390,6 +390,9 @@
                             <option value="Victoria Road : Ellinia">Ellinia</option>
                             <option value="Victoria Road : Sleepywood">Sleepywood / Ant Tunnel</option>
                         </optgroup>
+                        <optgroup label="Party Quest">
+                            <option value="Kerning Party Quest (KPQ)">Kerning Party Quest (KPQ)</option>
+                        </optgroup>
                         <optgroup label="Other">
                             <option value="CUSTOM">-- Custom Location/Mob --</option>
                         </optgroup>
@@ -452,87 +455,134 @@
 
         <!-- Middle Row: Main Session Controls & Trackers -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            <!-- Left Column: Session Timer + Break Logger -->
+            <!-- Left Column: Session Timer / KPQ Counter Card + Break Logger Side-by-Side -->
             <div class="lg:col-span-6 ms-card rounded-xl p-5 flex flex-col justify-between shadow-xl space-y-3 h-full">
+                <!-- Flippable Container -->
                 <div class="space-y-3">
                     <div class="flex items-center justify-between border-b border-slate-300/20 pb-2.5">
-                        <h2 class="text-lg font-bold font-header flex items-center gap-2">
-                            <i class="fa-solid fa-stopwatch theme-accent-text"></i> Session Timer
+                        <h2 id="cardTitle" class="text-lg font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-stopwatch theme-accent-text" id="cardTitleIcon"></i> <span id="cardTitleText">Session Timer</span>
                         </h2>
-                        <div class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
-                            <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-                            <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleCardFlip(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded-lg text-xs font-bold theme-accent-text interactive-btn flex items-center gap-1" title="Flip Card to KPQ Counter">
+                                <i class="fa-solid fa-rotate"></i> <span id="flipBtnText">KPQ</span>
+                            </button>
+                            <div id="timerStatusBadgeContainer" class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
+                                <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
-                        <!-- 10s Test Button with slightly darker readable grey text -->
-                        <div class="absolute top-2 right-2 flex items-center gap-1">
-                            <button onclick="setTimerPreset(10/60, this)" class="preset-btn ms-button px-2 py-0.5 rounded text-[10px] font-mono font-semibold opacity-70 hover:opacity-100 transition interactive-btn text-slate-600 dark:text-slate-400 bg-slate-500/10 border border-slate-500/20" title="10s test timer">10s test</button>
+                    <!-- FRONT SIDE: Session Timer -->
+                    <div id="timerCardSide" class="space-y-3">
+                        <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
+                            <div class="absolute top-2 right-2 flex items-center gap-1">
+                                <button onclick="setTimerPreset(10/60, this)" class="preset-btn ms-button px-2 py-0.5 rounded text-[10px] font-mono font-semibold opacity-70 hover:opacity-100 transition interactive-btn text-slate-600 dark:text-slate-400 bg-slate-500/10 border border-slate-500/20" title="10s test timer">10s test</button>
+                            </div>
+
+                            <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
+                                00:00:00
+                            </div>
+                            <div class="text-xs theme-subtext font-mono mt-1 flex justify-center gap-3 font-semibold">
+                                <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
+                                <span>|</span>
+                                <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+                            </div>
                         </div>
 
-                        <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
-                            00:00:00
+                        <div class="grid grid-cols-4 gap-1.5">
+                            <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
+                            <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
+                            <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1h</button>
+                            <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2h</button>
                         </div>
-                        <div class="text-xs theme-subtext font-mono mt-1 flex justify-center gap-3 font-semibold">
-                            <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
-                            <span>|</span>
-                            <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                                <i class="fa-solid fa-play" id="startPauseIcon"></i>
+                                <span id="startPauseLabel">Start Session</span>
+                            </button>
+                            <button onclick="promptFinishAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span>Finish & Save</span>
+                            </button>
+                        </div>
+
+                        <div class="text-center pt-1">
+                            <button onclick="resetTimerOnly(); animateClick(this)" class="text-xs theme-subtext hover:theme-accent-text transition inline-flex items-center gap-1 font-semibold interactive-btn">
+                                <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset Timer Clock
+                            </button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-4 gap-1.5">
-                        <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
-                        <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
-                        <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1h</button>
-                        <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2h</button>
-                    </div>
+                    <!-- BACK SIDE: KPQ Counter -->
+                    <div id="kpqCardSide" class="space-y-4 hidden">
+                        <div class="ms-inner-box rounded-xl py-4 px-3 text-center relative overflow-hidden group w-full space-y-2">
+                            <div class="text-xs uppercase font-bold theme-subtext tracking-wider">Kerning Party Quest (KPQ) Runs</div>
+                            <div id="kpqCountDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
+                                0
+                            </div>
+                            <div class="flex items-center justify-center gap-2 pt-1">
+                                <button onclick="incrementKpqCount(); animateClick(this)" class="ms-button theme-accent-bg text-white px-6 py-2 rounded-xl text-sm font-bold flex items-center gap-2 interactive-btn shadow-md">
+                                    <i class="fa-solid fa-plus text-xs"></i> +1 KPQ Finished
+                                </button>
+                                <button onclick="resetKpqCount(); animateClick(this)" class="ms-button ms-inner-box px-3 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Reset Counter">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
-                            <i class="fa-solid fa-play" id="startPauseIcon"></i>
-                            <span id="startPauseLabel">Start Session</span>
-                        </button>
-                        <button onclick="promptFinishAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
-                            <i class="fa-solid fa-box-archive"></i>
-                            <span>Finish & Save</span>
-                        </button>
-                    </div>
-
-                    <div class="text-center pt-1">
-                        <button onclick="resetTimerOnly(); animateClick(this)" class="text-xs theme-subtext hover:theme-accent-text transition inline-flex items-center gap-1 font-semibold interactive-btn">
-                            <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset Timer Clock
-                        </button>
+                        <!-- KPQ Timer / Stopwatch Sub-section -->
+                        <div class="ms-inner-box rounded-xl p-3.5 space-y-2.5">
+                            <div class="flex items-center justify-between text-xs font-bold">
+                                <span class="theme-subtext flex items-center gap-1.5"><i class="fa-solid fa-stopwatch theme-accent-text"></i> KPQ Run Stopwatch</span>
+                                <span id="kpqTimerDisplay" class="font-mono text-base font-bold theme-accent-text">00:00</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button id="kpqTimerStartBtn" onclick="toggleKpqTimer(); animateClick(this)" class="ms-button theme-accent-gradient text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm">
+                                    <i class="fa-solid fa-play" id="kpqTimerIcon"></i> <span id="kpqTimerLabel">Start KPQ Timer</span>
+                                </button>
+                                <button onclick="resetKpqTimer(); animateClick(this)" class="ms-button ms-inner-box py-2 rounded-lg text-xs font-semibold theme-subtext hover:theme-accent-text transition interactive-btn" title="Reset Stopwatch & Save Session Log">
+                                    Reset Stopwatch & Save
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="border-t border-slate-300/30 pt-2"></div>
 
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
-                            <i class="fa-solid fa-mug-hot theme-accent-text"></i> Session Break Logger
-                        </h3>
-                        <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="breakNameInput" placeholder="Break name (e.g. Lunch, Stretch)" class="flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
-                        <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn" disabled title="Start session to enable breaks">
-                            <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Start Break</span>
-                        </button>
-                        <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-
-                    <div class="ms-inner-box rounded-lg px-2.5 py-1.5 space-y-1">
-                        <div class="flex items-center justify-between text-[11px] font-semibold border-b border-slate-300/20 pb-0.5">
-                            <span class="theme-subtext">Logged Breaks</span>
-                            <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">Total: 0m 0s</span>
+                <!-- Two columns side-by-side: Left = KPQ & Session Summary Stats, Right = Break Logger -->
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-3 items-stretch">
+                    <!-- Section to the left of break logs for KPQ & Session Summary -->
+                    <!-- Right Column: Session Break Logger -->
+                    <div class="space-y-2 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
+                                <i class="fa-solid fa-mug-hot theme-accent-text"></i> Break Logger
+                            </h3>
+                            <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
                         </div>
-                        <div id="breakLogsList" class="space-y-1 max-h-28 overflow-y-auto pr-1 text-[11px] font-mono">
-                            <div class="text-center py-1 text-slate-400 italic font-sans text-[10px]">No breaks logged yet.</div>
+                        
+                        <div class="flex items-center gap-1.5">
+                            <input type="text" id="breakNameInput" placeholder="Break name" class="flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
+                            <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-2.5 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap interactive-btn" disabled title="Start session to enable breaks">
+                                <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Break</span>
+                            </button>
+                            <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+
+                        <div class="ms-inner-box rounded-lg px-2 py-1 space-y-1">
+                            <div class="flex items-center justify-between text-[10px] font-semibold border-b border-slate-300/20 pb-0.5">
+                                <span class="theme-subtext">Breaks</span>
+                                <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">0m 0s</span>
+                            </div>
+                            <div id="breakLogsList" class="space-y-1 max-h-20 overflow-y-auto pr-1 text-[10px] font-mono">
+                                <div class="text-center py-1 text-slate-400 italic font-sans text-[9px]">No breaks logged.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -730,10 +780,10 @@
                             </th>
                             <th class="py-2.5 px-3">Date & Time</th>
                             <th class="py-2.5 px-3">Character & Map</th>
+                            <th class="py-2.5 px-3">KPQ Stats</th>
                             <th class="py-2.5 px-3">Duration</th>
                             <th class="py-2.5 px-3">EXP Gained</th>
                             <th class="py-2.5 px-3">Net Profit</th>
-                            <th class="py-2.5 px-3">Net Rate / Min</th>
                             <th class="py-2.5 px-3 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -747,7 +797,7 @@
         </div>
     </div>
 
-    <!-- Consumables & Buffs Pop-Out Slide-Over Drawer (Expanded to max-w-6xl for two-column split) -->
+    <!-- Consumables & Buffs Pop-Out Slide-Over Drawer -->
     <div id="consumablesDrawerBackdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden transition-opacity opacity-0"></div>
     <div id="consumablesDrawer" class="fixed top-0 right-0 h-full w-full max-w-6xl ms-glass z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between border-l-2 border-pink-500/50">
         <div class="p-5 md:p-6 border-b border-slate-300/30 flex items-center justify-between">
@@ -758,10 +808,8 @@
         </div>
 
         <div class="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto">
-            <!-- Two-Column Grid: Left Side (Save New Custom Preset) & Right Side (All Other Libraries & Management) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- LEFT COLUMN: Save New Custom Preset Form (Sticky/Pinned) -->
                 <div class="lg:col-span-4 space-y-4 lg:sticky lg:top-0">
                     <div class="ms-inner-box p-5 rounded-2xl space-y-4 border-2 border-pink-400/40 shadow-inner">
                         <div class="flex items-center justify-between border-b border-slate-300/20 pb-2">
@@ -793,9 +841,7 @@
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN: All Other Libraries & Management -->
                 <div class="lg:col-span-8 space-y-6">
-                    <!-- Section 1: Preset Library (Categorized List with Collapsible Categories) -->
                     <div class="space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-300/20 pb-2">
                             <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
@@ -814,13 +860,10 @@
                             </div>
                         </div>
                         <div id="presetLibraryContainer" class="space-y-3 transition-all">
-                            <div id="presetLibraryList" class="space-y-3">
-                                <!-- Populated via JS grouped by categories -->
-                            </div>
+                            <div id="presetLibraryList" class="space-y-3"></div>
                         </div>
                     </div>
 
-                    <!-- Section 2: Custom Presets Library (Viewable) -->
                     <div class="space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-300/20 pb-2">
                             <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
@@ -828,12 +871,9 @@
                             </span>
                             <span class="text-[10px] theme-subtext font-mono">Your Saved Buffs</span>
                         </div>
-                        <div id="customPresetsLibraryList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <!-- Populated via JS -->
-                        </div>
+                        <div id="customPresetsLibraryList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
                     </div>
 
-                    <!-- Section 3: Manage & Delete Custom Presets -->
                     <div class="space-y-3">
                         <div class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
                             <i class="fa-solid fa-list-check theme-accent-text"></i> Manage Saved Custom Presets
@@ -995,34 +1035,38 @@
             breakStartTime: null,
             breakName: '',
             breakLogs: [],
-            presetLibraryHidden: false
+            presetLibraryHidden: false,
+            isKpqFlipped: false,
+            kpqCount: 0,
+            kpqTimerRunning: false,
+            kpqStartTime: null,
+            kpqElapsedSeconds: 0,
+            kpqTimerInterval: null
         };
 
         const DEFAULT_PRESETS = [
-            // General Foods
-            { id: 'preset_apple', name: 'Apple', category: 'General Foods', unitCost: 30, qty: 1, notes: 'Basic starter food' },
-            { id: 'preset_egg', name: 'Egg', category: 'General Foods', unitCost: 50, qty: 1, notes: 'Basic starter food' },
-            { id: 'preset_meat', name: 'Meat', category: 'General Foods', unitCost: 100, qty: 1, notes: 'Basic starter food' },
-            { id: 'preset_fried_chicken', name: 'Fried Chicken', category: 'General Foods', unitCost: 220, qty: 1, notes: '' },
-            { id: 'preset_hot_dog', name: 'Hot Dog', category: 'General Foods', unitCost: 360, qty: 1, notes: 'Sold in Sleepywood/Nautilus' },
-            { id: 'preset_dried_squid', name: 'Dried Squid', category: 'General Foods', unitCost: 360, qty: 1, notes: 'Sold in Orbis/Ludibrium' },
-            { id: 'preset_pizza', name: 'Pizza', category: 'General Foods', unitCost: 500, qty: 1, notes: '' },
-            { id: 'preset_hamburger', name: 'Hamburger', category: 'General Foods', unitCost: 700, qty: 1, notes: '' },
-            { id: 'preset_hot_dog_supreme', name: 'Hot Dog Supreme', category: 'General Foods', unitCost: 960, qty: 1, notes: '' },
-            { id: 'preset_unagi', name: 'Unagi', category: 'General Foods', unitCost: 1100, qty: 1, notes: 'High efficiency HP option' },
-            { id: 'preset_orange', name: 'Orange', category: 'General Foods', unitCost: 200, qty: 1, notes: 'Early MP food' },
-            { id: 'preset_lemon', name: 'Lemon', category: 'General Foods', unitCost: 600, qty: 1, notes: 'Popular early MP item' },
-            { id: 'preset_salad', name: 'Salad', category: 'General Foods', unitCost: 880, qty: 1, notes: 'Efficient mid-tier MP recovery' },
-            { id: 'preset_pure_water', name: 'Pure Water', category: 'General Foods', unitCost: 1650, qty: 1, notes: 'Great meso-per-MP efficiency' },
-
-            // Standard Potions
-            { id: 'preset_red_potion', name: 'Red Potion', category: 'Standard Potions', unitCost: 50, qty: 1, notes: 'Standard starter HP potion' },
-            { id: 'preset_orange_potion', name: 'Orange Potion', category: 'Standard Potions', unitCost: 160, qty: 1, notes: 'Standard low-tier HP potion' },
-            { id: 'preset_white_potion', name: 'White Potion', category: 'Standard Potions', unitCost: 320, qty: 1, notes: 'Workhorse early/mid-game HP potion' },
-            { id: 'preset_blue_potion', name: 'Blue Potion', category: 'Standard Potions', unitCost: 200, qty: 1, notes: 'Standard early-game MP potion' },
-            { id: 'preset_mana_elixir', name: 'Mana Elixir', category: 'Standard Potions', unitCost: 620, qty: 1, notes: 'Standard mid-game MP potion' },
-            { id: 'preset_elixir', name: 'Elixir', category: 'Standard Potions', unitCost: 0, qty: 1, notes: 'Percentage-based dual recovery (Drop/Quest)' },
-            { id: 'preset_power_elixir_single', name: 'Power Elixir', category: 'Standard Potions', unitCost: 0, qty: 1, notes: 'Fully restores all HP & MP (Drop/Quest)' }
+            { id: 'preset_apple', name: 'Apple', category: 'General Foods', unitCost: 20, qty: 1, notes: 'HP Recovery +40' },
+            { id: 'preset_egg', name: 'Egg', category: 'General Foods', unitCost: 60, qty: 1, notes: 'HP Recovery +60' },
+            { id: 'preset_meat', name: 'Meat', category: 'General Foods', unitCost: 80, qty: 1, notes: 'HP Recovery +180' },
+            { id: 'preset_fried_chicken', name: 'Fried Chicken', category: 'General Foods', unitCost: 60, qty: 1, notes: 'HP Recovery +120' },
+            { id: 'preset_hot_dog', name: 'Hot Dog', category: 'General Foods', unitCost: 180, qty: 1, notes: 'HP Recovery +300' },
+            { id: 'preset_pizza', name: 'Pizza', category: 'General Foods', unitCost: 252, qty: 1, notes: 'HP Recovery +360' },
+            { id: 'preset_hamburger', name: 'Hamburger', category: 'General Foods', unitCost: 350, qty: 1, notes: 'HP Recovery +500' },
+            { id: 'preset_hot_dog_supreme', name: 'Hot Dog Supreme', category: 'General Foods', unitCost: 600, qty: 1, notes: 'HP Recovery +500' },
+            { id: 'preset_unagi', name: 'Unagi', category: 'General Foods', unitCost: 1000, qty: 1, notes: 'HP Recovery +1000' },
+            { id: 'preset_orange', name: 'Orange', category: 'General Foods', unitCost: 50, qty: 1, notes: 'MP Recovery +50' },
+            { id: 'preset_lemon', name: 'Lemon', category: 'General Foods', unitCost: 150, qty: 1, notes: 'MP Recovery +150' },
+            { id: 'preset_salad', name: 'Salad', category: 'General Foods', unitCost: 220, qty: 1, notes: 'MP Recovery +200' },
+            { id: 'preset_salad', name: 'Cake', category: 'General Foods', unitCost: 150, qty: 1, notes: 'HP & MP Recovery +100' },
+            { id: 'preset_pure_water', name: 'Pure Water', category: 'General Foods', unitCost: 1200, qty: 1, notes: 'MP Recovery +800' },
+			
+            { id: 'preset_red_potion', name: 'Red Potion', category: 'Standard Potions', unitCost: 50, qty: 1, notes: 'HP Recovery +100' },
+            { id: 'preset_orange_potion', name: 'Orange Potion', category: 'Standard Potions', unitCost: 150, qty: 1, notes: 'HP Recovery +250' },
+            { id: 'preset_white_potion', name: 'White Potion', category: 'Standard Potions', unitCost: 350, qty: 1, notes: 'HP Recovery +500' },
+            { id: 'preset_blue_potion', name: 'Blue Potion', category: 'Standard Potions', unitCost: 220, qty: 1, notes: 'MP Recovery +200' },
+            { id: 'preset_mana_elixir', name: 'Mana Elixir', category: 'Standard Potions', unitCost: 1000, qty: 1, notes: '50% Mana Recovery' },
+            { id: 'preset_elixir', name: 'Elixir', category: 'Standard Potions', unitCost: 3000, qty: 1, notes: '35% HP & MP recovery' },
+            { id: 'preset_power_elixir_single', name: 'Power Elixir', category: 'Standard Potions', unitCost: 2500, qty: 1, notes: 'Fully restores all HP & MP' }
         ];
 
         function animateClick(element) {
@@ -1050,6 +1094,7 @@
             renderHistory();
             renderBreakLogs();
             updateCalculations();
+            updateSummarySectionUI();
             
             const mapSelect = document.getElementById('mapLocationSelect');
             const mapInput = document.getElementById('mapNameInput');
@@ -1075,6 +1120,7 @@
             document.getElementById('startMesoInput').value = state.startMeso !== '' ? formatNumberWithCommas(state.startMeso) : '';
             document.getElementById('endMesoInput').value = formatNumberWithCommas(state.endMeso);
             document.getElementById('directMesoInput').value = state.directMeso !== '' ? formatNumberWithCommas(state.directMeso) : '';
+            document.getElementById('kpqCountDisplay').textContent = state.kpqCount || 0;
             
             const themeSelector = document.getElementById('theme-selector');
             if (themeSelector) themeSelector.value = state.currentTheme || 'maple-light';
@@ -1086,6 +1132,7 @@
             updateBreakUI();
             updateHeaderCharacterBadge();
             applyPresetLibraryVisibilityUI();
+            updateKpqTimerUI();
             
             if (state.targetSeconds > 0) {
                 const presetMins = state.targetSeconds / 60;
@@ -1097,7 +1144,167 @@
             }
 
             if (state.timerRunning) startTimerLoop();
+            if (state.kpqTimerRunning) startKpqTimerLoop();
+            if (state.isKpqFlipped) {
+                state.isKpqFlipped = false;
+                toggleCardFlip(true);
+            }
         };
+
+        function toggleCardFlip(forceState) {
+            state.isKpqFlipped = forceState !== undefined ? forceState : !state.isKpqFlipped;
+            const timerSide = document.getElementById('timerCardSide');
+            const kpqSide = document.getElementById('kpqCardSide');
+            const cardTitleText = document.getElementById('cardTitleText');
+            const cardTitleIcon = document.getElementById('cardTitleIcon');
+            const flipBtnText = document.getElementById('flipBtnText');
+            const timerStatusBadgeContainer = document.getElementById('timerStatusBadgeContainer');
+
+            if (state.isKpqFlipped) {
+                timerSide.classList.add('hidden');
+                kpqSide.classList.remove('hidden');
+                cardTitleText.textContent = "KPQ Counter";
+                cardTitleIcon.className = "fa-solid fa-people-group theme-accent-text";
+                flipBtnText.textContent = "Timer";
+                timerStatusBadgeContainer.classList.add('hidden');
+            } else {
+                timerSide.classList.remove('hidden');
+                kpqSide.classList.add('hidden');
+                cardTitleText.textContent = "Session Timer";
+                cardTitleIcon.className = "fa-solid fa-stopwatch theme-accent-text";
+                flipBtnText.textContent = "KPQ";
+                timerStatusBadgeContainer.classList.remove('hidden');
+            }
+            updateInputLockStates();
+            saveCurrentState();
+        }
+
+        function incrementKpqCount() {
+            state.kpqCount = (state.kpqCount || 0) + 1;
+            document.getElementById('kpqCountDisplay').textContent = state.kpqCount;
+            updateSummarySectionUI();
+            showToast(`+1 KPQ completed! Total: ${state.kpqCount}`, "success");
+            saveCurrentState();
+        }
+
+        function resetKpqCount() {
+            if (confirm("Reset KPQ counter to 0?")) {
+                state.kpqCount = 0;
+                document.getElementById('kpqCountDisplay').textContent = 0;
+                updateSummarySectionUI();
+                showToast("KPQ counter reset", "info");
+                saveCurrentState();
+            }
+        }
+
+        function toggleKpqTimer() {
+            if (state.kpqTimerRunning) {
+                pauseKpqTimer();
+            } else {
+                startKpqTimer();
+            }
+        }
+
+        function startKpqTimer() {
+            state.kpqTimerRunning = true;
+            state.kpqStartTime = Date.now() - (state.kpqElapsedSeconds * 1000);
+            startKpqTimerLoop();
+            updateKpqTimerUI();
+            showToast("KPQ Stopwatch started", "success");
+            saveCurrentState();
+        }
+
+        function startKpqTimerLoop() {
+            clearInterval(state.kpqTimerInterval);
+            state.kpqTimerInterval = setInterval(() => {
+                state.kpqElapsedSeconds = Math.floor((Date.now() - state.kpqStartTime) / 1000);
+                updateKpqTimerUI();
+                updateSummarySectionUI();
+            }, 1000);
+        }
+
+        function pauseKpqTimer() {
+            state.kpqTimerRunning = false;
+            clearInterval(state.kpqTimerInterval);
+            updateKpqTimerUI();
+            showToast("KPQ Stopwatch paused", "info");
+            saveCurrentState();
+        }
+
+        function resetKpqTimer() {
+            if (state.kpqElapsedSeconds > 0 || (state.kpqCount || 0) > 0) {
+                if (confirm("Reset stopwatch and automatically log/save this KPQ session into history?")) {
+                    stopAndSaveSession("KPQ Stopwatch Run");
+                }
+            }
+            pauseKpqTimer();
+            state.kpqElapsedSeconds = 0;
+            state.kpqCount = 0;
+            document.getElementById('kpqCountDisplay').textContent = '0';
+            updateKpqTimerUI();
+            updateSummarySectionUI();
+            showToast("KPQ Stopwatch reset", "info");
+            saveCurrentState();
+        }
+
+        function updateKpqTimerUI() {
+            const display = document.getElementById('kpqTimerDisplay');
+            const btn = document.getElementById('kpqTimerStartBtn');
+            const icon = document.getElementById('kpqTimerIcon');
+            const label = document.getElementById('kpqTimerLabel');
+
+            const mins = Math.floor(state.kpqElapsedSeconds / 60);
+            const secs = state.kpqElapsedSeconds % 60;
+            const timeStr = [mins, secs].map(v => v < 10 ? "0" + v : v).join(":");
+            if (display) display.textContent = timeStr;
+
+            if (state.kpqTimerRunning) {
+                if (btn) btn.className = "ms-button bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm";
+                if (icon) icon.className = "fa-solid fa-pause";
+                if (label) label.textContent = "Pause KPQ Timer";
+            } else {
+                if (btn) btn.className = "ms-button theme-accent-gradient text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm";
+                if (icon) icon.className = "fa-solid fa-play";
+                if (label) label.textContent = state.kpqElapsedSeconds > 0 ? "Resume KPQ Timer" : "Start KPQ Timer";
+            }
+            updateSummarySectionUI();
+        }
+
+        function updateSummarySectionUI() {
+            const runsEl = document.getElementById('summaryKpqRuns');
+            const stopwatchEl = document.getElementById('summaryKpqStopwatch');
+            const totalExpEl = document.getElementById('summaryTotalExp');
+            const netProfitEl = document.getElementById('summaryNetProfit');
+
+            if (runsEl) runsEl.textContent = state.kpqCount || 0;
+            if (stopwatchEl) {
+                const mins = Math.floor(state.kpqElapsedSeconds / 60);
+                const secs = state.kpqElapsedSeconds % 60;
+                stopwatchEl.textContent = [mins, secs].map(v => v < 10 ? "0" + v : v).join(":");
+            }
+
+            const startExpVal = state.startExp !== '' ? state.startExp : 0;
+            const expGained = state.startExp !== '' ? (((state.levelUpsCount || 0) * 100) + Math.max(0, state.endExp - startExpVal)) : 0;
+            if (totalExpEl) totalExpEl.textContent = state.startExp !== '' ? `+${expGained.toFixed(3)}%` : '+0.000%';
+
+            let grossMeso = 0;
+            if (state.mesoInputMode === 'diff') {
+                const startMesoVal = document.getElementById('startMesoInput').value;
+                if (startMesoVal !== '') grossMeso = Math.max(0, parseMesoInput(document.getElementById('endMesoInput').value) - parseMesoInput(startMesoVal));
+            } else {
+                const directVal = document.getElementById('directMesoInput').value;
+                if (directVal !== '') grossMeso = parseMesoInput(directVal);
+            }
+            let totalConsumableCost = 0;
+            state.consumables.forEach(item => { if (item.active) totalConsumableCost += (item.unitCost * item.qty); });
+            let totalDropsValue = 0;
+            state.drops.forEach(item => { totalDropsValue += (item.unitValue * item.qty); });
+            const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
+            if (netProfitEl) {
+                netProfitEl.textContent = `${netProfit >= 0 ? '+' : ''}${formatNumberWithCommas(netProfit)} mesos`;
+                netProfitEl.className = netProfit >= 0 ? "text-emerald-500 font-bold" : "text-rose-500 font-bold";
+            }
+        }
 
         function openConsumablesDrawer() {
             const drawer = document.getElementById('consumablesDrawer');
@@ -1166,7 +1373,6 @@
             const listEl = document.getElementById('presetLibraryList');
             listEl.innerHTML = '';
             
-            // Group presets by category
             const categories = {};
             DEFAULT_PRESETS.forEach(preset => {
                 const cat = preset.category || 'General';
@@ -1253,6 +1459,7 @@
             }
             renderConsumables();
             updateCalculations();
+            updateSummarySectionUI();
             saveCurrentState();
             showToast(`Added preset: ${name}`, "success");
         }
@@ -1457,7 +1664,7 @@
         }
 
         function triggerLevelUpPrompt() {
-            if (state.timerRunning) return showToast("Level up can only be pressed when paused or when session ends!", "error");
+            if (state.timerRunning && !state.isKpqFlipped) return showToast("Level up can only be pressed when paused or when session ends!", "error");
             document.getElementById('modalLevelUpExpInput').value = '';
             document.getElementById('levelUpModal').classList.remove('hidden');
             setTimeout(() => { document.getElementById('modalLevelUpExpInput').focus(); }, 100);
@@ -1479,6 +1686,7 @@
                 state.endExp = newExp;
                 document.getElementById('endExpInput').value = state.endExp;
                 updateCalculations();
+                updateSummarySectionUI();
                 updateHeaderCharacterBadge();
                 showToast(`🎉 Level Up! Now Level ${state.charLevel}! (+${state.levelUpsCount} level ups)`, "success");
                 saveCurrentState();
@@ -1670,7 +1878,7 @@
                 state.breakName = breakNameInput.value.trim() || 'Break';
                 if (state.timerRunning) pauseTimer();
                 breakNameInput.disabled = true;
-                breakNameInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs font-medium transition bg-amber-500/10 border-2 border-amber-500/50 text-amber-500 cursor-not-allowed";
+                breakNameInput.className = "flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs font-medium transition bg-amber-500/10 border-2 border-amber-500/50 text-amber-500 cursor-not-allowed";
                 updateBreakUI();
                 showToast("Break started! Session timer paused.", "info");
             } else {
@@ -1691,7 +1899,7 @@
                 state.breakName = '';
                 breakNameInput.value = '';
                 breakNameInput.disabled = false;
-                breakNameInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
+                breakNameInput.className = "flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
 
                 updateBreakUI();
                 renderBreakLogs();
@@ -1710,23 +1918,23 @@
 
             if (state.breakActive) {
                 btn.disabled = false;
-                btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn cursor-pointer";
+                btn.className = "py-1.5 px-2.5 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap interactive-btn cursor-pointer";
                 icon.className = "fa-solid fa-stop";
-                label.textContent = "End Break";
+                label.textContent = "End";
                 badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-emerald-500 border border-emerald-500/30 font-bold animate-pulse";
                 badge.textContent = "On Break";
             } else {
                 if (!state.timerRunning) {
                     btn.disabled = true;
-                    btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs bg-slate-600/30 text-slate-400 border border-slate-700/50 transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-not-allowed opacity-60";
+                    btn.className = "py-1.5 px-2.5 rounded-lg font-bold text-xs bg-slate-600/30 text-slate-400 border border-slate-700/50 transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap cursor-not-allowed opacity-60";
                     btn.setAttribute('title', 'Start session to enable breaks');
                 } else {
                     btn.disabled = false;
-                    btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn cursor-pointer";
+                    btn.className = "py-1.5 px-2.5 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap interactive-btn cursor-pointer";
                     btn.removeAttribute('title');
                 }
                 icon.className = "fa-solid fa-play";
-                label.textContent = "Start Break";
+                label.textContent = "Break";
                 badge.className = "text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400";
                 badge.textContent = "Idle";
             }
@@ -1737,8 +1945,8 @@
             const totalDisplay = document.getElementById('totalBreakTimeDisplay');
 
             if (!state.breakLogs || state.breakLogs.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-1 theme-subtext italic font-sans text-[10px]">No breaks logged yet.</div>`;
-                totalDisplay.textContent = "Total: 0m 0s";
+                listEl.innerHTML = `<div class="text-center py-1 theme-subtext italic font-sans text-[9px]">No breaks logged.</div>`;
+                totalDisplay.textContent = "0m 0s";
                 return;
             }
 
@@ -1747,24 +1955,22 @@
             state.breakLogs.forEach((item) => {
                 totalSecsSum += item.durationSeconds;
                 const row = document.createElement('div');
-                row.className = "flex items-center justify-between p-1.5 rounded break-log-row text-[11px]";
+                row.className = "flex items-center justify-between p-1 rounded break-log-row text-[10px]";
                 row.id = `breakRow_${item.id}`;
                 
                 const mins = Math.floor(item.durationSeconds / 60);
                 const secs = item.durationSeconds % 60;
                 const durStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
-                const dateDisplay = item.dateStr ? `${item.dateStr} ` : '';
 
                 row.innerHTML = `
                     <div class="flex flex-col max-w-[65%]">
-                        <span id="breakNameText_${item.id}" class="font-bold theme-accent-text truncate"><i class="fa-solid fa-mug-hot text-[9px] mr-1"></i>${item.name || 'Break'}</span>
-                        <input type="text" id="breakNameInput_${item.id}" value="${item.name || 'Break'}" class="hidden w-full ms-inner-box rounded px-1.5 py-0.5 text-xs font-bold theme-accent-text focus:outline-none" onkeydown="handleBreakEditKey(event, '${item.id}')" onblur="saveBreakInlineEdit('${item.id}')">
-                        <span class="text-[10px] theme-subtext font-semibold">${dateDisplay}(${item.startTime} - ${item.endTime})</span>
+                        <span id="breakNameText_${item.id}" class="font-bold theme-accent-text truncate">${item.name || 'Break'}</span>
+                        <input type="text" id="breakNameInput_${item.id}" value="${item.name || 'Break'}" class="hidden w-full ms-inner-box rounded px-1 text-xs font-bold theme-accent-text focus:outline-none" onkeydown="handleBreakEditKey(event, '${item.id}')" onblur="saveBreakInlineEdit('${item.id}')">
                     </div>
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-1">
                         <span class="font-bold theme-accent-text">(${durStr})</span>
-                        <button onclick="toggleBreakInlineEdit('${item.id}')" class="opacity-80 hover:opacity-100 theme-accent-text transition px-0.5" title="Edit Break Name"><i class="fa-solid fa-pen" id="breakEditIcon_${item.id}"></i></button>
-                        <button onclick="removeBreakLog('${item.id}')" class="opacity-80 hover:opacity-100 hover:text-rose-500 transition px-0.5" title="Delete Break"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="toggleBreakInlineEdit('${item.id}')" class="opacity-80 hover:opacity-100 theme-accent-text transition px-0.5"><i class="fa-solid fa-pen text-[9px]" id="breakEditIcon_${item.id}"></i></button>
+                        <button onclick="removeBreakLog('${item.id}')" class="opacity-80 hover:opacity-100 hover:text-rose-500 transition px-0.5"><i class="fa-solid fa-xmark text-[9px]"></i></button>
                     </div>
                 `;
                 listEl.appendChild(row);
@@ -1772,7 +1978,7 @@
 
             const totalMins = Math.floor(totalSecsSum / 60);
             const totalSecs = totalSecsSum % 60;
-            totalDisplay.textContent = `Total: ${totalMins}m ${totalSecs}s`;
+            totalDisplay.textContent = `${totalMins}m ${totalSecs}s`;
         }
 
         function toggleBreakInlineEdit(id) {
@@ -1785,7 +1991,7 @@
                 inputField.classList.remove('hidden');
                 inputField.focus();
                 inputField.select();
-                editIcon.className = "fa-solid fa-check text-emerald-500";
+                editIcon.className = "fa-solid fa-check text-emerald-500 text-[9px]";
             } else {
                 saveBreakInlineEdit(id);
             }
@@ -1832,7 +2038,7 @@
                 state.breakName = '';
                 const breakInput = document.getElementById('breakNameInput');
                 breakInput.disabled = false;
-                breakInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
+                breakInput.className = "flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
                 updateBreakUI();
                 renderBreakLogs();
                 showToast("Break logs cleared", "info");
@@ -1851,7 +2057,22 @@
             endExpInput.disabled = false;
             endExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition ring-1 ring-pink-500/30 bg-pink-500/5";
 
-            if (state.timerRunning) {
+            if (state.isKpqFlipped) {
+                startExpInput.disabled = false;
+                startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none theme-accent-border";
+                
+                startMesoInput.disabled = false;
+                startMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition focus:outline-none theme-accent-border";
+                
+                endMesoInput.disabled = false;
+                endMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition bg-pink-500/5";
+                
+                directMesoInput.disabled = false;
+                directMesoInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition bg-pink-500/5";
+                
+                expHint.textContent = "✏️ KPQ Edit Mode Unlocked";
+                expHint.className = "text-xs theme-subtext font-bold text-fuchsia-500";
+            } else if (state.timerRunning) {
                 startExpInput.disabled = true;
                 startExpInput.className = "w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono transition bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-500 font-semibold cursor-not-allowed";
                 
@@ -1894,20 +2115,14 @@
 
         function handleExpInput(inputEl) {
             let parsed = parseExpInput(inputEl.value);
-            if (parsed !== '' && parsed > 100) {
-                parsed = 100;
-            }
-            if (parsed !== '' && parsed < 0) {
-                parsed = 0;
-            }
+            if (parsed !== '' && parsed > 100) parsed = 100;
+            if (parsed !== '' && parsed < 0) parsed = 0;
             if (inputEl.value.trim() !== '' && !isNaN(parseFloat(inputEl.value))) {
                 let currentNum = parseFloat(inputEl.value.toString().replace(/%/g, '').trim());
-                if (currentNum > 100) {
-                    inputEl.value = '100';
-                } else if (currentNum < 0) {
-                    inputEl.value = '0';
-                }
+                if (currentNum > 100) inputEl.value = '100';
+                else if (currentNum < 0) inputEl.value = '0';
             }
+            updateSummarySectionUI();
         }
 
         function updateCalculations() {
@@ -1965,7 +2180,7 @@
             state.consumables.forEach(item => { if (item.active) totalConsumableCost += (item.unitCost * item.qty); });
 
             let totalDropsValue = 0;
-            state.drops.forEach(item => { totalDropsValue += (item.unitValue * item.qty); });
+            state.drops.forEach(item => { item => totalDropsValue += (item.unitValue * item.qty); });
 
             const netProfit = (grossMeso + totalDropsValue) - totalConsumableCost;
             const netProfitPerMinute = netProfit / durationMinutes;
@@ -1995,6 +2210,7 @@
 
             netProfitAmount.innerHTML = `${formattedNet} <span class="text-[10px] font-normal opacity-70">mesos</span>`;
             netProfitHourly.textContent = (netProfitPerMinute >= 0 ? '+' : '') + formatShortMeso(netProfitPerMinute) + ' / min';
+            updateSummarySectionUI();
         }
 
         function renderConsumables() {
@@ -2181,7 +2397,7 @@
         }
 
         function promptFinishAndSaveSession() {
-            if (state.elapsedSeconds < 1) return showToast("Session duration is too short to save (min 1s)", "error");
+            if (state.elapsedSeconds < 1 && (state.kpqCount || 0) === 0) return showToast("Session duration or KPQ count required to save", "error");
             document.getElementById('modalFinishExpInput').value = document.getElementById('endExpInput').value || '0.000';
             document.getElementById('finishModalLevelUpCheck').checked = false;
             document.getElementById('modalFinishNotesInput').value = '';
@@ -2213,12 +2429,13 @@
 
         function stopAndSaveSession(sessionNotes = '') {
             pauseTimer();
+            if (state.kpqTimerRunning) pauseKpqTimer();
 
             const mapName = document.getElementById('mapNameInput').value.trim() || 'Unknown Map';
             const charName = state.charName || 'Unnamed';
             const startExpVal = state.startExp !== '' ? state.startExp : 0;
             const expGained = ((state.levelUpsCount || 0) * 100) + Math.max(0, state.endExp - startExpVal);
-            const durationMinutes = state.elapsedSeconds / 60;
+            const durationMinutes = Math.max(state.elapsedSeconds, 10) / 60;
             
             const endingMesoParsed = parseMesoInput(document.getElementById('endMesoInput').value);
             const startingMesoParsed = parseMesoInput(document.getElementById('startMesoInput').value);
@@ -2257,7 +2474,9 @@
                 dropsSnapshot: dropsSnapshot,
                 grossMeso: grossMeso,
                 consumableCost: totalConsumableCost,
-                dropsValue: totalDropsValue
+                dropsValue: totalDropsValue,
+                kpqCount: state.kpqCount || 0,
+                kpqSeconds: state.kpqElapsedSeconds || 0
             });
 
             renderHistory();
@@ -2269,7 +2488,7 @@
             state.breakName = '';
             const breakInput = document.getElementById('breakNameInput');
             breakInput.disabled = false;
-            breakInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
+            breakInput.className = "flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
             renderBreakLogs();
             updateBreakUI();
 
@@ -2283,10 +2502,15 @@
 
             state.levelUpsCount = 0;
             state.elapsedSeconds = 0;
+            state.kpqCount = 0;
+            state.kpqElapsedSeconds = 0;
+            document.getElementById('kpqCountDisplay').textContent = '0';
+            updateKpqTimerUI();
             updateTimerUI();
             updateCalculations();
             updateInputLockStates();
             updateBreakUI();
+            updateSummarySectionUI();
             saveCurrentState();
         }
 
@@ -2311,16 +2535,24 @@
                 tr.className = "hover:bg-slate-500/10 transition";
                 const isPositive = session.netProfit >= 0;
                 const charDisplay = session.charName && session.charName !== 'Unnamed' ? `[${session.charName}] ` : '';
+                
+                const kpqRuns = session.kpqCount || 0;
+                const kpqSecs = session.kpqSeconds || 0;
+                const kpqMins = Math.floor(kpqSecs / 60);
+                const kpqRemSecs = kpqSecs % 60;
+                const kpqTimeStr = [kpqMins, kpqRemSecs].map(v => v < 10 ? "0" + v : v).join(":");
+                const kpqStatsDisplay = kpqRuns > 0 ? `<span class="text-fuchsia-400 font-bold">${kpqRuns} Runs</span> <span class="theme-subtext text-[10px]">(${kpqTimeStr})</span>` : '<span class="theme-subtext italic">None</span>';
+
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 w-8">
                         <input type="checkbox" data-session-id="${session.id}" class="session-select-checkbox rounded border-slate-400 theme-accent-text cursor-pointer focus:ring-0">
                     </td>
                     <td class="py-2.5 px-3 theme-subtext text-[11px] font-semibold">${session.timestamp}</td>
                     <td class="py-2.5 px-3 font-sans font-semibold">${charDisplay}${session.mapName} <span class="text-xs theme-accent-text">Lv.${session.level}</span></td>
+                    <td class="py-2.5 px-3 font-mono">${kpqStatsDisplay}</td>
                     <td class="py-2.5 px-3">${formatSecondsToHHMMSS(session.durationSeconds)}</td>
                     <td class="py-2.5 px-3 theme-accent-text">+${session.expGained.toFixed(3)}%</td>
                     <td class="py-2.5 px-3 font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfit)}</td>
-                    <td class="py-2.5 px-3 font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfitPerMinute)}/min</td>
                     <td class="py-2.5 px-3 text-right flex items-center justify-end gap-2">
                         <button onclick="openSessionModal('${session.id}')" class="theme-subtext hover:theme-accent-text transition text-sm px-1" title="View Breakdown Details"><i class="fa-solid fa-eye"></i></button>
                         <button onclick="deleteHistoryItem('${session.id}')" class="theme-subtext hover:text-rose-500 transition text-sm px-1" title="Delete Log"><i class="fa-solid fa-trash-can"></i></button>
@@ -2406,7 +2638,7 @@
 
             let breaksHtml = '<div class="theme-subtext font-semibold italic text-sm py-4">No breaks recorded for this session.</div>';
             if (session.breaksSnapshot && session.breaksSnapshot.length > 0) {
-                breaksHtml = '<div class="space-y-2 max-h-[50vh] overflow-y-auto pr-2">';
+                breaksHtml = '<div class="space-y-2 max-h-[35vh] overflow-y-auto pr-2">';
                 session.breaksSnapshot.forEach(b => {
                     const bMins = Math.floor(b.durationSeconds / 60);
                     const bSecs = b.durationSeconds % 60;
@@ -2472,9 +2704,14 @@
                 `;
             }
 
+            const kpqRuns = session.kpqCount || 0;
+            const kpqSecs = session.kpqSeconds || 0;
+            const kpqMins = Math.floor(kpqSecs / 60);
+            const kpqRemSecs = kpqSecs % 60;
+            const kpqTimeStr = [kpqMins, kpqRemSecs].map(v => v < 10 ? "0" + v : v).join(":");
+
             modalContent.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <!-- Left Column: Session Stats & Item Breakdowns -->
                     <div class="lg:col-span-7 space-y-4">
                         <div class="ms-inner-box p-5 rounded-2xl space-y-3 text-xs md:text-sm">
                             <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
@@ -2488,6 +2725,10 @@
                             <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">Map & Level:</span>
                                 <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">KPQ Runs & Stopwatch:</span>
+                                <span class="font-bold text-fuchsia-400">${kpqRuns} Runs (${kpqTimeStr})</span>
                             </div>
                             <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">Duration:</span>
@@ -2529,12 +2770,41 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Dedicated Breaks Breakdown with Divider -->
-                    <div class="lg:col-span-5 lg:border-l-2 lg:border-slate-300/30 lg:pl-6 space-y-3">
-                        <div class="text-base font-extrabold theme-accent-text flex items-center gap-2 border-b border-slate-300/20 pb-2">
-                            <i class="fa-solid fa-mug-hot"></i> Breaks Breakdown (${session.breaksSnapshot ? session.breaksSnapshot.length : 0})
+                    <!-- Right Column: KPQ & Summary above Breaks Breakdown -->
+                    <div class="lg:col-span-5 lg:border-l-2 lg:border-slate-300/30 lg:pl-6 space-y-4">
+                        <!-- Saved KPQ & Summary Section -->
+                        <div class="ms-inner-box rounded-xl p-4 flex flex-col justify-between space-y-2 shadow-sm border border-fuchsia-400/30">
+                            <div class="flex items-center justify-between text-xs font-bold border-b border-slate-300/20 pb-2">
+                                <span class="theme-accent-text flex items-center gap-1.5"><i class="fa-solid fa-chart-pie"></i> KPQ & Summary</span>
+                                <span class="text-[10px] theme-subtext font-mono">Saved Log</span>
+                            </div>
+                            <div class="space-y-1.5 text-xs font-mono">
+                                <div class="flex justify-between">
+                                    <span class="theme-subtext">KPQ Runs:</span>
+                                    <strong class="text-fuchsia-400 font-bold">${kpqRuns}</strong>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="theme-subtext">KPQ Stopwatch:</span>
+                                    <strong class="text-current">${kpqTimeStr}</strong>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="theme-subtext">Total EXP:</span>
+                                    <strong class="text-emerald-500">+${session.expGained.toFixed(3)}%</strong>
+                                </div>
+                                <div class="flex justify-between border-t border-slate-300/20 pt-1.5">
+                                    <span class="theme-subtext">Net Profit:</span>
+                                    <strong class="${isPositive ? 'text-emerald-500' : 'text-rose-500'} font-bold">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</strong>
+                                </div>
+                            </div>
                         </div>
-                        ${breaksHtml}
+
+                        <!-- Breaks Breakdown Section -->
+                        <div class="space-y-3">
+                            <div class="text-base font-extrabold theme-accent-text flex items-center gap-2 border-b border-slate-300/20 pb-2">
+                                <i class="fa-solid fa-mug-hot"></i> Breaks Breakdown (${session.breaksSnapshot ? session.breaksSnapshot.length : 0})
+                            </div>
+                            ${breaksHtml}
+                        </div>
                     </div>
                 </div>
             `;
@@ -2646,13 +2916,16 @@
         function resetCurrentSessionData() {
             if (confirm("Reset current session timer & inputs?")) {
                 pauseTimer();
-                state.elapsedSeconds = 0; state.startExp = ''; state.endExp = 0; state.levelUpsCount = 0; state.startMeso = ''; state.endMeso = 0; state.directMeso = '';
+                if (state.kpqTimerRunning) pauseKpqTimer();
+                state.elapsedSeconds = 0; state.startExp = ''; state.endExp = 0; state.levelUpsCount = 0; state.startMeso = ''; state.endMeso = 0; state.directMeso = ''; state.kpqCount = 0; state.kpqElapsedSeconds = 0;
                 document.getElementById('startExpInput').value = '';
                 document.getElementById('endExpInput').value = '0.000';
                 document.getElementById('startMesoInput').value = '';
                 document.getElementById('endMesoInput').value = '0';
                 document.getElementById('directMesoInput').value = '';
-                updateTimerUI(); updateCalculations(); updateInputLockStates(); updateBreakUI(); saveCurrentState();
+                document.getElementById('kpqCountDisplay').textContent = '0';
+                updateKpqTimerUI();
+                updateTimerUI(); updateCalculations(); updateInputLockStates(); updateBreakUI(); updateSummarySectionUI(); saveCurrentState();
                 showToast("Session reset", "info");
             }
         }
