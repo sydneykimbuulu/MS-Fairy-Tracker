@@ -518,7 +518,7 @@
                     
                     <div class="flex items-center gap-2">
                         <input type="text" id="breakNameInput" placeholder="Break name (e.g. Lunch, Stretch)" class="flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
-                        <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn">
+                        <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn" disabled title="Start session to enable breaks">
                             <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Start Break</span>
                         </button>
                         <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
@@ -583,7 +583,6 @@
                             <label class="text-xs theme-subtext">Quick Input Mode:</label>
                             <select id="mesoInputMode" onchange="toggleMesoInputMode()" class="ms-inner-box rounded px-2 py-0.5 text-xs theme-accent-text font-bold">
                                 <option value="diff">Start & End Balance</option>
-                                <!-- <option value="direct">Direct Total Picked Up</option> -->
                             </select>
                         </div>
                     </div>
@@ -626,21 +625,33 @@
                         <h3 class="text-base font-bold font-header flex items-center gap-2">
                             <i class="fa-solid fa-flask text-rose-500"></i> Consumables & Buff Expenses
                         </h3>
-                        <span id="totalConsumableCostTag" class="text-xs font-mono font-bold text-rose-500 px-2.5 py-1 rounded bg-rose-500/10 border border-rose-500/30">
-                            Total Cost: 0 Meso
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <span id="totalConsumableCostTag" class="text-xs font-mono font-bold text-rose-500 px-2.5 py-1 rounded bg-rose-500/10 border border-rose-500/30">
+                                Total Cost: 0 Meso
+                            </span>
+                            <button onclick="clearConsumables(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Consumables">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                     </div>
-                    <p class="text-xs theme-subtext mb-3">Check active buffs/items or add custom costs used during session (click name to edit):</p>
+                    <p class="text-xs theme-subtext mb-3">Active session expenses (toggle items or open drawer to load presets):</p>
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="consumablesList"></div>
                 </div>
-                <div class="pt-3 border-t border-slate-300/30">
-                    <div class="text-xs font-bold theme-subtext mb-2">Add Custom Consumable / Cost:</div>
-                    <div class="grid grid-cols-12 gap-2">
-                        <input type="text" id="customConsumableName" placeholder="e.g. Exp Coupon 3x" class="col-span-5 ms-inner-box rounded px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border">
-                        <input type="number" id="customConsumableQty" placeholder="Qty" min="1" class="col-span-2 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border">
-                        <input type="text" id="customConsumableCost" placeholder="Unit Cost" class="col-span-3 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border" oninput="formatMesoInput(this)">
-                        <button onclick="addCustomConsumable(); animateClick(this)" class="col-span-2 ms-button theme-accent-bg text-white rounded text-xs font-bold hover:opacity-80 transition flex items-center justify-center interactive-btn">
-                            <i class="fa-solid fa-plus"></i>
+                <div class="pt-3 border-t border-slate-300/30 space-y-3">
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="text-xs font-bold theme-subtext">Add Quick Consumable / Cost:</div>
+                        <div class="grid grid-cols-12 gap-2">
+                            <input type="text" id="customConsumableName" placeholder="e.g. Exp Coupon 3x" class="col-span-5 ms-inner-box rounded px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border">
+                            <input type="number" id="customConsumableQty" placeholder="Qty" min="1" class="col-span-2 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border">
+                            <input type="text" id="customConsumableCost" placeholder="Unit Cost" class="col-span-3 ms-inner-box rounded px-2 py-1.5 text-xs font-mono focus:outline-none theme-accent-border" oninput="formatMesoInput(this)">
+                            <button onclick="addCustomConsumable(); animateClick(this)" class="col-span-2 ms-button theme-accent-bg text-white rounded text-xs font-bold hover:opacity-80 transition flex items-center justify-center interactive-btn">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="openConsumablesDrawer(); animateClick(this)" class="w-full ms-button theme-accent-bg text-white px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 interactive-btn shadow-sm">
+                            <i class="fa-solid fa-sliders"></i> Manage Buffs Drawer
                         </button>
                     </div>
                 </div>
@@ -652,9 +663,14 @@
                         <h3 class="text-base font-bold font-header flex items-center gap-2">
                             <i class="fa-solid fa-gem theme-accent-text"></i> Valuable Drops & Extra Revenue
                         </h3>
-                        <span id="totalDropsValueTag" class="text-xs font-mono font-bold theme-accent-text px-2.5 py-1 rounded bg-purple-500/10 border border-purple-500/30">
-                            Drops Value: 0 Meso
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <span id="totalDropsValueTag" class="text-xs font-mono font-bold theme-accent-text px-2.5 py-1 rounded bg-purple-500/10 border border-purple-500/30">
+                                Drops Value: 0 Meso
+                            </span>
+                            <button onclick="clearValuables(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Valuables">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                     </div>
                     <p class="text-xs theme-subtext mb-3">Track tradeable items dropped and set market values to add to revenue (click name to edit):</p>
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="dropsList"></div>
@@ -675,35 +691,33 @@
 
         <!-- Session Logs & History Section -->
         <div class="ms-card rounded-xl p-5 space-y-4 shadow-md">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-300/30 pb-3 gap-2">
-                <div class="flex items-center gap-2">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-300/30 pb-3 gap-3">
+                <div class="flex items-center gap-2 flex-wrap">
                     <h3 class="text-base font-bold font-header flex items-center gap-2">
                         <i class="fa-solid fa-clock-rotate-left theme-accent-text"></i> Grind Session History Log
                     </h3>
                     <span id="sessionCountBadge" class="text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">0 Saved Sessions</span>
+                    <span class="text-xs theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="theme-accent-text font-mono">0</strong></span>
                 </div>
-                <div class="flex items-center gap-3 text-xs flex-wrap">
-                    <span class="theme-subtext">Lifetime Avg Meso/Min: <strong id="avgMesoHrText" class="theme-accent-text font-mono">0</strong></span>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <a href="analytics.html" class="ms-button theme-accent-gradient text-white px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-lg ring-2 ring-pink-400/40 hover:scale-110 transition interactive-btn" title="View Analytics Dashboard">
-                            <i class="fa-solid fa-chart-pie text-sm animate-pulse"></i> Analytics Dashboard
-                        </a>
+                <div class="flex items-center gap-2 text-xs flex-wrap justify-end">
+                    <a href="analytics.html" class="ms-button theme-accent-gradient text-white px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-lg ring-2 ring-pink-400/40 hover:scale-110 transition interactive-btn" title="View Analytics Dashboard">
+                        <i class="fa-solid fa-chart-pie text-sm animate-pulse"></i> Analytics Dashboard
+                    </a>
 
-                        <button onclick="exportSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 theme-accent-text interactive-btn" title="Export Selected Sessions">
-                            <i class="fa-solid fa-download"></i> Export Selected
-                        </button>
-                        <button onclick="deleteSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 text-rose-500 hover:text-rose-600 interactive-btn" title="Delete Selected Sessions">
-                            <i class="fa-solid fa-trash-can"></i> Delete Selected
-                        </button>
+                    <button onclick="exportSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 theme-accent-text interactive-btn" title="Export Selected Sessions">
+                        <i class="fa-solid fa-download"></i> Export Selected
+                    </button>
+                    <button onclick="deleteSelectedSessions(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 text-rose-500 hover:text-rose-600 interactive-btn" title="Delete Selected Sessions">
+                        <i class="fa-solid fa-trash-can"></i> Delete Selected
+                    </button>
 
-                        <label class="ms-button ms-inner-box px-2.5 py-1 rounded text-xs font-semibold cursor-pointer flex items-center gap-1.5 interactive-btn">
-                            <i class="fa-solid fa-upload theme-accent-text"></i> Upload Log
-                            <input type="file" id="importHistoryInput" onchange="importHistoryLogFile(event)" class="hidden" accept=".json">
-                        </label>
-                        <button onclick="clearAllHistory(); animateClick(this)" class="text-rose-500 hover:underline text-xs flex items-center gap-1 font-semibold interactive-btn">
-                            <i class="fa-solid fa-trash-can"></i> Clear History
-                        </button>
-                    </div>
+                    <label class="ms-button ms-inner-box px-2.5 py-1.5 rounded text-xs font-semibold cursor-pointer flex items-center gap-1.5 interactive-btn">
+                        <i class="fa-solid fa-upload theme-accent-text"></i> Upload Log
+                        <input type="file" id="importHistoryInput" onchange="importHistoryLogFile(event)" class="hidden" accept=".json">
+                    </label>
+                    <button onclick="clearAllHistory(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1.5 rounded text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear History">
+                        <i class="fa-solid fa-trash-can"></i> Clear History
+                    </button>
                 </div>
             </div>
 
@@ -733,6 +747,111 @@
         </div>
     </div>
 
+    <!-- Consumables & Buffs Pop-Out Slide-Over Drawer (Expanded to max-w-6xl for two-column split) -->
+    <div id="consumablesDrawerBackdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden transition-opacity opacity-0"></div>
+    <div id="consumablesDrawer" class="fixed top-0 right-0 h-full w-full max-w-6xl ms-glass z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between border-l-2 border-pink-500/50">
+        <div class="p-5 md:p-6 border-b border-slate-300/30 flex items-center justify-between">
+            <h3 class="text-xl md:text-2xl font-bold font-header flex items-center gap-3 theme-accent-text">
+                <i class="fa-solid fa-flask text-rose-500"></i> Buffs & Consumables Presets Manager
+            </h3>
+            <button onclick="closeConsumablesDrawer()" class="ms-inner-box text-slate-400 hover:text-rose-500 transition px-3 py-1.5 rounded-xl text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto">
+            <!-- Two-Column Grid: Left Side (Save New Custom Preset) & Right Side (All Other Libraries & Management) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- LEFT COLUMN: Save New Custom Preset Form (Sticky/Pinned) -->
+                <div class="lg:col-span-4 space-y-4 lg:sticky lg:top-0">
+                    <div class="ms-inner-box p-5 rounded-2xl space-y-4 border-2 border-pink-400/40 shadow-inner">
+                        <div class="flex items-center justify-between border-b border-slate-300/20 pb-2">
+                            <div class="text-sm font-bold theme-accent-text flex items-center gap-2">
+                                <i class="fa-solid fa-circle-plus text-base"></i> Save New Custom Preset
+                            </div>
+                        </div>
+                        <p class="text-[11px] theme-subtext">Add custom buffs to your personal library</p>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[10px] theme-subtext font-semibold block mb-1">ITEM / BUFF NAME</label>
+                                <input type="text" id="presetNewName" placeholder="e.g. Ginger Ale x50" class="w-full ms-card rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none theme-accent-border font-medium">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[10px] theme-subtext font-semibold block mb-1">DEFAULT QUANTITY</label>
+                                    <input type="number" id="presetNewQty" placeholder="1" min="1" value="1" class="w-full ms-card rounded-xl px-3 py-2 text-xs md:text-sm font-mono focus:outline-none theme-accent-border font-bold">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] theme-subtext font-semibold block mb-1">UNIT COST (MESOS)</label>
+                                    <input type="text" id="presetNewCost" placeholder="e.g. 1,500" class="w-full ms-card rounded-xl px-3 py-2 text-xs md:text-sm font-mono focus:outline-none theme-accent-border font-bold" oninput="formatMesoInput(this)">
+                                </div>
+                            </div>
+                            <button onclick="saveNewPreset(); animateClick(this)" class="w-full ms-button theme-accent-gradient text-white py-3 rounded-xl text-xs md:text-sm font-extrabold shadow-md flex items-center justify-center gap-2 interactive-btn">
+                                <i class="fa-solid fa-floppy-disk text-base"></i> Save to Custom Presets Library
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: All Other Libraries & Management -->
+                <div class="lg:col-span-8 space-y-6">
+                    <!-- Section 1: Preset Library (Categorized List with Collapsible Categories) -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-300/20 pb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                                <i class="fa-solid fa-bookmark theme-accent-text"></i> Preset Library (Click to Add to Session)
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="expandAllPresetCategories(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-[10px] font-bold theme-accent-text flex items-center gap-1">
+                                    <i class="fa-solid fa-angles-down"></i> Expand All
+                                </button>
+                                <button onclick="collapseAllPresetCategories(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded text-[10px] font-bold theme-subtext flex items-center gap-1">
+                                    <i class="fa-solid fa-angles-up"></i> Collapse All
+                                </button>
+                                <button onclick="togglePresetLibraryVisibility(); animateClick(this)" id="togglePresetLibraryBtn" class="ms-button ms-inner-box px-3 py-1 rounded text-[11px] font-bold theme-accent-text flex items-center gap-1.5 interactive-btn">
+                                    <i class="fa-solid fa-eye-slash" id="togglePresetIcon"></i> <span id="togglePresetLabel">Hide Preset Library</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="presetLibraryContainer" class="space-y-3 transition-all">
+                            <div id="presetLibraryList" class="space-y-3">
+                                <!-- Populated via JS grouped by categories -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Custom Presets Library (Viewable) -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-300/20 pb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                                <i class="fa-solid fa-star theme-accent-text"></i> Custom Presets Library (Click to Add to Session)
+                            </span>
+                            <span class="text-[10px] theme-subtext font-mono">Your Saved Buffs</span>
+                        </div>
+                        <div id="customPresetsLibraryList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Manage & Delete Custom Presets -->
+                    <div class="space-y-3">
+                        <div class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-check theme-accent-text"></i> Manage Saved Custom Presets
+                        </div>
+                        <div id="customPresetsList" class="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs">
+                            <div class="text-center py-3 text-slate-400 italic">No custom presets saved yet.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="p-4 md:p-5 border-t border-slate-300/30 flex items-center justify-end">
+            <button onclick="closeConsumablesDrawer()" class="ms-button theme-accent-bg text-white px-8 py-3 rounded-xl text-xs md:text-sm font-bold interactive-btn shadow-md">Done / Close Drawer</button>
+        </div>
+    </div>
+
     <!-- Modals & Footer -->
     <div id="timerAlertModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden animate-fadeIn">
         <div class="ms-glass rounded-3xl p-6 md:p-8 max-w-md w-full space-y-6 shadow-2xl relative border-4 border-sky-400 text-center overflow-hidden">
@@ -740,14 +859,14 @@
             <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-indigo-500/30 rounded-full blur-2xl pointer-events-none"></div>
 
             <div class="space-y-2 relative z-10">
-                <div class="text-4xl animate-bounce">⏱️✨</div>
+                <div class="text-4xl animate-bounce">⏱️</div>
                 <h3 class="text-3xl font-black font-header theme-accent-text tracking-wide drop-shadow-sm">TARGET REACHED!</h3>
                 <p id="timerAlertMessage" class="text-xs md:text-sm theme-subtext font-semibold">Your set session target time has been completed. Timer has been paused.</p>
             </div>
 
             <div class="flex items-center justify-center gap-3 relative z-10 pt-2">
                 <button onclick="document.getElementById('timerAlertModal').classList.add('hidden')" class="ms-button theme-accent-gradient text-white px-7 py-2.5 rounded-xl text-sm font-extrabold shadow-lg hover:scale-105 transition flex items-center gap-2">
-                    <i class="fa-solid fa-check"></i> Got it! 👍
+                    <i class="fa-solid fa-check"></i> Got it! 
                 </button>
             </div>
         </div>
@@ -759,21 +878,21 @@
             <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-purple-500/30 rounded-full blur-2xl pointer-events-none"></div>
 
             <div class="space-y-2 relative z-10">
-                <div class="text-4xl animate-bounce">🎉✨⭐</div>
+                <div class="text-4xl animate-bounce">✨⭐✨</div>
                 <h3 class="text-3xl font-black font-header theme-accent-text tracking-wide drop-shadow-sm">LEVEL UP!</h3>
                 <p class="text-xs md:text-sm theme-subtext font-semibold">What's your new EXP percentage right after leveling up?</p>
             </div>
 
             <div class="relative z-10 space-y-2">
                 <div class="ms-inner-box p-3 rounded-2xl border-2 border-pink-400/50">
-                    <input type="text" id="modalLevelUpExpInput" placeholder="experience after leveling" max="100" class="w-full bg-transparent text-center text-xl md:text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
+                    <input type="text" id="modalLevelUpExpInput" placeholder="xp after leveling" max="100" class="w-full bg-transparent text-center text-xl md:text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
                 </div>
             </div>
 
             <div class="flex items-center justify-center gap-3 relative z-10 pt-2">
                 <button onclick="closeLevelUpModal(false)" class="ms-button ms-inner-box px-5 py-2.5 rounded-xl text-xs font-bold theme-subtext hover:text-slate-200 transition">Cancel</button>
                 <button onclick="confirmLevelUp()" class="ms-button theme-accent-gradient text-white px-7 py-2.5 rounded-xl text-sm font-extrabold shadow-lg hover:scale-105 transition flex items-center gap-2">
-                    <i class="fa-solid fa-sparkles"></i> Claim Level Up! 🌟
+                    <i class="fa-solid fa-sparkles"></i> Claim Level Up!
                 </button>
             </div>
         </div>
@@ -795,11 +914,15 @@
                     <input type="text" id="modalFinishExpInput" placeholder="0.000" max="100" class="w-full bg-transparent text-center text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
                 </div>
                 <label class="ms-inner-box p-3 rounded-xl flex items-center justify-between cursor-pointer select-none">
-                    <div class="flex items-center gap-2 text-xs font-semibold theme-subtext">
+                    <div class="flex items-center gap-2 text-xs font-semibold theme-subtext text-left">
                         <i class="fa-solid fa-arrow-up text-amber-400"></i> Did you level up during this session?<br>(adds 1 lvl to your sheet)
                     </div>
                     <input type="checkbox" id="finishModalLevelUpCheck" class="rounded border-slate-400 theme-accent-text w-4 h-4 cursor-pointer focus:ring-0">
                 </label>
+                <div class="space-y-1 text-left">
+                    <label class="text-[11px] font-bold theme-subtext block">Session Notes (Optional):</label>
+                    <textarea id="modalFinishNotesInput" placeholder="Record notes about drops, spawns, or session strategy..." class="w-full ms-inner-box rounded-xl p-2.5 text-xs focus:outline-none theme-accent-border font-medium h-20 resize-none"></textarea>
+                </div>
             </div>
 
             <div class="flex items-center justify-center gap-3 relative z-10 pt-2">
@@ -813,7 +936,7 @@
 
     <!-- Session Breakdown Details Modal -->
     <div id="sessionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="ms-glass rounded-3xl p-6 md:p-10 max-w-3xl w-full space-y-6 shadow-2xl relative border-4 border-pink-500/50">
+        <div class="ms-glass rounded-3xl p-6 md:p-10 max-w-5xl w-full space-y-6 shadow-2xl relative border-4 border-pink-500/50">
             <div class="flex items-center justify-between border-b-2 border-slate-300/30 pb-4">
                 <h3 class="text-2xl md:text-3xl font-black font-header flex items-center gap-3 theme-accent-text">
                     <i class="fa-solid fa-file-invoice text-2xl"></i> Session Breakdown Details
@@ -821,7 +944,7 @@
                 <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-3 py-1 text-xl rounded-xl ms-inner-box"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div id="modalContent" class="space-y-5 text-sm md:text-base font-mono max-h-[70vh] overflow-y-auto pr-3"></div>
+            <div id="modalContent" class="space-y-6 text-sm md:text-base font-mono max-h-[72vh] overflow-y-auto pr-3"></div>
 
             <div class="pt-4 border-t-2 border-slate-300/30 flex items-center justify-between">
                 <button id="modalDownloadBtn" class="ms-button ms-inner-box px-5 py-3 rounded-2xl text-sm md:text-base font-bold flex items-center gap-2.5 theme-accent-text hover:opacity-80 transition interactive-btn shadow-md">
@@ -864,14 +987,43 @@
             endMeso: 0,
             directMeso: '',
             consumables: [],
+            customPresets: [],
             drops: [],
             history: [],
             currentTheme: 'maple-light',
             breakActive: false,
             breakStartTime: null,
             breakName: '',
-            breakLogs: []
+            breakLogs: [],
+            presetLibraryHidden: false
         };
+
+        const DEFAULT_PRESETS = [
+            // General Foods
+            { id: 'preset_apple', name: 'Apple', category: 'General Foods', unitCost: 30, qty: 1, notes: 'Basic starter food' },
+            { id: 'preset_egg', name: 'Egg', category: 'General Foods', unitCost: 50, qty: 1, notes: 'Basic starter food' },
+            { id: 'preset_meat', name: 'Meat', category: 'General Foods', unitCost: 100, qty: 1, notes: 'Basic starter food' },
+            { id: 'preset_fried_chicken', name: 'Fried Chicken', category: 'General Foods', unitCost: 220, qty: 1, notes: '' },
+            { id: 'preset_hot_dog', name: 'Hot Dog', category: 'General Foods', unitCost: 360, qty: 1, notes: 'Sold in Sleepywood/Nautilus' },
+            { id: 'preset_dried_squid', name: 'Dried Squid', category: 'General Foods', unitCost: 360, qty: 1, notes: 'Sold in Orbis/Ludibrium' },
+            { id: 'preset_pizza', name: 'Pizza', category: 'General Foods', unitCost: 500, qty: 1, notes: '' },
+            { id: 'preset_hamburger', name: 'Hamburger', category: 'General Foods', unitCost: 700, qty: 1, notes: '' },
+            { id: 'preset_hot_dog_supreme', name: 'Hot Dog Supreme', category: 'General Foods', unitCost: 960, qty: 1, notes: '' },
+            { id: 'preset_unagi', name: 'Unagi', category: 'General Foods', unitCost: 1100, qty: 1, notes: 'High efficiency HP option' },
+            { id: 'preset_orange', name: 'Orange', category: 'General Foods', unitCost: 200, qty: 1, notes: 'Early MP food' },
+            { id: 'preset_lemon', name: 'Lemon', category: 'General Foods', unitCost: 600, qty: 1, notes: 'Popular early MP item' },
+            { id: 'preset_salad', name: 'Salad', category: 'General Foods', unitCost: 880, qty: 1, notes: 'Efficient mid-tier MP recovery' },
+            { id: 'preset_pure_water', name: 'Pure Water', category: 'General Foods', unitCost: 1650, qty: 1, notes: 'Great meso-per-MP efficiency' },
+
+            // Standard Potions
+            { id: 'preset_red_potion', name: 'Red Potion', category: 'Standard Potions', unitCost: 50, qty: 1, notes: 'Standard starter HP potion' },
+            { id: 'preset_orange_potion', name: 'Orange Potion', category: 'Standard Potions', unitCost: 160, qty: 1, notes: 'Standard low-tier HP potion' },
+            { id: 'preset_white_potion', name: 'White Potion', category: 'Standard Potions', unitCost: 320, qty: 1, notes: 'Workhorse early/mid-game HP potion' },
+            { id: 'preset_blue_potion', name: 'Blue Potion', category: 'Standard Potions', unitCost: 200, qty: 1, notes: 'Standard early-game MP potion' },
+            { id: 'preset_mana_elixir', name: 'Mana Elixir', category: 'Standard Potions', unitCost: 620, qty: 1, notes: 'Standard mid-game MP potion' },
+            { id: 'preset_elixir', name: 'Elixir', category: 'Standard Potions', unitCost: 0, qty: 1, notes: 'Percentage-based dual recovery (Drop/Quest)' },
+            { id: 'preset_power_elixir_single', name: 'Power Elixir', category: 'Standard Potions', unitCost: 0, qty: 1, notes: 'Fully restores all HP & MP (Drop/Quest)' }
+        ];
 
         function animateClick(element) {
             element.classList.remove('btn-clicked');
@@ -891,6 +1043,9 @@
         window.onload = function() {
             loadSavedState();
             renderConsumables();
+            renderPresetLibrary();
+            renderCustomPresetsLibrary();
+            renderCustomPresetsManager();
             renderDrops();
             renderHistory();
             renderBreakLogs();
@@ -930,6 +1085,7 @@
             updateInputLockStates();
             updateBreakUI();
             updateHeaderCharacterBadge();
+            applyPresetLibraryVisibilityUI();
             
             if (state.targetSeconds > 0) {
                 const presetMins = state.targetSeconds / 60;
@@ -942,6 +1098,220 @@
 
             if (state.timerRunning) startTimerLoop();
         };
+
+        function openConsumablesDrawer() {
+            const drawer = document.getElementById('consumablesDrawer');
+            const backdrop = document.getElementById('consumablesDrawerBackdrop');
+            backdrop.classList.remove('hidden');
+            setTimeout(() => { backdrop.classList.remove('opacity-0'); }, 10);
+            drawer.classList.remove('translate-x-full');
+            renderPresetLibrary();
+            renderCustomPresetsLibrary();
+            renderCustomPresetsManager();
+        }
+
+        function closeConsumablesDrawer() {
+            const drawer = document.getElementById('consumablesDrawer');
+            const backdrop = document.getElementById('consumablesDrawerBackdrop');
+            drawer.classList.add('translate-x-full');
+            backdrop.classList.add('opacity-0');
+            setTimeout(() => { backdrop.classList.add('hidden'); }, 300);
+        }
+
+        function togglePresetLibraryVisibility() {
+            state.presetLibraryHidden = !state.presetLibraryHidden;
+            applyPresetLibraryVisibilityUI();
+            saveCurrentState();
+        }
+
+        function applyPresetLibraryVisibilityUI() {
+            const container = document.getElementById('presetLibraryContainer');
+            const icon = document.getElementById('togglePresetIcon');
+            const label = document.getElementById('togglePresetLabel');
+
+            if (state.presetLibraryHidden) {
+                container.classList.add('hidden');
+                icon.className = "fa-solid fa-eye";
+                label.textContent = "Show Preset Library";
+            } else {
+                container.classList.remove('hidden');
+                icon.className = "fa-solid fa-eye-slash";
+                label.textContent = "Hide Preset Library";
+            }
+        }
+
+        function togglePresetCategory(catId) {
+            const contentEl = document.getElementById(`presetCatContent_${catId}`);
+            const iconEl = document.getElementById(`presetCatIcon_${catId}`);
+            if (contentEl.classList.contains('hidden')) {
+                contentEl.classList.remove('hidden');
+                iconEl.className = "fa-solid fa-chevron-up text-xs";
+            } else {
+                contentEl.classList.add('hidden');
+                iconEl.className = "fa-solid fa-chevron-down text-xs";
+            }
+        }
+
+        function expandAllPresetCategories() {
+            document.querySelectorAll('[id^="presetCatContent_"]').forEach(el => el.classList.remove('hidden'));
+            document.querySelectorAll('[id^="presetCatIcon_"]').forEach(el => el.className = "fa-solid fa-chevron-up text-xs");
+        }
+
+        function collapseAllPresetCategories() {
+            document.querySelectorAll('[id^="presetCatContent_"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id^="presetCatIcon_"]').forEach(el => el.className = "fa-solid fa-chevron-down text-xs");
+        }
+
+        function renderPresetLibrary() {
+            const listEl = document.getElementById('presetLibraryList');
+            listEl.innerHTML = '';
+            
+            // Group presets by category
+            const categories = {};
+            DEFAULT_PRESETS.forEach(preset => {
+                const cat = preset.category || 'General';
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(preset);
+            });
+
+            Object.keys(categories).forEach((catName, index) => {
+                const catId = 'cat_' + index;
+                const catWrapper = document.createElement('div');
+                catWrapper.className = "ms-inner-box rounded-xl p-3 shadow-sm";
+                
+                const catHeader = document.createElement('button');
+                catHeader.className = "w-full flex items-center justify-between text-xs font-extrabold uppercase theme-accent-text tracking-wider focus:outline-none py-1";
+                catHeader.setAttribute('onclick', `togglePresetCategory('${catId}')`);
+                catHeader.innerHTML = `
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-folder text-xs"></i> ${catName} (${categories[catName].length})</span>
+                    <i class="fa-solid fa-chevron-down text-xs" id="presetCatIcon_${catId}"></i>
+                `;
+                catWrapper.appendChild(catHeader);
+
+                const grid = document.createElement('div');
+                grid.id = `presetCatContent_${catId}`;
+                grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3 pt-3 border-t border-slate-300/20 hidden";
+
+                categories[catName].forEach(preset => {
+                    const row = document.createElement('div');
+                    row.className = "ms-card p-3 rounded-xl flex items-center justify-between text-xs transition hover:border-pink-500/50 shadow-sm";
+                    const noteText = preset.notes ? `<span class="text-[10px] theme-subtext truncate block">${preset.notes}</span>` : '';
+                    row.innerHTML = `
+                        <div class="flex flex-col truncate max-w-[65%]">
+                            <span class="font-bold text-current truncate text-xs mb-0.5" title="${preset.name}">${preset.name}</span>
+                            <span class="text-[10px] theme-accent-text font-mono">Cost: ${formatNumberWithCommas(preset.unitCost * preset.qty)} mesos</span>
+                            ${noteText}
+                        </div>
+                        <button onclick="applyPresetToSession('${preset.id}', '${preset.name.replace(/'/g, "\\'")}', ${preset.unitCost}, ${preset.qty}); animateClick(this)" class="ms-button theme-accent-bg text-white px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap interactive-btn shadow">
+                            <i class="fa-solid fa-plus mr-1"></i> Add
+                        </button>
+                    `;
+                    grid.appendChild(row);
+                });
+
+                catWrapper.appendChild(grid);
+                listEl.appendChild(catWrapper);
+            });
+        }
+
+        function renderCustomPresetsLibrary() {
+            const listEl = document.getElementById('customPresetsLibraryList');
+            if (!state.customPresets || state.customPresets.length === 0) {
+                listEl.innerHTML = `<div class="col-span-full text-center py-3 text-slate-400 italic text-xs">No custom presets saved yet. Use the form on the left to add one!</div>`;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            state.customPresets.forEach(preset => {
+                const row = document.createElement('div');
+                row.className = "ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs transition hover:border-pink-500/50 shadow-sm";
+                row.innerHTML = `
+                    <div class="flex flex-col truncate max-w-[65%]">
+                        <span class="font-bold text-current truncate text-xs mb-0.5">${preset.name}</span>
+                        <span class="text-[10px] theme-accent-text font-mono">Cost: ${formatNumberWithCommas(preset.unitCost * preset.qty)} mesos</span>
+                    </div>
+                    <button onclick="applyPresetToSession('${preset.id}', '${preset.name.replace(/'/g, "\\'")}', ${preset.unitCost}, ${preset.qty}); animateClick(this)" class="ms-button theme-accent-bg text-white px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap interactive-btn shadow">
+                        <i class="fa-solid fa-plus mr-1"></i> Add
+                    </button>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        function applyPresetToSession(id, name, unitCost, qty) {
+            const existing = state.consumables.find(c => c.name === name);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                state.consumables.push({
+                    id: 'cons_' + Date.now(),
+                    name: name,
+                    unitCost: unitCost,
+                    qty: qty,
+                    active: true
+                });
+            }
+            renderConsumables();
+            updateCalculations();
+            saveCurrentState();
+            showToast(`Added preset: ${name}`, "success");
+        }
+
+        function saveNewPreset() {
+            const nameInput = document.getElementById('presetNewName');
+            const qtyInput = document.getElementById('presetNewQty');
+            const costInput = document.getElementById('presetNewCost');
+
+            const name = nameInput.value.trim();
+            if (!name) return showToast("Please enter a preset name", "error");
+
+            state.customPresets.push({
+                id: 'custom_preset_' + Date.now(),
+                name: name,
+                qty: parseInt(qtyInput.value) || 1,
+                unitCost: parseMesoInput(costInput.value)
+            });
+
+            nameInput.value = '';
+            qtyInput.value = '1';
+            costInput.value = '';
+
+            renderCustomPresetsLibrary();
+            renderCustomPresetsManager();
+            showToast("Custom preset saved successfully!", "success");
+            saveCurrentState();
+        }
+
+        function renderCustomPresetsManager() {
+            const listEl = document.getElementById('customPresetsList');
+            if (!state.customPresets || state.customPresets.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-3 text-slate-400 italic">No custom presets saved yet.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            state.customPresets.forEach((preset, index) => {
+                const row = document.createElement('div');
+                row.className = "ms-card p-3 rounded-xl flex items-center justify-between text-xs shadow-sm";
+                row.innerHTML = `
+                    <div class="flex items-center gap-2 truncate max-w-[80%]">
+                        <i class="fa-solid fa-flask theme-accent-text"></i>
+                        <span class="font-semibold truncate text-sm">${preset.name}</span>
+                        <span class="theme-subtext font-mono">(Qty: ${preset.qty} • Cost: ${formatNumberWithCommas(preset.unitCost * preset.qty)})</span>
+                    </div>
+                    <button onclick="deleteCustomPreset(${index})" class="text-slate-400 hover:text-rose-500 transition p-1.5 rounded ms-inner-box" title="Delete Preset"><i class="fa-solid fa-trash-can"></i></button>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        function deleteCustomPreset(index) {
+            state.customPresets.splice(index, 1);
+            renderCustomPresetsLibrary();
+            renderCustomPresetsManager();
+            showToast("Custom preset deleted", "info");
+            saveCurrentState();
+        }
 
         function saveCharacterCard() {
             const nameVal = document.getElementById('charNameInput').value.trim();
@@ -1162,6 +1532,7 @@
             startTimerLoop();
             updateTimerUI();
             updateInputLockStates();
+            updateBreakUI();
             showToast("Session timer started! Starting EXP is now locked.", "success");
             saveCurrentState();
         }
@@ -1171,6 +1542,7 @@
             clearInterval(state.timerInterval);
             updateTimerUI();
             updateInputLockStates();
+            updateBreakUI();
             showToast("Session paused.", "info");
             saveCurrentState();
         }
@@ -1223,6 +1595,7 @@
             updateTimerUI();
             updateCalculations();
             updateInputLockStates();
+            updateBreakUI();
             showToast("Timer reset to 00:00:00", "info");
             saveCurrentState();
         }
@@ -1286,6 +1659,10 @@
         }
 
         function toggleBreakSession() {
+            if (!state.breakActive && !state.timerRunning) {
+                return showToast("You can only start a break while an active session is running!", "error");
+            }
+
             const breakNameInput = document.getElementById('breakNameInput');
             if (!state.breakActive) {
                 state.breakActive = true;
@@ -1318,7 +1695,9 @@
 
                 updateBreakUI();
                 renderBreakLogs();
-                showToast("Break ended and logged successfully!", "success");
+                showToast("Break ended! Session timer resumed.", "success");
+
+                startTimer();
             }
             saveCurrentState();
         }
@@ -1330,13 +1709,22 @@
             const badge = document.getElementById('breakStatusBadge');
 
             if (state.breakActive) {
-                btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn";
+                btn.disabled = false;
+                btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn cursor-pointer";
                 icon.className = "fa-solid fa-stop";
                 label.textContent = "End Break";
                 badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-emerald-500 border border-emerald-500/30 font-bold animate-pulse";
                 badge.textContent = "On Break";
             } else {
-                btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn";
+                if (!state.timerRunning) {
+                    btn.disabled = true;
+                    btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs bg-slate-600/30 text-slate-400 border border-slate-700/50 transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-not-allowed opacity-60";
+                    btn.setAttribute('title', 'Start session to enable breaks');
+                } else {
+                    btn.disabled = false;
+                    btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn cursor-pointer";
+                    btn.removeAttribute('title');
+                }
                 icon.className = "fa-solid fa-play";
                 label.textContent = "Start Break";
                 badge.className = "text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400";
@@ -1612,6 +2000,12 @@
         function renderConsumables() {
             const listEl = document.getElementById('consumablesList');
             listEl.innerHTML = '';
+            
+            if (!state.consumables || state.consumables.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-2 text-slate-400 italic text-xs">No active consumables added. Click 'Manage Buffs Drawer' below to add presets!</div>`;
+                return;
+            }
+
             state.consumables.forEach((item, index) => {
                 const row = document.createElement('div');
                 row.className = `flex items-center justify-between p-2.5 rounded-lg border transition ${item.active ? 'ms-inner-box' : 'opacity-60 ms-card'}`;
@@ -1632,6 +2026,28 @@
                 `;
                 listEl.appendChild(row);
             });
+        }
+
+        function clearConsumables() {
+            if (state.consumables.length === 0) return;
+            if (confirm("Clear all consumables and buffs?")) {
+                state.consumables = [];
+                renderConsumables();
+                updateCalculations();
+                showToast("Consumables cleared", "info");
+                saveCurrentState();
+            }
+        }
+
+        function clearValuables() {
+            if (state.drops.length === 0) return;
+            if (confirm("Clear all valuable drops?")) {
+                state.drops = [];
+                renderDrops();
+                updateCalculations();
+                showToast("Valuable drops cleared", "info");
+                saveCurrentState();
+            }
         }
 
         function toggleConsumableInlineEdit(index) {
@@ -1768,6 +2184,7 @@
             if (state.elapsedSeconds < 1) return showToast("Session duration is too short to save (min 1s)", "error");
             document.getElementById('modalFinishExpInput').value = document.getElementById('endExpInput').value || '0.000';
             document.getElementById('finishModalLevelUpCheck').checked = false;
+            document.getElementById('modalFinishNotesInput').value = '';
             document.getElementById('finishModal').classList.remove('hidden');
             setTimeout(() => { document.getElementById('modalFinishExpInput').focus(); }, 100);
         }
@@ -1788,11 +2205,13 @@
                 updateHeaderCharacterBadge();
             }
 
+            const sessionNotes = document.getElementById('modalFinishNotesInput').value.trim();
+
             document.getElementById('finishModal').classList.add('hidden');
-            stopAndSaveSession();
+            stopAndSaveSession(sessionNotes);
         }
 
-        function stopAndSaveSession() {
+        function stopAndSaveSession(sessionNotes = '') {
             pauseTimer();
 
             const mapName = document.getElementById('mapNameInput').value.trim() || 'Unknown Map';
@@ -1832,6 +2251,7 @@
                 expGained: expGained,
                 netProfit: netProfit,
                 netProfitPerMinute: netProfit / durationMinutes,
+                notes: sessionNotes,
                 breaksSnapshot: [...state.breakLogs],
                 consumablesSnapshot: activeConsumablesSnapshot,
                 dropsSnapshot: dropsSnapshot,
@@ -1842,6 +2262,16 @@
 
             renderHistory();
             showToast("Session successfully saved to history!", "success");
+
+            state.breakLogs = [];
+            state.breakActive = false;
+            state.breakStartTime = null;
+            state.breakName = '';
+            const breakInput = document.getElementById('breakNameInput');
+            breakInput.disabled = false;
+            breakInput.className = "flex-1 ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition";
+            renderBreakLogs();
+            updateBreakUI();
 
             state.startExp = state.endExp;
             document.getElementById('startExpInput').value = state.startExp;
@@ -1856,6 +2286,7 @@
             updateTimerUI();
             updateCalculations();
             updateInputLockStates();
+            updateBreakUI();
             saveCurrentState();
         }
 
@@ -1973,18 +2404,18 @@
             const downloadBtn = document.getElementById('modalDownloadBtn');
             const isPositive = session.netProfit >= 0;
 
-            let breaksHtml = '<div class="theme-subtext font-semibold italic text-sm">No breaks recorded for this session.</div>';
+            let breaksHtml = '<div class="theme-subtext font-semibold italic text-sm py-4">No breaks recorded for this session.</div>';
             if (session.breaksSnapshot && session.breaksSnapshot.length > 0) {
-                breaksHtml = '<div class="space-y-2 max-h-36 overflow-y-auto pr-1">';
+                breaksHtml = '<div class="space-y-2 max-h-[50vh] overflow-y-auto pr-2">';
                 session.breaksSnapshot.forEach(b => {
                     const bMins = Math.floor(b.durationSeconds / 60);
                     const bSecs = b.durationSeconds % 60;
                     const bDur = bMins > 0 ? `${bMins}m ${bSecs}s` : `${bSecs}s`;
                     const dateDisplay = b.dateStr ? `${b.dateStr} ` : '';
                     breaksHtml += `
-                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-sm md:text-base">
-                            <span class="font-semibold text-current"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-xs">(${dateDisplay}(${b.startTime} - ${b.endTime}))</span></span>
-                            <span class="font-bold theme-accent-text font-mono">(${bDur})</span>
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm shadow-sm">
+                            <span class="font-semibold text-current truncate max-w-[70%]" title="${b.name || 'Break'}"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-[11px] block">${dateDisplay}(${b.startTime} - ${b.endTime})</span></span>
+                            <span class="font-bold theme-accent-text font-mono whitespace-nowrap">(${bDur})</span>
                         </div>
                     `;
                 });
@@ -1998,10 +2429,10 @@
                     const unitPriceFormatted = formatNumberWithCommas(c.unitCost || 0);
                     const totalCostFormatted = formatNumberWithCommas(c.totalCost || (c.unitCost * c.qty) || 0);
                     consumablesHtml += `
-                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-sm md:text-base">
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm">
                             <div class="flex flex-col truncate max-w-[65%]">
                                 <span class="font-bold text-current truncate"><i class="fa-solid fa-flask text-rose-500 mr-1.5"></i> ${c.name}</span>
-                                <span class="text-xs theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
+                                <span class="text-[11px] theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-rose-500 font-mono text-right">-${totalCostFormatted} mesos</span>
                         </div>
@@ -2017,10 +2448,10 @@
                     const unitValueFormatted = formatNumberWithCommas(d.unitValue || 0);
                     const totalValFormatted = formatNumberWithCommas(d.totalValue || (d.unitValue * d.qty) || 0);
                     dropsHtml += `
-                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-sm md:text-base">
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm">
                             <div class="flex flex-col truncate max-w-[65%]">
                                 <span class="font-bold text-current truncate"><i class="fa-solid fa-gem text-purple-500 mr-1.5"></i> ${d.name}</span>
-                                <span class="text-xs theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
+                                <span class="text-[11px] theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-purple-500 font-mono text-right">+${totalValFormatted} mesos</span>
                         </div>
@@ -2029,62 +2460,82 @@
                 dropsHtml += '</div>';
             }
 
+            let notesHtml = '';
+            if (session.notes) {
+                notesHtml = `
+                    <div class="ms-inner-box p-4 rounded-2xl space-y-1.5">
+                        <div class="text-xs font-extrabold theme-accent-text flex items-center gap-1.5">
+                            <i class="fa-solid fa-note-sticky"></i> Session Notes:
+                        </div>
+                        <p class="text-xs md:text-sm text-current font-sans whitespace-pre-wrap">${escapeHtml(session.notes)}</p>
+                    </div>
+                `;
+            }
+
             modalContent.innerHTML = `
-                <div class="ms-inner-box p-5 rounded-2xl space-y-3 text-sm md:text-base">
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                        <span class="theme-subtext font-bold">Date & Time:</span>
-                        <span class="font-bold theme-accent-text">${session.timestamp}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                        <span class="theme-subtext font-bold">Character IGN:</span>
-                        <span class="font-bold theme-accent-text">${session.charName || 'Unnamed'}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                        <span class="theme-subtext font-bold">Map & Level:</span>
-                        <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
-                    </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                        <span class="theme-subtext font-bold">Duration:</span>
-                        <span class="font-bold theme-accent-text">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                        <span class="theme-subtext font-bold">EXP Gained:</span>
-                        <span class="font-bold text-emerald-500">+${session.expGained.toFixed(3)}%</span>
-                    </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                        <span class="theme-subtext font-bold">Gross Meso Looted:</span>
-                        <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)} mesos</span>
-                    </div>
-                    <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
-                        <span class="theme-subtext font-bold">Net Profit:</span>
-                        <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</span>
-                    </div>
-                    <div class="flex justify-between pb-1">
-                        <span class="theme-subtext font-bold">Net Rate / Min:</span>
-                        <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfitPerMinute)} / min</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                    <div class="space-y-2">
-                        <div class="text-base font-extrabold theme-subtext flex items-center gap-2">
-                            <i class="fa-solid fa-flask text-rose-500"></i> Buff Expenses Breakdown:
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- Left Column: Session Stats & Item Breakdowns -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="ms-inner-box p-5 rounded-2xl space-y-3 text-xs md:text-sm">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">Date & Time:</span>
+                                <span class="font-bold theme-accent-text">${session.timestamp}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">Character IGN:</span>
+                                <span class="font-bold theme-accent-text">${session.charName || 'Unnamed'}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">Map & Level:</span>
+                                <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">Duration:</span>
+                                <span class="font-bold theme-accent-text">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">EXP Gained:</span>
+                                <span class="font-bold text-emerald-500">+${session.expGained.toFixed(3)}%</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">Gross Meso Looted:</span>
+                                <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)} mesos</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">Net Profit:</span>
+                                <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</span>
+                            </div>
+                            <div class="flex justify-between pb-1">
+                                <span class="theme-subtext font-bold">Net Rate / Min:</span>
+                                <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatShortMeso(session.netProfitPerMinute)} / min</span>
+                            </div>
                         </div>
-                        ${consumablesHtml}
-                    </div>
-                    <div class="space-y-2">
-                        <div class="text-base font-extrabold theme-subtext flex items-center gap-2">
-                            <i class="fa-solid fa-gem text-purple-500"></i> Valuable Drops Revenue:
-                        </div>
-                        ${dropsHtml}
-                    </div>
-                </div>
 
-                <div class="space-y-2 pt-2">
-                    <div class="text-base font-extrabold theme-subtext flex items-center gap-2">
-                        <i class="fa-solid fa-mug-hot theme-accent-text"></i> Breaks Breakdown:
+                        ${notesHtml}
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                                    <i class="fa-solid fa-flask text-rose-500"></i> Buff Expenses:
+                                </div>
+                                ${consumablesHtml}
+                            </div>
+                            <div class="space-y-2">
+                                <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
+                                    <i class="fa-solid fa-gem text-purple-500"></i> Drops Revenue:
+                                </div>
+                                ${dropsHtml}
+                            </div>
+                        </div>
                     </div>
-                    ${breaksHtml}
+
+                    <!-- Right Column: Dedicated Breaks Breakdown with Divider -->
+                    <div class="lg:col-span-5 lg:border-l-2 lg:border-slate-300/30 lg:pl-6 space-y-3">
+                        <div class="text-base font-extrabold theme-accent-text flex items-center gap-2 border-b border-slate-300/20 pb-2">
+                            <i class="fa-solid fa-mug-hot"></i> Breaks Breakdown (${session.breaksSnapshot ? session.breaksSnapshot.length : 0})
+                        </div>
+                        ${breaksHtml}
+                    </div>
                 </div>
             `;
 
@@ -2201,7 +2652,7 @@
                 document.getElementById('startMesoInput').value = '';
                 document.getElementById('endMesoInput').value = '0';
                 document.getElementById('directMesoInput').value = '';
-                updateTimerUI(); updateCalculations(); updateInputLockStates(); saveCurrentState();
+                updateTimerUI(); updateCalculations(); updateInputLockStates(); updateBreakUI(); saveCurrentState();
                 showToast("Session reset", "info");
             }
         }
