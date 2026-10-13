@@ -366,18 +366,20 @@
                     <span class="text-xs font-bold uppercase tracking-wider theme-subtext flex items-center gap-1.5 truncate">
                         <i class="fa-solid fa-id-card theme-accent-text"></i> Character & Level
                     </span>
-                    <div class="flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded ms-inner-box font-bold">
-                        <span class="theme-subtext">Lv.</span>
-                        <input type="number" id="charLevelInput" placeholder="1" min="1" max="100" class="w-8 bg-transparent text-center focus:outline-none theme-accent-text font-bold" oninput="updateCalculations(); saveCurrentState();">
-                    </div>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-[11px] theme-subtext font-semibold block">CHARACTER IGN</label>
                     <div class="flex items-center gap-1.5">
-                        <input type="text" id="charNameInput" placeholder="insert your IGN" class="w-full ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition" oninput="saveCurrentState()">
                         <button onclick="setAndHideCharacterCard(); animateClick(this)" class="ms-button theme-accent-bg text-white px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition interactive-btn flex items-center gap-1">
                             <i class="fa-solid fa-check"></i> Set
                         </button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="space-y-1">
+                        <label class="text-[10px] theme-subtext font-semibold block">CHARACTER IGN</label>
+                        <input type="text" id="charNameInput" placeholder="insert your IGN" class="w-full ms-inner-box rounded-lg px-2.5 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition" oninput="saveCurrentState()">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] theme-subtext font-semibold block">CHARACTER LEVEL</label>
+                        <input type="number" id="charLevelInput" placeholder="1" min="1" max="100" class="w-full ms-inner-box rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none theme-accent-border font-bold theme-accent-text transition" oninput="updateCalculations(); saveCurrentState();">
                     </div>
                 </div>
             </div>
@@ -559,11 +561,11 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs theme-subtext font-semibold mb-1 block">STARTING EXP (%)</label>
-                            <input type="text" id="startExpInput" value="" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none theme-accent-border transition" oninput="handleExpInput(this); updateCalculations(); saveCurrentState(); removeInputError(this);" placeholder="e.g. 15.5 or 15.5%">
+                            <input type="text" id="startExpInput" value="" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono focus:outline-none theme-accent-border transition" oninput="handleExpInput(this); updateCalculations(); saveCurrentState(); removeInputError(this);" placeholder="e.g. 15.5 or 15.5%">
                         </div>
                         <div>
                             <label class="text-xs theme-subtext font-semibold mb-1 block">CURRENT / ENDING EXP (%)</label>
-                            <input type="text" id="endExpInput" value="0.000" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition" oninput="handleExpInput(this); updateCalculations(); saveCurrentState();" placeholder="Always editable">
+                            <input type="text" id="endExpInput" value="0.000" max="100" class="w-full ms-inner-box rounded-lg px-3 py-2 text-sm font-mono theme-accent-text font-bold focus:outline-none theme-accent-border transition" oninput="handleExpInput(this); updateCalculations(); saveCurrentState();" placeholder="Always editable">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3 pt-1">
@@ -752,7 +754,7 @@
 
             <div class="relative z-10 space-y-2">
                 <div class="ms-inner-box p-3 rounded-2xl border-2 border-pink-400/50">
-                    <input type="text" id="modalLevelUpExpInput" placeholder="experience after leveling" class="w-full bg-transparent text-center text-xl md:text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
+                    <input type="text" id="modalLevelUpExpInput" placeholder="experience after leveling" max="100" class="w-full bg-transparent text-center text-xl md:text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
                 </div>
             </div>
 
@@ -778,7 +780,7 @@
 
             <div class="relative z-10 space-y-4">
                 <div class="ms-inner-box p-3 rounded-2xl border-2 border-amber-400/50">
-                    <input type="text" id="modalFinishExpInput" placeholder="0.000" class="w-full bg-transparent text-center text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
+                    <input type="text" id="modalFinishExpInput" placeholder="0.000" max="100" class="w-full bg-transparent text-center text-2xl font-mono font-bold theme-accent-text focus:outline-none" oninput="handleExpInput(this)">
                 </div>
                 <label class="ms-inner-box p-3 rounded-xl flex items-center justify-between cursor-pointer select-none">
                     <div class="flex items-center gap-2 text-xs font-semibold theme-subtext">
@@ -864,6 +866,15 @@
             element.classList.add('btn-clicked');
         }
 
+        function formatCustomTimestamp(dateObj) {
+            const d = dateObj ? new Date(dateObj) : new Date();
+            if (isNaN(d.getTime())) return dateObj;
+            const optionsDate = { month: 'short', day: 'numeric', year: 'numeric' };
+            const dateStr = d.toLocaleDateString('en-US', optionsDate);
+            let timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+            return `${dateStr} [ ${timeStr} ]`;
+        }
+
         window.onload = function() {
             loadSavedState();
             renderConsumables();
@@ -936,12 +947,12 @@
             removeInputError(document.getElementById('charLevelInput'));
 
             state.charName = nameVal;
-            state.charLevel = parseInt(levelVal, 10);
+            state.charLevel = Math.max(1, Math.min(100, parseInt(levelVal, 10) || 1));
             state.charNameLocked = true;
 
             updateCharacterDisplayUI();
             saveCurrentState();
-            showToast("Character details saved!", "success");
+            showToast("Character & level set and saved!", "success");
         }
 
         function removeInputError(el) {
@@ -981,7 +992,7 @@
                 badgeEl.classList.add('hidden');
                 subtitleEl.style.opacity = '1';
                 if (state.charName) document.getElementById('charNameInput').value = state.charName;
-                if (state.charLevel) document.getElementById('charLevelInput').value = state.charLevel;
+                if (state.charLevel !== '') document.getElementById('charLevelInput').value = state.charLevel;
             }
         }
 
@@ -1107,7 +1118,7 @@
             const directMesoInput = document.getElementById('directMesoInput');
 
             const nameVal = state.charName || nameInput.value.trim();
-            const levelVal = state.charLevel || levelInput.value.trim();
+            const levelVal = state.charLevel !== '' ? state.charLevel : levelInput.value.trim();
             const customMapVal = mapInput.value.trim();
             const hasValidMap = mapSelectVal !== 'CUSTOM' || (mapSelectVal === 'CUSTOM' && state.mapLocked && customMapVal !== '');
             const startExpVal = startExpInput.value.trim();
@@ -1252,9 +1263,9 @@
                 state.breakLogs.unshift({
                     id: 'break_' + Date.now(),
                     name: state.breakName || 'Break',
-                    dateStr: state.breakStartTime.toLocaleDateString(),
-                    startTime: state.breakStartTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                    endTime: breakEndTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                    dateStr: formatCustomTimestamp(state.breakStartTime),
+                    startTime: state.breakStartTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }),
+                    endTime: breakEndTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }),
                     durationSeconds: durationSeconds
                 });
 
@@ -1281,7 +1292,7 @@
                 btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn";
                 icon.className = "fa-solid fa-stop";
                 label.textContent = "End Break";
-                badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/30 font-bold animate-pulse";
+                badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-emerald-500 border border-emerald-500/30 font-bold animate-pulse";
                 badge.textContent = "On Break";
             } else {
                 btn.className = "py-1.5 px-3 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap interactive-btn";
@@ -1319,7 +1330,7 @@
                     <div class="flex flex-col max-w-[65%]">
                         <span id="breakNameText_${item.id}" class="font-bold theme-accent-text truncate"><i class="fa-solid fa-mug-hot text-[9px] mr-1"></i>${item.name || 'Break'}</span>
                         <input type="text" id="breakNameInput_${item.id}" value="${item.name || 'Break'}" class="hidden w-full ms-inner-box rounded px-1.5 py-0.5 text-xs font-bold theme-accent-text focus:outline-none" onkeydown="handleBreakEditKey(event, '${item.id}')" onblur="saveBreakInlineEdit('${item.id}')">
-                        <span class="text-[10px] theme-subtext font-semibold">${dateDisplay}${item.startTime} - ${item.endTime}</span>
+                        <span class="text-[10px] theme-subtext font-semibold">${dateDisplay}(${item.startTime} - ${item.endTime})</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="font-bold theme-accent-text">(${durStr})</span>
@@ -1445,7 +1456,7 @@
         }
 
         function parseExpInput(valStr) {
-            if (!valStr) return '';
+            if (!valStr && valStr !== 0) return '';
             let clean = valStr.toString().replace(/%/g, '').trim();
             let num = parseFloat(clean);
             if (isNaN(num)) return '';
@@ -1456,7 +1467,17 @@
             let parsed = parseExpInput(inputEl.value);
             if (parsed !== '' && parsed > 100) {
                 parsed = 100;
-                inputEl.value = '100';
+            }
+            if (parsed !== '' && parsed < 0) {
+                parsed = 0;
+            }
+            if (inputEl.value.trim() !== '' && !isNaN(parseFloat(inputEl.value))) {
+                let currentNum = parseFloat(inputEl.value.toString().replace(/%/g, '').trim());
+                if (currentNum > 100) {
+                    inputEl.value = '100';
+                } else if (currentNum < 0) {
+                    inputEl.value = '0';
+                }
             }
         }
 
@@ -1686,7 +1707,7 @@
 
             state.history.unshift({
                 id: 'session_' + Date.now(),
-                timestamp: new Date().toLocaleString(),
+                timestamp: formatCustomTimestamp(new Date()),
                 charName: charName,
                 mapName: mapName,
                 level: state.charLevel || 1,
@@ -1846,7 +1867,7 @@
                     const dateDisplay = b.dateStr ? `${b.dateStr} ` : '';
                     breaksHtml += `
                         <div class="ms-inner-box p-2 rounded-lg flex items-center justify-between text-xs">
-                            <span class="font-semibold text-slate-700 dark:text-slate-200"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-[11px]">(${dateDisplay}${b.startTime} - ${b.endTime})</span></span>
+                            <span class="font-semibold text-slate-800 dark:text-slate-100"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-[11px]">(${dateDisplay}(${b.startTime} - ${b.endTime}))</span></span>
                             <span class="font-bold theme-accent-text font-mono">(${bDur})</span>
                         </div>
                     `;
@@ -2021,11 +2042,11 @@
             const mapSelect = document.getElementById('mapLocationSelect');
             const mapInput = document.getElementById('mapNameInput');
             state.mapName = mapSelect.value === 'CUSTOM' ? mapInput.value : mapSelect.value;
-            if (!state.charNameLocked) {
-                state.charName = document.getElementById('charNameInput').value.trim();
-                const rawLevel = document.getElementById('charLevelInput').value;
-                state.charLevel = rawLevel === '' ? '' : parseInt(rawLevel, 10);
-            }
+            
+            state.charName = document.getElementById('charNameInput').value.trim();
+            const rawLevel = document.getElementById('charLevelInput').value;
+            state.charLevel = rawLevel === '' ? '' : parseInt(rawLevel, 10);
+
             const startExpVal = document.getElementById('startExpInput').value;
             state.startExp = startExpVal === '' ? '' : parseExpInput(startExpVal);
             state.endExp = parseExpInput(document.getElementById('endExpInput').value) || 0;
