@@ -243,13 +243,6 @@
             border: 1px solid var(--inner-border);
         }
 
-        /* Highlighted Session Timer Card */
-        .session-timer-featured-card {
-            background: linear-gradient(145deg, var(--card-bg), rgba(236, 72, 153, 0.08));
-            border: 3px solid var(--accent-primary);
-            box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.25), 0 0 20px rgba(236, 72, 153, 0.2);
-        }
-
         .ms-button {
             transition: all 0.12s ease-in-out;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -290,12 +283,12 @@
             margin: 0; 
         }
 
-        /* 3D Flip Card Animation for Entire Session Timer Card */
+        /* 3D Flip Card Animation */
         .card-flip-container {
-            perspective: 1200px;
+            perspective: 1000px;
         }
         .card-flipper {
-            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
             position: relative;
         }
@@ -493,149 +486,146 @@
 
         <!-- Middle Row: Main Session Controls & Trackers -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            <!-- Left Column: Entire Session Timer / KPQ Card Wrapper with 3D Flip & Featured Styling -->
-            <div class="lg:col-span-6 card-flip-container relative w-full h-full">
-                <div id="cardFlipper" class="card-flipper w-full h-full">
-                    
-                    <!-- FRONT SIDE: Session Timer Card (Featured Outstanding Styling) -->
-                    <div id="timerCardSide" class="card-face session-timer-featured-card rounded-2xl p-5 flex flex-col justify-between shadow-2xl space-y-3 w-full h-full">
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between border-b border-pink-400/30 pb-2.5">
-                                <h2 class="text-lg font-bold font-header flex items-center gap-2">
-                                    <i class="fa-solid fa-stopwatch text-pink-500 dark:text-pink-400"></i> <span class="theme-accent-text">Session Timer</span>
-                                </h2>
-                                <div class="flex items-center gap-2">
-                                    <button onclick="toggleCardFlip(); animateClick(this)" class="ms-button ms-inner-box px-3 py-1 rounded-lg text-xs font-bold theme-accent-text interactive-btn flex items-center gap-1 shadow-sm" title="Flip Card to KPQ Counter">
-                                        <i class="fa-solid fa-rotate"></i> <span>KPQ</span>
-                                    </button>
-                                    <div id="timerStatusBadgeContainer" class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
-                                        <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-                                        <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
-                                <div class="absolute top-2 right-2 flex items-center gap-1">
-                                    <button onclick="setTimerPreset(10/60, this)" class="preset-btn ms-button px-2 py-0.5 rounded text-[10px] font-mono font-semibold opacity-70 hover:opacity-100 transition interactive-btn text-slate-600 dark:text-slate-400 bg-slate-500/10 border border-slate-500/20" title="10s test timer">10s test</button>
-                                </div>
-
-                                <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
-                                    00:00:00
-                                </div>
-                                <div class="text-xs theme-subtext font-mono mt-1 flex justify-center gap-3 font-semibold">
-                                    <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
-                                    <span>|</span>
-                                    <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-4 gap-1.5">
-                                <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
-                                <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
-                                <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1h</button>
-                                <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2h</button>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2.5">
-                                <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
-                                    <i class="fa-solid fa-play" id="startPauseIcon"></i>
-                                    <span id="startPauseLabel">Start Session</span>
-                                </button>
-                                <button onclick="promptFinishAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
-                                    <i class="fa-solid fa-box-archive"></i>
-                                    <span>Finish & Save</span>
-                                </button>
-                            </div>
-
-                            <div class="text-center pt-1">
-                                <button onclick="resetTimerOnly(); animateClick(this)" class="text-xs theme-subtext hover:theme-accent-text transition inline-flex items-center gap-1 font-semibold interactive-btn">
-                                    <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset Timer Clock
-                                </button>
+            <!-- Left Column: Session Timer / KPQ Counter Card + Break Logger Side-by-Side -->
+            <div class="lg:col-span-6 ms-card rounded-xl p-5 flex flex-col justify-between shadow-xl space-y-3 h-full">
+                <!-- Flippable Container with 3D Flip Animation -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-300/20 pb-2.5">
+                        <h2 id="cardTitle" class="text-lg font-bold font-header flex items-center gap-2">
+                            <i class="fa-solid fa-stopwatch theme-accent-text" id="cardTitleIcon"></i> <span id="cardTitleText">Session Timer</span>
+                        </h2>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleCardFlip(); animateClick(this)" class="ms-button ms-inner-box px-2.5 py-1 rounded-lg text-xs font-bold theme-accent-text interactive-btn flex items-center gap-1" title="Flip Card to KPQ Counter">
+                                <i class="fa-solid fa-rotate" id="flipCardIcon"></i> <span id="flipBtnText">KPQ</span>
+                            </button>
+                            <div id="timerStatusBadgeContainer" class="flex items-center gap-1.5 ms-inner-box px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
+                                <span id="timerStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                <span id="timerStatusText" class="uppercase theme-subtext">Stopped</span>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="border-t border-slate-300/30 pt-2"></div>
-
-                        <!-- Session Break Logger -->
-                        <div class="space-y-2 flex flex-col justify-between">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
-                                    <i class="fa-solid fa-mug-hot theme-accent-text"></i> Break Logger
-                                </h3>
-                                <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
-                            </div>
+                    <!-- Flipper Wrapper -->
+                    <div class="card-flip-container relative w-full">
+                        <div id="cardFlipper" class="card-flipper w-full">
                             
-                            <div class="flex items-center gap-1.5">
-                                <input type="text" id="breakNameInput" placeholder="Break name" class="flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
-                                <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-2.5 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap interactive-btn" title="Start break">
-                                    <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Break</span>
-                                </button>
-                                <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-
-                            <div class="ms-inner-box rounded-lg px-2 py-1 space-y-1">
-                                <div class="flex items-center justify-between text-[10px] font-semibold border-b border-slate-300/20 pb-0.5">
-                                    <span class="theme-subtext">Breaks</span>
-                                    <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">0m 0s</span>
-                                </div>
-                                <div id="breakLogsList" class="space-y-1 max-h-20 overflow-y-hidden pr-1 text-[10px] font-mono">
-                                    <div class="text-center py-1 text-slate-400 italic font-sans text-[9px]">No breaks logged.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BACK SIDE: KPQ Counter Card -->
-                    <div id="kpqCardSide" class="card-face card-back ms-card rounded-2xl p-5 space-y-4 w-full h-full flex flex-col justify-between shadow-2xl">
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between border-b border-slate-300/20 pb-2.5">
-                                <h2 class="text-lg font-bold font-header flex items-center gap-2">
-                                    <i class="fa-solid fa-people-group theme-accent-text"></i> <span class="theme-accent-text">KPQ Counter</span>
-                                </h2>
-                                <button onclick="toggleCardFlip(); animateClick(this)" class="ms-button ms-inner-box px-3 py-1 rounded-lg text-xs font-bold theme-accent-text interactive-btn flex items-center gap-1 shadow-sm" title="Flip Card to Session Timer">
-                                    <i class="fa-solid fa-stopwatch"></i> <span>Timer</span>
-                                </button>
-                            </div>
-
-                            <div class="ms-inner-box rounded-xl py-4 px-3 text-center relative overflow-hidden group w-full space-y-3">
-                                <div class="text-xs uppercase font-bold theme-subtext tracking-wider">Kerning Party Quest (KPQ) Runs</div>
-                                
-                                <div class="flex items-center justify-center gap-3">
-                                    <div id="kpqCountDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)]">
-                                        0
+                            <!-- FRONT SIDE: Session Timer -->
+                            <div id="timerCardSide" class="card-face space-y-3 w-full">
+                                <div class="ms-inner-box rounded-xl py-5 px-3 text-center relative overflow-hidden group w-full">
+                                    <div class="absolute top-2 right-2 flex items-center gap-1">
+                                        <button onclick="setTimerPreset(10/60, this)" class="preset-btn ms-button px-2 py-0.5 rounded text-[10px] font-mono font-semibold opacity-70 hover:opacity-100 transition interactive-btn text-slate-600 dark:text-slate-400 bg-slate-500/10 border border-slate-500/20" title="10s test timer">10s test</button>
                                     </div>
-                                    <button onclick="resetKpqCount(); animateClick(this)" class="ms-button ms-inner-box px-3 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Reset Counter">
-                                        <i class="fa-solid fa-rotate-right"></i>
+
+                                    <div id="timerDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)] py-1">
+                                        00:00:00
+                                    </div>
+                                    <div class="text-xs theme-subtext font-mono mt-1 flex justify-center gap-3 font-semibold">
+                                        <span>Target: <strong id="timerTargetText" class="text-current">Open-ended</strong></span>
+                                        <span>|</span>
+                                        <span>Elapsed: <strong id="elapsedTotalText" class="text-current">0s</strong></span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-4 gap-1.5">
+                                    <button onclick="setTimerPreset(15, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">15m</button>
+                                    <button onclick="setTimerPreset(30, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">30m</button>
+                                    <button onclick="setTimerPreset(60, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">1h</button>
+                                    <button onclick="setTimerPreset(120, this)" class="preset-btn ms-button ms-inner-box py-2 rounded-lg text-xs font-mono font-semibold hover:opacity-80 transition interactive-btn">2h</button>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <button id="startPauseBtn" onclick="toggleTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm theme-accent-gradient hover:opacity-95 text-white transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                                        <i class="fa-solid fa-play" id="startPauseIcon"></i>
+                                        <span id="startPauseLabel">Start Session</span>
+                                    </button>
+                                    <button onclick="promptFinishAndSaveSession(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-2 interactive-btn">
+                                        <i class="fa-solid fa-box-archive"></i>
+                                        <span>Finish & Save</span>
                                     </button>
                                 </div>
 
-                                <div class="pt-1">
-                                    <button onclick="incrementKpqCount(); animateClick(this)" class="w-full py-3.5 px-5 rounded-xl font-extrabold text-sm md:text-base bg-gradient-to-r from-fuchsia-600 via-pink-500 to-rose-500 hover:opacity-95 text-white transition shadow-lg flex items-center justify-center gap-2.5 interactive-btn ring-2 ring-pink-400/50">
-                                        <i class="fa-solid fa-circle-plus text-lg animate-bounce"></i> +1 KPQ Finished!
+                                <div class="text-center pt-1">
+                                    <button onclick="resetTimerOnly(); animateClick(this)" class="text-xs theme-subtext hover:theme-accent-text transition inline-flex items-center gap-1 font-semibold interactive-btn">
+                                        <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset Timer Clock
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="ms-inner-box rounded-xl p-3.5 space-y-2.5">
-                                <div class="flex items-center justify-between text-xs font-bold">
-                                    <span class="theme-subtext flex items-center gap-1.5"><i class="fa-solid fa-stopwatch theme-accent-text"></i> KPQ Run Stopwatch</span>
-                                    <span id="kpqTimerDisplay" class="font-mono text-base font-bold theme-accent-text">00:00</span>
+                            <!-- BACK SIDE: KPQ Counter -->
+                            <div id="kpqCardSide" class="card-face card-back space-y-4 w-full">
+                                <div class="ms-inner-box rounded-xl py-4 px-3 text-center relative overflow-hidden group w-full space-y-3">
+                                    <div class="text-xs uppercase font-bold theme-subtext tracking-wider">Kerning Party Quest (KPQ) Runs</div>
+                                    
+                                    <!-- KPQ Counter Display -->
+                                    <div class="flex items-center justify-center gap-3">
+                                        <div id="kpqCountDisplay" class="text-5xl sm:text-6xl font-black font-mono tracking-tight theme-accent-text drop-shadow-[0_4px_12px_rgba(236,72,153,0.35)]">
+                                            0
+                                        </div>
+                                        <button onclick="resetKpqCount(); animateClick(this)" class="ms-button ms-inner-box px-3 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:text-rose-600 transition interactive-btn" title="Reset Counter">
+                                            <i class="fa-solid fa-rotate-right"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- KPQ Finished Button Below Counter (Bigger & Distinct Color) -->
+                                    <div class="pt-1">
+                                        <button onclick="incrementKpqCount(); animateClick(this)" class="w-full py-3.5 px-5 rounded-xl font-extrabold text-sm md:text-base bg-gradient-to-r from-fuchsia-600 via-pink-500 to-rose-500 hover:opacity-95 text-white transition shadow-lg flex items-center justify-center gap-2.5 interactive-btn ring-2 ring-pink-400/50">
+                                            <i class="fa-solid fa-circle-plus text-lg animate-bounce"></i> +1 KPQ Finished!
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button id="kpqTimerStartBtn" onclick="toggleKpqTimer(); animateClick(this)" class="ms-button theme-accent-gradient text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm">
-                                        <i class="fa-solid fa-play" id="kpqTimerIcon"></i> <span id="kpqTimerLabel">Start KPQ Timer</span>
-                                    </button>
-                                    <button onclick="resetKpqTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-1.5 interactive-btn" title="Reset Stopwatch & Save KPQ Session Log">
-                                        <i class="fa-solid fa-box-archive text-xs"></i> Finish KPQ & Save
-                                    </button>
+
+                                <!-- KPQ Timer / Stopwatch Sub-section -->
+                                <div class="ms-inner-box rounded-xl p-3.5 space-y-2.5">
+                                    <div class="flex items-center justify-between text-xs font-bold">
+                                        <span class="theme-subtext flex items-center gap-1.5"><i class="fa-solid fa-stopwatch theme-accent-text"></i> KPQ Run Stopwatch</span>
+                                        <span id="kpqTimerDisplay" class="font-mono text-base font-bold theme-accent-text">00:00</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button id="kpqTimerStartBtn" onclick="toggleKpqTimer(); animateClick(this)" class="ms-button theme-accent-gradient text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 interactive-btn shadow-sm">
+                                            <i class="fa-solid fa-play" id="kpqTimerIcon"></i> <span id="kpqTimerLabel">Start KPQ Timer</span>
+                                        </button>
+                                        <button onclick="resetKpqTimer(); animateClick(this)" class="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center justify-center gap-1.5 interactive-btn" title="Reset Stopwatch & Save KPQ Session Log">
+                                            <i class="fa-solid fa-box-archive text-xs"></i> Finish KPQ & Save
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
+                </div>
+
+                <div class="border-t border-slate-300/30 pt-2"></div>
+
+                <!-- Session Break Logger -->
+                <div class="space-y-2 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold font-header flex items-center gap-1.5">
+                            <i class="fa-solid fa-mug-hot theme-accent-text"></i> Break Logger
+                        </h3>
+                        <span id="breakStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded ms-inner-box font-bold text-slate-400">Idle</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-1.5">
+                        <input type="text" id="breakNameInput" placeholder="Break name" class="flex-1 ms-inner-box rounded-lg px-2 py-1.5 text-xs focus:outline-none theme-accent-border font-medium transition">
+                        <button id="breakToggleBtn" onclick="toggleBreakSession(); animateClick(this)" class="py-1.5 px-2.5 rounded-lg font-bold text-xs break-idle-btn transition shadow-sm flex items-center justify-center gap-1 whitespace-nowrap interactive-btn" title="Start break">
+                            <i class="fa-solid fa-play" id="breakToggleIcon"></i> <span id="breakToggleLabel">Break</span>
+                        </button>
+                        <button onclick="clearBreakLogs(); animateClick(this)" class="ms-button ms-inner-box py-1.5 px-2 rounded-lg font-semibold text-xs text-rose-500 hover:text-rose-600 transition interactive-btn" title="Clear Break Logs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <div class="ms-inner-box rounded-lg px-2 py-1 space-y-1">
+                        <div class="flex items-center justify-between text-[10px] font-semibold border-b border-slate-300/20 pb-0.5">
+                            <span class="theme-subtext">Breaks</span>
+                            <span id="totalBreakTimeDisplay" class="font-mono theme-accent-text">0m 0s</span>
+                        </div>
+                        <div id="breakLogsList" class="space-y-1 max-h-20 overflow-y-auto pr-1 text-[10px] font-mono">
+                            <div class="text-center py-1 text-slate-400 italic font-sans text-[9px]">No breaks logged.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -736,21 +726,7 @@
                         </div>
                     </div>
                     <p class="text-xs theme-subtext mb-3">Active session expenses (toggle items or open drawer to load presets):</p>
-                    
-                    <!-- Scroll Replacement with Up/Down Buttons -->
-                    <div class="relative">
-                        <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none">
-                            <button onclick="scrollList('consumablesListContainer', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up">
-                                <i class="fa-solid fa-chevron-up text-[10px]"></i>
-                            </button>
-                            <button onclick="scrollList('consumablesListContainer', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down">
-                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                            </button>
-                        </div>
-                        <div id="consumablesListContainer" class="space-y-2 max-h-56 overflow-y-hidden pr-8 scroll-smooth" onwheel="handleWheelScroll(event, this)">
-                            <div id="consumablesList" class="space-y-2"></div>
-                        </div>
-                    </div>
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="consumablesList"></div>
                 </div>
                 <div class="pt-3 border-t border-slate-300/30 space-y-3">
                     <div class="grid grid-cols-1 gap-2">
@@ -788,21 +764,7 @@
                         </div>
                     </div>
                     <p class="text-xs theme-subtext mb-3">Track tradeable items dropped and set market values to add to revenue (click name to edit):</p>
-                    
-                    <!-- Scroll Replacement with Up/Down Buttons -->
-                    <div class="relative">
-                        <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none">
-                            <button onclick="scrollList('dropsListContainer', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up">
-                                <i class="fa-solid fa-chevron-up text-[10px]"></i>
-                            </button>
-                            <button onclick="scrollList('dropsListContainer', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-6 h-6 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down">
-                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                            </button>
-                        </div>
-                        <div id="dropsListContainer" class="space-y-2 max-h-56 overflow-y-hidden pr-8 scroll-smooth" onwheel="handleWheelScroll(event, this)">
-                            <div id="dropsList" class="space-y-2"></div>
-                        </div>
-                    </div>
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="dropsList"></div>
                 </div>
                 <div class="pt-3 border-t border-slate-300/30">
                     <div class="text-xs font-bold theme-subtext mb-2">Add Custom Drop Item:</div>
@@ -1053,23 +1015,23 @@
         </div>
     </div>
 
-    <!-- Session Breakdown Details Modal (70% Screen Width/Height, Larger Text & Standout Visuals) -->
-    <div id="sessionModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="ms-glass rounded-3xl p-6 md:p-10 w-[70vw] h-[70vh] max-w-none max-h-none space-y-6 shadow-2xl relative border-4 border-pink-500/50 flex flex-col justify-between">
+    <!-- Session Breakdown Details Modal -->
+    <div id="sessionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="ms-glass rounded-3xl p-6 md:p-10 max-w-5xl w-full space-y-6 shadow-2xl relative border-4 border-pink-500/50">
             <div class="flex items-center justify-between border-b-2 border-slate-300/30 pb-4">
-                <h3 class="text-2xl md:text-4xl font-black font-header flex items-center gap-3 theme-accent-text">
-                    <i class="fa-solid fa-file-invoice text-3xl"></i> Session Breakdown Details
+                <h3 class="text-2xl md:text-3xl font-black font-header flex items-center gap-3 theme-accent-text">
+                    <i class="fa-solid fa-file-invoice text-2xl"></i> Session Breakdown Details
                 </h3>
-                <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-4 py-2 text-2xl rounded-xl ms-inner-box"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeSessionModal()" class="text-slate-400 hover:text-rose-500 transition font-bold px-3 py-1 text-xl rounded-xl ms-inner-box"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div id="modalContent" class="space-y-6 text-base md:text-lg font-mono flex-1 overflow-y-auto pr-3"></div>
+            <div id="modalContent" class="space-y-6 text-sm md:text-base font-mono max-h-[72vh] overflow-y-auto pr-3"></div>
 
             <div class="pt-4 border-t-2 border-slate-300/30 flex items-center justify-between">
-                <button id="modalDownloadBtn" class="ms-button ms-inner-box px-6 py-3.5 rounded-2xl text-base md:text-lg font-bold flex items-center gap-2.5 theme-accent-text hover:opacity-80 transition interactive-btn shadow-md">
+                <button id="modalDownloadBtn" class="ms-button ms-inner-box px-5 py-3 rounded-2xl text-sm md:text-base font-bold flex items-center gap-2.5 theme-accent-text hover:opacity-80 transition interactive-btn shadow-md">
                     <i class="fa-solid fa-download"></i> Download Breakdown (JSON)
                 </button>
-                <button onclick="closeSessionModal()" class="ms-button theme-accent-bg text-white px-9 py-3.5 rounded-2xl text-base md:text-lg font-extrabold transition interactive-btn shadow-lg">Close Window</button>
+                <button onclick="closeSessionModal()" class="ms-button theme-accent-bg text-white px-7 py-3 rounded-2xl text-sm md:text-base font-extrabold transition interactive-btn shadow-lg">Close Window</button>
             </div>
         </div>
     </div>
@@ -1154,18 +1116,6 @@
             element.classList.add('btn-clicked');
         }
 
-        function scrollList(containerId, amount) {
-            const container = document.getElementById(containerId);
-            if (container) {
-                container.scrollBy({ top: amount, behavior: 'smooth' });
-            }
-        }
-
-        function handleWheelScroll(event, container) {
-            event.preventDefault();
-            container.scrollBy({ top: event.deltaY, behavior: 'smooth' });
-        }
-
         function formatCustomTimestamp(dateObj) {
             const d = dateObj ? new Date(dateObj) : new Date();
             if (isNaN(d.getTime())) return dateObj;
@@ -1245,13 +1195,25 @@
         function toggleCardFlip(forceState) {
             state.isKpqFlipped = forceState !== undefined ? forceState : !state.isKpqFlipped;
             const flipper = document.getElementById('cardFlipper');
+            const cardTitleText = document.getElementById('cardTitleText');
+            const cardTitleIcon = document.getElementById('cardTitleIcon');
+            const flipBtnText = document.getElementById('flipBtnText');
+            const flipCardIcon = document.getElementById('flipCardIcon');
             const timerStatusBadgeContainer = document.getElementById('timerStatusBadgeContainer');
 
             if (state.isKpqFlipped) {
                 flipper.classList.add('card-flipped');
+                cardTitleText.textContent = "KPQ Counter";
+                cardTitleIcon.className = "fa-solid fa-people-group theme-accent-text";
+                flipBtnText.textContent = "Timer";
+                flipCardIcon.className = "fa-solid fa-stopwatch";
                 timerStatusBadgeContainer.classList.add('hidden');
             } else {
                 flipper.classList.remove('card-flipped');
+                cardTitleText.textContent = "Session Timer";
+                cardTitleIcon.className = "fa-solid fa-stopwatch theme-accent-text";
+                flipBtnText.textContent = "KPQ";
+                flipCardIcon.className = "fa-solid fa-rotate";
                 timerStatusBadgeContainer.classList.remove('hidden');
             }
             updateInputLockStates();
@@ -2744,70 +2706,70 @@
             const downloadBtn = document.getElementById('modalDownloadBtn');
             const isPositive = session.netProfit >= 0;
 
-            let breaksHtml = '<div class="theme-subtext font-semibold italic text-base py-4">No breaks recorded for this session.</div>';
+            let breaksHtml = '<div class="theme-subtext font-semibold italic text-sm py-4">No breaks recorded for this session.</div>';
             if (session.breaksSnapshot && session.breaksSnapshot.length > 0) {
-                breaksHtml = '<div class="relative"><div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none"><button onclick="scrollList(\'modalBreaksContainer\', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up"><i class="fa-solid fa-chevron-up text-xs"></i></button><button onclick="scrollList(\'modalBreaksContainer\', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down"><i class="fa-solid fa-chevron-down text-xs"></i></button></div><div id="modalBreaksContainer" class="space-y-2.5 max-h-[38vh] overflow-y-hidden pr-9 scroll-smooth" onwheel="handleWheelScroll(event, this)">';
+                breaksHtml = '<div class="space-y-2 max-h-[35vh] overflow-y-auto pr-2">';
                 session.breaksSnapshot.forEach(b => {
                     const bMins = Math.floor(b.durationSeconds / 60);
                     const bSecs = b.durationSeconds % 60;
                     const bDur = bMins > 0 ? `${bMins}m ${bSecs}s` : `${bSecs}s`;
                     const dateDisplay = b.dateStr ? `${b.dateStr} ` : '';
                     breaksHtml += `
-                        <div class="ms-inner-box p-3.5 rounded-xl flex items-center justify-between text-sm md:text-base shadow-sm">
-                            <span class="font-semibold text-current truncate max-w-[70%]" title="${b.name || 'Break'}"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-xs block">${dateDisplay}(${b.startTime} - ${b.endTime})</span></span>
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm shadow-sm">
+                            <span class="font-semibold text-current truncate max-w-[70%]" title="${b.name || 'Break'}"><strong class="theme-accent-text font-bold">${b.name || 'Break'}</strong> <span class="theme-subtext text-[11px] block">${dateDisplay}(${b.startTime} - ${b.endTime})</span></span>
                             <span class="font-bold theme-accent-text font-mono whitespace-nowrap">(${bDur})</span>
                         </div>
                     `;
                 });
-                breaksHtml += '</div></div>';
+                breaksHtml += '</div>';
             }
 
-            let consumablesHtml = '<div class="theme-subtext font-semibold italic text-base">No active consumables/expenses recorded.</div>';
+            let consumablesHtml = '<div class="theme-subtext font-semibold italic text-sm">No active consumables/expenses recorded.</div>';
             if (session.consumablesSnapshot && session.consumablesSnapshot.length > 0) {
-                consumablesHtml = '<div class="relative"><div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none"><button onclick="scrollList(\'modalConsumablesContainer\', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up"><i class="fa-solid fa-chevron-up text-xs"></i></button><button onclick="scrollList(\'modalConsumablesContainer\', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down"><i class="fa-solid fa-chevron-down text-xs"></i></button></div><div id="modalConsumablesContainer" class="space-y-2.5 max-h-[38vh] overflow-y-hidden pr-9 scroll-smooth" onwheel="handleWheelScroll(event, this)">';
+                consumablesHtml = '<div class="space-y-2 max-h-40 overflow-y-auto pr-1">';
                 session.consumablesSnapshot.forEach(c => {
                     const unitPriceFormatted = formatNumberWithCommas(c.unitCost || 0);
                     const totalCostFormatted = formatNumberWithCommas(c.totalCost || (c.unitCost * c.qty) || 0);
                     consumablesHtml += `
-                        <div class="ms-inner-box p-3.5 rounded-xl flex items-center justify-between text-sm md:text-base">
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm">
                             <div class="flex flex-col truncate max-w-[65%]">
                                 <span class="font-bold text-current truncate"><i class="fa-solid fa-flask text-rose-500 mr-1.5"></i> ${c.name}</span>
-                                <span class="text-xs theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
+                                <span class="text-[11px] theme-subtext font-semibold">Qty: ${c.qty} • Unit: ${unitPriceFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-rose-500 font-mono text-right">-${totalCostFormatted} mesos</span>
                         </div>
                     `;
                 });
-                consumablesHtml += '</div></div>';
+                consumablesHtml += '</div>';
             }
 
-            let dropsHtml = '<div class="theme-subtext font-semibold italic text-base">No valuable drops recorded.</div>';
+            let dropsHtml = '<div class="theme-subtext font-semibold italic text-sm">No valuable drops recorded.</div>';
             if (session.dropsSnapshot && session.dropsSnapshot.length > 0) {
-                dropsHtml = '<div class="relative"><div class="absolute right-1 top-0 bottom-0 flex flex-col justify-between py-1 z-10 pointer-events-none"><button onclick="scrollList(\'modalDropsContainer\', -60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Up"><i class="fa-solid fa-chevron-up text-xs"></i></button><button onclick="scrollList(\'modalDropsContainer\', 60); animateClick(this)" class="pointer-events-auto ms-button ms-inner-box w-7 h-7 rounded-md flex items-center justify-center text-xs theme-accent-text shadow-sm hover:scale-105" title="Scroll Down"><i class="fa-solid fa-chevron-down text-xs"></i></button></div><div id="modalDropsContainer" class="space-y-2.5 max-h-[38vh] overflow-y-hidden pr-9 scroll-smooth" onwheel="handleWheelScroll(event, this)">';
+                dropsHtml = '<div class="space-y-2 max-h-40 overflow-y-auto pr-1">';
                 session.dropsSnapshot.forEach(d => {
                     const unitValueFormatted = formatNumberWithCommas(d.unitValue || 0);
                     const totalValFormatted = formatNumberWithCommas(d.totalValue || (d.unitValue * d.qty) || 0);
                     dropsHtml += `
-                        <div class="ms-inner-box p-3.5 rounded-xl flex items-center justify-between text-sm md:text-base">
+                        <div class="ms-inner-box p-3 rounded-xl flex items-center justify-between text-xs md:text-sm">
                             <div class="flex flex-col truncate max-w-[65%]">
                                 <span class="font-bold text-current truncate"><i class="fa-solid fa-gem text-purple-500 mr-1.5"></i> ${d.name}</span>
-                                <span class="text-xs theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
+                                <span class="text-[11px] theme-subtext font-semibold">Qty: ${d.qty} • Unit: ${unitValueFormatted} mesos</span>
                             </div>
                             <span class="font-bold text-purple-500 font-mono text-right">+${totalValFormatted} mesos</span>
                         </div>
                     `;
                 });
-                dropsHtml += '</div></div>';
+                dropsHtml += '</div>';
             }
 
             let notesHtml = '';
             if (session.notes) {
                 notesHtml = `
                     <div class="ms-inner-box p-4 rounded-2xl space-y-1.5">
-                        <div class="text-sm md:text-base font-extrabold theme-accent-text flex items-center gap-1.5">
+                        <div class="text-xs font-extrabold theme-accent-text flex items-center gap-1.5">
                             <i class="fa-solid fa-note-sticky"></i> Session Notes:
                         </div>
-                        <p class="text-sm md:text-base text-current font-sans whitespace-pre-wrap">${escapeHtml(session.notes)}</p>
+                        <p class="text-xs md:text-sm text-current font-sans whitespace-pre-wrap">${escapeHtml(session.notes)}</p>
                     </div>
                 `;
             }
@@ -2821,40 +2783,36 @@
             modalContent.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     <div class="lg:col-span-7 space-y-4">
-                        <!-- Box-y standoutish header visual change for Date & Time -->
-                        <div class="ms-card p-4 rounded-2xl border-2 border-pink-400/40 shadow-md flex items-center justify-between">
-                            <span class="text-xs md:text-sm font-extrabold uppercase theme-subtext flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-days theme-accent-text text-base"></i> Recorded Timestamp
-                            </span>
-                            <span class="text-sm md:text-base font-bold text-pink-500 dark:text-pink-400 font-mono">${session.timestamp}</span>
-                        </div>
-
-                        <div class="ms-inner-box p-6 rounded-2xl space-y-3.5 text-sm md:text-base">
-                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
+                        <div class="ms-inner-box p-5 rounded-2xl space-y-3 text-xs md:text-sm">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
+                                <span class="theme-subtext font-bold">Date & Time:</span>
+                                <span class="font-bold theme-accent-text">${session.timestamp}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">Character IGN:</span>
-                                <span class="font-extrabold text-amber-500 dark:text-amber-400 text-base md:text-lg tracking-wide">${session.charName || 'Unnamed'}</span>
+                                <span class="font-bold theme-accent-text">${session.charName || 'Unnamed'}</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">Map & Level:</span>
-                                <span class="font-bold text-sky-500 dark:text-sky-400 text-base md:text-lg">${session.mapName} <strong class="text-purple-500 dark:text-purple-400">(Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</strong></span>
+                                <span class="font-bold theme-accent-text">${session.mapName} (Lv. ${session.level}${session.levelUps ? ' [+' + session.levelUps + ' Lvls]' : ''})</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">KPQ Runs & Stopwatch:</span>
                                 <span class="font-bold text-fuchsia-400">${kpqRuns} Runs (${kpqTimeStr})</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">Duration:</span>
                                 <span class="font-bold theme-accent-text">${formatSecondsToHHMMSS(session.durationSeconds)}</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">EXP Gained:</span>
                                 <span class="font-bold text-emerald-500">+${session.expGained.toFixed(3)}%</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">Gross Meso Looted:</span>
                                 <span class="font-bold text-amber-500">${formatNumberWithCommas(session.grossMeso || 0)} mesos</span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-300/20 pb-3">
+                            <div class="flex justify-between border-b border-slate-300/20 pb-2.5">
                                 <span class="theme-subtext font-bold">Net Profit:</span>
                                 <span class="font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</span>
                             </div>
@@ -2868,13 +2826,13 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="space-y-2">
-                                <div class="text-sm md:text-base font-extrabold theme-subtext flex items-center gap-1.5">
+                                <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
                                     <i class="fa-solid fa-flask text-rose-500"></i> Buff Expenses:
                                 </div>
                                 ${consumablesHtml}
                             </div>
                             <div class="space-y-2">
-                                <div class="text-sm md:text-base font-extrabold theme-subtext flex items-center gap-1.5">
+                                <div class="text-xs md:text-sm font-extrabold theme-subtext flex items-center gap-1.5">
                                     <i class="fa-solid fa-gem text-purple-500"></i> Drops Revenue:
                                 </div>
                                 ${dropsHtml}
@@ -2882,29 +2840,29 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: More Distinguished Box for KPQ & Summary, and Breaks -->
-                    <div class="lg:col-span-5 lg:border-l-2 lg:border-slate-300/30 lg:pl-6 space-y-5">
-                        <!-- Highly Distinguished Box for KPQ & Summary -->
-                        <div class="ms-card rounded-2xl p-5 flex flex-col justify-between space-y-3 shadow-lg border-2 border-fuchsia-400/60 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-pink-500/10">
-                            <div class="flex items-center justify-between text-sm font-extrabold border-b border-fuchsia-400/30 pb-2.5">
-                                <span class="theme-accent-text flex items-center gap-2"><i class="fa-solid fa-chart-pie text-base"></i> KPQ & Summary Highlights</span>
-                                <span class="text-xs theme-subtext font-mono px-2 py-0.5 rounded ms-inner-box">Saved Log</span>
+                    <!-- Right Column: KPQ & Summary above Breaks Breakdown -->
+                    <div class="lg:col-span-5 lg:border-l-2 lg:border-slate-300/30 lg:pl-6 space-y-4">
+                        <!-- Saved KPQ & Summary Section -->
+                        <div class="ms-inner-box rounded-xl p-4 flex flex-col justify-between space-y-2 shadow-sm border border-fuchsia-400/30">
+                            <div class="flex items-center justify-between text-xs font-bold border-b border-slate-300/20 pb-2">
+                                <span class="theme-accent-text flex items-center gap-1.5"><i class="fa-solid fa-chart-pie"></i> KPQ & Summary</span>
+                                <span class="text-[10px] theme-subtext font-mono">Saved Log</span>
                             </div>
-                            <div class="space-y-2 text-sm font-mono">
+                            <div class="space-y-1.5 text-xs font-mono">
                                 <div class="flex justify-between">
-                                    <span class="theme-subtext font-semibold">KPQ Runs:</span>
+                                    <span class="theme-subtext">KPQ Runs:</span>
                                     <strong class="text-fuchsia-400 font-bold">${kpqRuns}</strong>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="theme-subtext font-semibold">KPQ Stopwatch:</span>
+                                    <span class="theme-subtext">KPQ Stopwatch:</span>
                                     <strong class="text-current">${kpqTimeStr}</strong>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="theme-subtext font-semibold">Total EXP:</span>
+                                    <span class="theme-subtext">Total EXP:</span>
                                     <strong class="text-emerald-500">+${session.expGained.toFixed(3)}%</strong>
                                 </div>
-                                <div class="flex justify-between border-t border-slate-300/20 pt-2">
-                                    <span class="theme-subtext font-semibold">Net Profit:</span>
+                                <div class="flex justify-between border-t border-slate-300/20 pt-1.5">
+                                    <span class="theme-subtext">Net Profit:</span>
                                     <strong class="${isPositive ? 'text-emerald-500' : 'text-rose-500'} font-bold">${isPositive ? '+' : ''}${formatNumberWithCommas(session.netProfit)} mesos</strong>
                                 </div>
                             </div>
@@ -2912,7 +2870,7 @@
 
                         <!-- Breaks Breakdown Section -->
                         <div class="space-y-3">
-                            <div class="text-base md:text-lg font-extrabold theme-accent-text flex items-center gap-2 border-b border-slate-300/20 pb-2">
+                            <div class="text-base font-extrabold theme-accent-text flex items-center gap-2 border-b border-slate-300/20 pb-2">
                                 <i class="fa-solid fa-mug-hot"></i> Breaks Breakdown (${session.breaksSnapshot ? session.breaksSnapshot.length : 0})
                             </div>
                             ${breaksHtml}
